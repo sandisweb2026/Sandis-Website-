@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Phone, Instagram, Facebook, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import sandisLogo from "@/assets/sandis logo .png";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -19,8 +20,13 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 glass shadow-card">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
         <Link to="/" className="flex items-center gap-2">
-          <span className="text-2xl font-bold text-gradient">Sandis</span>
-          <span className="text-2xl font-light text-foreground">Tours</span>
+          <img
+            src={sandisLogo}
+            alt="Sandis Tours logo"
+            className="h-10 w-auto"
+            loading="eager"
+            decoding="async"
+          />
         </Link>
 
         {/* Desktop Nav */}

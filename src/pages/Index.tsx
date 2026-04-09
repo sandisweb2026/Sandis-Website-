@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import heroBeach from "@/assets/hero-beach.jpg";
 import heroFlight from "@/assets/hero-flight.jpg";
 import heroHotel from "@/assets/hero-hotel.jpg";
+import sandisLogo from "@/assets/sandis logo .png";
 import type { Database } from "@/integrations/supabase/types";
 
 type Tour = Database["public"]["Tables"]["tours"]["Row"];
@@ -79,9 +80,14 @@ const Index = () => {
         <div className="absolute top-0 left-0 right-0 z-20">
           <div className="container mx-auto px-4">
             <div className="flex items-center justify-between pt-5">
-              <div className="flex items-center gap-2">
-                <span className="text-2xl font-bold text-gradient">Sandis</span>
-                <span className="text-2xl font-light text-background">Tours</span>
+              <div className="flex items-center">
+                <img
+                  src={sandisLogo}
+                  alt="Sandis Tours logo"
+                  className="h-10 w-auto"
+                  loading="eager"
+                  decoding="async"
+                />
               </div>
               <div className="flex items-center gap-4 text-background/80">
                 <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-background transition-colors">

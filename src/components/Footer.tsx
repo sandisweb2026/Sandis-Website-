@@ -1,14 +1,21 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Instagram, Facebook } from "lucide-react";
+import sandisLogo from "@/assets/sandis logo .png";
 
 const Footer = () => (
   <footer className="bg-foreground text-background">
     <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
         <div>
-          <h3 className="text-xl font-bold mb-4">
-            <span className="text-gradient">Sandis</span> Tours
-          </h3>
+          <div className="flex items-center gap-3 mb-4">
+            <img
+              src={sandisLogo}
+              alt="Sandis Tours logo"
+              className="h-10 w-auto"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
           <p className="text-sm opacity-70 leading-relaxed">
             Creating unforgettable journeys since 1995. Your trusted travel partner for domestic and international tours.
           </p>

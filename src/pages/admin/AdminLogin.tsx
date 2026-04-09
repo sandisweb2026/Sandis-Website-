@@ -18,23 +18,30 @@ const AdminLogin = () => {
     e.preventDefault();
     setLoading(true);
 
-    if (isSignup) {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) {
-        toast.error(error.message);
-      } else {
+    try {
+      if (isSignup) {
+        const { error } = await supabase.auth.signUp({ email, password });
+        if (error) {
+          toast.error(error.message);
+          return;
+        }
         toast.success("Account created! Please sign in.");
         setIsSignup(false);
+        return;
       }
-    } else {
+
       const { error } = await signIn(email, password);
       if (error) {
         toast.error(error.message);
-      } else {
-        navigate("/admin");
+        return;
       }
+      navigate("/admin");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Login failed. Please try again.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

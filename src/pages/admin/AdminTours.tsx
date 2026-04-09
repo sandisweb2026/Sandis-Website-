@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,14 +6,63 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { Plus, Pencil, Trash2, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
-import type { Database } from "@/integrations/supabase/types";
+import type { Database, Json } from "@/integrations/supabase/types";
 
 type Tour = Database["public"]["Tables"]["tours"]["Row"];
+type ItineraryItem = { day: string; title: string; description: string };
+
+const parseList = (value: string) =>
+  value
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+const parseItinerary = (value: string): ItineraryItem[] => {
+  const lines = value.split("\n").map((l) => l.trim()).filter(Boolean);
+  return lines.map((line, idx) => ({
+    day: `Day ${idx + 1}`,
+    title: line,
+    description: "",
+  }));
+};
+
+const extractExtras = (itinerary: Json | null) => {
+  const extras = {
+    itinerary: [] as ItineraryItem[],
+    highlights: [] as string[],
+    exclusions: [] as string[],
+    terms: [] as string[],
+    gallery: [] as string[],
+    faqs: [] as FaqItem[],
+  };
+
+  if (Array.isArray(itinerary)) {
+    extras.itinerary = itinerary as unknown as ItineraryItem[];
+    return extras;
+  }
+
+  if (itinerary && typeof itinerary === "object") {
+    const obj = itinerary as Record<string, unknown>;
+    if (Array.isArray(obj.itinerary)) extras.itinerary = obj.itinerary as ItineraryItem[];
+    if (Array.isArray(obj.highlights)) extras.highlights = obj.highlights as string[];
+    if (Array.isArray(obj.exclusions)) extras.exclusions = obj.exclusions as string[];
+    if (Array.isArray(obj.terms)) extras.terms = obj.terms as string[];
+    if (Array.isArray(obj.gallery)) extras.gallery = obj.gallery as string[];
+    if (Array.isArray(obj.faqs)) extras.faqs = obj.faqs as FaqItem[];
+  }
+  return extras;
+};
 
 const AdminTours = () => {
   const [tours, setTours] = useState<Tour[]>([]);
   const [editing, setEditing] = useState<Partial<Tour> | null>(null);
   const [loading, setLoading] = useState(false);
+  const [itineraryText, setItineraryText] = useState("");
+  const [highlightsText, setHighlightsText] = useState("");
+  const [exclusionsText, setExclusionsText] = useState("");
+  const [termsText, setTermsText] = useState("");
+  const [galleryText, setGalleryText] = useState("");
+  const [faqText, setFaqText] = useState("");
 
   const fetchTours = async () => {
     const { data } = await supabase.from("tours").select("*").order("created_at", { ascending: false });
@@ -21,10 +70,31 @@ const AdminTours = () => {
   };
 
   useEffect(() => { fetchTours(); }, []);
+  useEffect(() => {
+    if (!editing) return;
+    const extras = extractExtras(editing.itinerary ?? null);
+    setItineraryText(extras.itinerary.map((i) => i.title).join("\n"));
+    setHighlightsText(extras.highlights.join("\n"));
+    setExclusionsText(extras.exclusions.join("\n"));
+    setTermsText(extras.terms.join("\n"));
+    setGalleryText(extras.gallery.join("\n"));
+    setFaqText(extras.faqs.map((f) => (typeof f === "string" ? f : f.q)).join("\n"));
+  }, [editing]);
 
   const handleSave = async () => {
-    if (!editing?.name || !editing?.duration || !editing?.price || !editing?.category) {
-      toast.error("Please fill all required fields");
+    const name = editing?.name?.trim() || "";
+    const duration = editing?.duration?.trim() || "";
+    const price = editing?.price?.trim() || "";
+    const category = editing?.category?.toString().trim() || "";
+
+    const missing: string[] = [];
+    if (!name) missing.push("Tour Name");
+    if (!duration) missing.push("Duration");
+    if (!price) missing.push("Price");
+    if (!category) missing.push("Category");
+
+    if (missing.length > 0) {
+      toast.error(`Please fill required: ${missing.join(", ")}`);
       return;
     }
     setLoading(true);
@@ -37,13 +107,21 @@ const AdminTours = () => {
     }
 
     const payload = {
-      name: editing.name,
-      duration: editing.duration,
-      price: editing.price,
-      category: editing.category,
+      name,
+      duration,
+      price,
+      category,
       description: editing.description || null,
       inclusions: inclusionsArray,
       image_url: editing.image_url || null,
+      itinerary: {
+        itinerary: parseItinerary(itineraryText),
+        highlights: parseList(highlightsText),
+        exclusions: parseList(exclusionsText),
+        terms: parseList(termsText),
+        gallery: parseList(galleryText),
+        faqs: parseList(faqText),
+      },
     };
 
     if (editing.id) {
@@ -55,6 +133,12 @@ const AdminTours = () => {
     }
     setLoading(false);
     setEditing(null);
+    setItineraryText("");
+    setHighlightsText("");
+    setExclusionsText("");
+    setTermsText("");
+    setGalleryText("");
+    setFaqText("");
     fetchTours();
   };
 
@@ -93,6 +177,42 @@ const AdminTours = () => {
               value={Array.isArray(editing.inclusions) ? editing.inclusions.join(", ") : (editing.inclusions || "")}
               onChange={(e) => setEditing({ ...editing, inclusions: e.target.value as any })}
             />
+            <Textarea
+              placeholder="Itinerary (one item per line)"
+              value={itineraryText}
+              onChange={(e) => setItineraryText(e.target.value)}
+              rows={4}
+            />
+            <Textarea
+              placeholder="Highlights (one per line)"
+              value={highlightsText}
+              onChange={(e) => setHighlightsText(e.target.value)}
+              rows={3}
+            />
+            <Textarea
+              placeholder="Exclusions (one per line)"
+              value={exclusionsText}
+              onChange={(e) => setExclusionsText(e.target.value)}
+              rows={3}
+            />
+            <Textarea
+              placeholder="Terms & Conditions (one per line)"
+              value={termsText}
+              onChange={(e) => setTermsText(e.target.value)}
+              rows={3}
+            />
+            <Textarea
+              placeholder="Gallery Image URLs (one per line)"
+              value={galleryText}
+              onChange={(e) => setGalleryText(e.target.value)}
+              rows={3}
+            />
+            <Textarea
+              placeholder="FAQ (one per line)"
+              value={faqText}
+              onChange={(e) => setFaqText(e.target.value)}
+              rows={3}
+            />
             <Button onClick={handleSave} disabled={loading}>{loading ? "Saving..." : "Save Tour"}</Button>
           </div>
         </div>
@@ -108,7 +228,7 @@ const AdminTours = () => {
             <Link to="/admin" className="text-muted-foreground hover:text-foreground"><ArrowLeft size={20} /></Link>
             <h1 className="text-2xl font-bold text-foreground">Manage Tours</h1>
           </div>
-          <Button onClick={() => setEditing({})} className="gap-1"><Plus size={16} /> Add Tour</Button>
+          <Button onClick={() => setEditing({ category: "domestic" } as Partial<Tour>)} className="gap-1"><Plus size={16} /> Add Tour</Button>
         </div>
 
         <div className="space-y-3">

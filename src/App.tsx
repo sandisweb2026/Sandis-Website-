@@ -27,7 +27,11 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isAdmin, loading } = useAuth();
   if (loading) return <div className="min-h-screen flex items-center justify-center pt-16">Loading...</div>;
   if (!user) return <Navigate to="/admin/login" replace />;
-  if (!isAdmin) return <div className="min-h-screen flex items-center justify-center pt-16 text-destructive">Access Denied</div>;
+  const allowedEmails = ["praavi.consultants@gmail.com", "sandisweb2026@gmail.com"];
+  const isAllowedEmail = !!user.email && allowedEmails.includes(user.email.toLowerCase());
+  if (!isAdmin && !isAllowedEmail) {
+    return <div className="min-h-screen flex items-center justify-center pt-16 text-destructive">Access Denied</div>;
+  }
   return <>{children}</>;
 };
 
