@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Clock, IndianRupee, CheckCircle, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import type { Database, Json } from "@/integrations/supabase/types";
 
 import tourGoa from "@/assets/tour-goa.jpg";
@@ -23,6 +23,249 @@ const fallbackImages: Record<string, string> = {
 
 type Tour = Database["public"]["Tables"]["tours"]["Row"];
 type ItineraryItem = { day: string; title: string; description: string };
+type FaqItem = { q: string; a: string } | string;
+
+const fallbackTours: Tour[] = [
+  {
+    id: "fallback-goa",
+    name: "Goa Beach Paradise",
+    category: "domestic",
+    duration: "4D / 3N",
+    price: "12,999",
+    description: "Sun-soaked beaches, lively shacks, and relaxed coastal vibes.",
+    image_url: null,
+    inclusions: [
+      "3 nights accommodation in a beachside hotel",
+      "Daily breakfast",
+      "Airport or railway station transfers",
+      "North Goa sightseeing",
+      "South Goa sightseeing",
+    ],
+    itinerary: {
+      itinerary: [
+        { day: "Day 1", title: "Arrival and Leisure", description: "Arrive in Goa, check in, and spend the evening at leisure by the beach." },
+        { day: "Day 2", title: "North Goa Highlights", description: "Visit Calangute, Baga, Anjuna, and Fort Aguada with scenic stops." },
+        { day: "Day 3", title: "South Goa Serenity", description: "Explore Panjim, Old Goa churches, Miramar beach, and Dona Paula." },
+        { day: "Day 4", title: "Departure", description: "Check out and transfer to the airport or railway station." },
+      ],
+      highlights: ["Beach time and sunset views", "Iconic Goa forts and churches", "Local markets and cuisine"],
+      exclusions: ["Airfare or train tickets", "Personal expenses", "Water sports activities", "Travel insurance"],
+      terms: ["Check-in 2 PM, check-out 11 AM", "Rates valid for Indian nationals only", "Itinerary may change due to weather"],
+      gallery: [tourGoa, tourKerala, tourBali],
+      faqs: [
+        { q: "Is airport transfer included?", a: "Yes, pick-up and drop are included as per your arrival/departure timings." },
+        { q: "Can we add water sports?", a: "Yes, activities can be added on request at an extra cost." },
+      ],
+    },
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-manali",
+    name: "Manali Adventure",
+    category: "domestic",
+    duration: "5D / 4N",
+    price: "15,499",
+    description: "Snowy peaks, cozy stays, and thrilling mountain activities.",
+    image_url: null,
+    inclusions: [
+      "4 nights accommodation",
+      "Daily breakfast and dinner",
+      "Local sightseeing by private cab",
+      "Solang Valley excursion",
+      "All tolls and parking",
+    ],
+    itinerary: {
+      itinerary: [
+        { day: "Day 1", title: "Arrival in Manali", description: "Check in and relax by the river or explore the local market." },
+        { day: "Day 2", title: "Solang Valley Adventure", description: "Visit Solang Valley for snow activities and scenic views." },
+        { day: "Day 3", title: "Local Sightseeing", description: "Hadimba Temple, Vashisht, Club House, and Tibetan Monastery." },
+        { day: "Day 4", title: "Kullu and Naggar", description: "Explore Kullu market and Naggar Castle with river rafting options." },
+        { day: "Day 5", title: "Departure", description: "Check out and proceed for onward journey." },
+      ],
+      highlights: ["Solang Valley snow activities", "Scenic Himalayan views", "Traditional Himachali culture"],
+      exclusions: ["Adventure sports fees", "Personal expenses", "Lunch and beverages"],
+      terms: ["Subject to road and weather conditions", "Peak season supplements may apply"],
+      gallery: [tourManali, tourKerala, tourGoa],
+      faqs: [
+        { q: "Is snow guaranteed?", a: "Snow is seasonal. We schedule visits for the best possible experience." },
+        { q: "Are adventure activities included?", a: "Adventure activities are optional and paid directly on-site." },
+      ],
+    },
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-kerala",
+    name: "Kerala Backwaters",
+    category: "domestic",
+    duration: "5D / 4N",
+    price: "18,999",
+    description: "Houseboats, lush greenery, and serene backwater cruises.",
+    image_url: null,
+    inclusions: [
+      "2 nights hotel + 1 night houseboat + 1 night resort",
+      "Daily breakfast",
+      "Private cab for transfers and sightseeing",
+      "Houseboat meals included",
+      "Munnar and Alleppey sightseeing",
+    ],
+    itinerary: {
+      itinerary: [
+        { day: "Day 1", title: "Cochin Arrival", description: "Arrive in Cochin, check in, and explore Fort Kochi." },
+        { day: "Day 2", title: "Munnar Hills", description: "Drive to Munnar and visit tea gardens and viewpoints." },
+        { day: "Day 3", title: "Munnar to Alleppey", description: "Scenic drive to Alleppey and check in to the houseboat." },
+        { day: "Day 4", title: "Backwater Cruise", description: "Relax on the backwaters and enjoy Kerala cuisine." },
+        { day: "Day 5", title: "Departure", description: "Check out and transfer to Cochin for departure." },
+      ],
+      highlights: ["Tea plantations of Munnar", "Overnight houseboat stay", "Backwater cruise experience"],
+      exclusions: ["Airfare or train tickets", "Personal expenses", "Optional activities"],
+      terms: ["Houseboat AC operates at night only", "Route may vary based on water levels"],
+      gallery: [tourKerala, tourGoa, tourThailand],
+      faqs: [
+        { q: "Is houseboat private?", a: "Yes, the houseboat is private for your group." },
+        { q: "What meals are included?", a: "All meals are included on the houseboat day." },
+      ],
+    },
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-dubai",
+    name: "Dubai Extravaganza",
+    category: "international",
+    duration: "5D / 4N",
+    price: "54,999",
+    description: "Skyscrapers, desert safari, and luxury shopping experiences.",
+    image_url: null,
+    inclusions: [
+      "4 nights hotel accommodation",
+      "Daily breakfast",
+      "Dubai city tour",
+      "Desert safari with BBQ dinner",
+      "Airport transfers",
+    ],
+    itinerary: {
+      itinerary: [
+        { day: "Day 1", title: "Arrival", description: "Arrive in Dubai and check in to the hotel." },
+        { day: "Day 2", title: "City Tour", description: "Visit Burj Khalifa area, Dubai Mall, and Jumeirah." },
+        { day: "Day 3", title: "Desert Safari", description: "Dune bashing, sunset views, and BBQ dinner." },
+        { day: "Day 4", title: "Leisure Day", description: "Optional Marina cruise or shopping at leisure." },
+        { day: "Day 5", title: "Departure", description: "Check out and transfer to the airport." },
+      ],
+      highlights: ["Burj Khalifa and Dubai Mall", "Desert safari with dinner", "Luxury shopping"],
+      exclusions: ["Visa fees", "Travel insurance", "Optional tours and activities"],
+      terms: ["Tour timings depend on local schedules", "Visa processing time 5-7 working days"],
+      gallery: [tourDubai, tourBali, tourThailand],
+      faqs: [
+        { q: "Is visa included?", a: "Visa can be arranged on request at additional cost." },
+        { q: "Can we add a Marina cruise?", a: "Yes, optional activities can be added." },
+      ],
+    },
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-bali",
+    name: "Bali Island Escape",
+    category: "international",
+    duration: "6D / 5N",
+    price: "62,999",
+    description: "Temples, beaches, and a perfect tropical getaway.",
+    image_url: null,
+    inclusions: [
+      "5 nights accommodation",
+      "Daily breakfast",
+      "Airport transfers",
+      "Ubud and Kintamani tour",
+      "Tanah Lot sunset tour",
+    ],
+    itinerary: {
+      itinerary: [
+        { day: "Day 1", title: "Arrival", description: "Arrive in Bali and check in." },
+        { day: "Day 2", title: "Ubud Tour", description: "Visit Ubud, rice terraces, and local markets." },
+        { day: "Day 3", title: "Kintamani Day", description: "Volcano view, coffee plantations, and temples." },
+        { day: "Day 4", title: "Tanah Lot", description: "Sunset tour with coastal views." },
+        { day: "Day 5", title: "Leisure Day", description: "Beach time or optional water sports." },
+        { day: "Day 6", title: "Departure", description: "Check out and depart." },
+      ],
+      highlights: ["Ubud cultural experience", "Temple visits", "Beach and sunset views"],
+      exclusions: ["Airfare", "Personal expenses", "Optional activities"],
+      terms: ["Tour order may change due to local conditions", "Hotel standard is 3 or 4 star as selected"],
+      gallery: [tourBali, tourGoa, tourKerala],
+      faqs: [
+        { q: "Is this a honeymoon-friendly package?", a: "Yes, we can add honeymoon inclusions on request." },
+        { q: "Can we change the hotel?", a: "Yes, upgrades are available at extra cost." },
+      ],
+    },
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-thailand",
+    name: "Thailand Discovery",
+    category: "international",
+    duration: "6D / 5N",
+    price: "58,499",
+    description: "Vibrant nightlife, island hopping, and cultural landmarks.",
+    image_url: null,
+    inclusions: [
+      "5 nights accommodation",
+      "Daily breakfast",
+      "Airport transfers",
+      "Bangkok city tour",
+      "Phi Phi island tour",
+    ],
+    itinerary: {
+      itinerary: [
+        { day: "Day 1", title: "Arrival in Bangkok", description: "Arrive and check in." },
+        { day: "Day 2", title: "Bangkok City Tour", description: "Grand Palace, temples, and markets." },
+        { day: "Day 3", title: "Pattaya Transfer", description: "Travel to Pattaya and enjoy the beach." },
+        { day: "Day 4", title: "Island Tour", description: "Phi Phi or Coral Island day tour with lunch." },
+        { day: "Day 5", title: "Leisure Day", description: "Shopping or optional Alcazar show." },
+        { day: "Day 6", title: "Departure", description: "Check out and depart." },
+      ],
+      highlights: ["Bangkok temples", "Island hopping", "Night markets"],
+      exclusions: ["Airfare", "Personal expenses", "Optional shows and activities"],
+      terms: ["Island tour subject to weather", "Peak season supplements may apply"],
+      gallery: [tourThailand, tourBali, tourDubai],
+      faqs: [
+        { q: "Is lunch included on island tour?", a: "Yes, lunch is included during the island tour." },
+        { q: "Can we add Phuket instead of Pattaya?", a: "Yes, we can customize the itinerary." },
+      ],
+    },
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+];
+
+const extractExtras = (itinerary: Json | null) => {
+  const extras = {
+    itinerary: [] as ItineraryItem[],
+    highlights: [] as string[],
+    exclusions: [] as string[],
+    terms: [] as string[],
+    gallery: [] as string[],
+    faqs: [] as FaqItem[],
+  };
+
+  if (Array.isArray(itinerary)) {
+    extras.itinerary = itinerary as unknown as ItineraryItem[];
+    return extras;
+  }
+
+  if (itinerary && typeof itinerary === "object") {
+    const obj = itinerary as Record<string, unknown>;
+    if (Array.isArray(obj.itinerary)) extras.itinerary = obj.itinerary as ItineraryItem[];
+    if (Array.isArray(obj.highlights)) extras.highlights = obj.highlights as string[];
+    if (Array.isArray(obj.exclusions)) extras.exclusions = obj.exclusions as string[];
+    if (Array.isArray(obj.terms)) extras.terms = obj.terms as string[];
+    if (Array.isArray(obj.gallery)) extras.gallery = obj.gallery as string[];
+    if (Array.isArray(obj.faqs)) extras.faqs = obj.faqs as FaqItem[];
+  }
+
+  return extras;
+};
 
 const TourDetail = () => {
   const { id } = useParams();
@@ -31,6 +274,11 @@ const TourDetail = () => {
 
   useEffect(() => {
     if (!id) return;
+    if (!isSupabaseConfigured) {
+      setTour(fallbackTours.find((item) => item.id === id) ?? null);
+      setLoading(false);
+      return;
+    }
     supabase.from("tours").select("*").eq("id", id).maybeSingle().then(({ data }) => {
       setTour(data);
       setLoading(false);
@@ -49,9 +297,7 @@ const TourDetail = () => {
   }
 
   const image = tour.image_url || fallbackImages[tour.name] || tourGoa;
-  const itinerary: ItineraryItem[] = Array.isArray(tour.itinerary)
-    ? (tour.itinerary as unknown as ItineraryItem[])
-    : [];
+  const { itinerary, highlights, exclusions, terms, gallery, faqs } = extractExtras(tour.itinerary ?? null);
 
   return (
     <div className="pt-16">
@@ -108,6 +354,78 @@ const TourDetail = () => {
                         <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
                       </div>
                     </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {highlights.length > 0 && (
+              <>
+                <h3 className="text-xl font-bold mt-8 text-foreground">Highlights</h3>
+                <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-muted-foreground">
+                  {highlights.map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <CheckCircle size={16} className="text-primary shrink-0 mt-0.5" /> {item}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {exclusions.length > 0 && (
+              <>
+                <h3 className="text-xl font-bold mt-8 text-foreground">Exclusions</h3>
+                <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                  {exclusions.map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <CheckCircle size={16} className="text-muted-foreground shrink-0 mt-0.5" /> {item}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {terms.length > 0 && (
+              <>
+                <h3 className="text-xl font-bold mt-8 text-foreground">Terms & Conditions</h3>
+                <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
+                  {terms.map((item) => (
+                    <li key={item} className="flex items-start gap-2">
+                      <CheckCircle size={16} className="text-primary shrink-0 mt-0.5" /> {item}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {gallery.length > 0 && (
+              <>
+                <h3 className="text-xl font-bold mt-8 text-foreground">Gallery</h3>
+                <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
+                  {gallery.map((src) => (
+                    <div key={src} className="aspect-[4/3] overflow-hidden rounded-xl bg-muted">
+                      <img src={src} alt={`${tour.name} gallery`} className="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {faqs.length > 0 && (
+              <>
+                <h3 className="text-xl font-bold mt-8 text-foreground">FAQ</h3>
+                <div className="mt-4 space-y-4">
+                  {faqs.map((faq) => (
+                    typeof faq === "string" ? (
+                      <div key={faq} className="bg-card rounded-xl p-4 shadow-card">
+                        <p className="text-sm text-muted-foreground">{faq}</p>
+                      </div>
+                    ) : (
+                      <div key={faq.q} className="bg-card rounded-xl p-4 shadow-card">
+                        <h4 className="font-semibold text-foreground">{faq.q}</h4>
+                        <p className="text-sm text-muted-foreground mt-2">{faq.a}</p>
+                      </div>
+                    )
                   ))}
                 </div>
               </>

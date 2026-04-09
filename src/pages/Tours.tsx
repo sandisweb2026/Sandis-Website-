@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 import { Clock, IndianRupee } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,12 +23,107 @@ const fallbackImages: Record<string, string> = {
 
 type Tour = Database["public"]["Tables"]["tours"]["Row"];
 
+const fallbackTours: Tour[] = [
+  {
+    id: "fallback-goa",
+    name: "Goa Beach Paradise",
+    category: "domestic",
+    duration: "4D / 3N",
+    price: "12,999",
+    description: "Sun-soaked beaches, lively shacks, and relaxed coastal vibes.",
+    image_url: null,
+    inclusions: null,
+    itinerary: null,
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-manali",
+    name: "Manali Adventure",
+    category: "domestic",
+    duration: "5D / 4N",
+    price: "15,499",
+    description: "Snowy peaks, cozy stays, and thrilling mountain activities.",
+    image_url: null,
+    inclusions: null,
+    itinerary: null,
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-kerala",
+    name: "Kerala Backwaters",
+    category: "domestic",
+    duration: "5D / 4N",
+    price: "18,999",
+    description: "Houseboats, lush greenery, and serene backwater cruises.",
+    image_url: null,
+    inclusions: null,
+    itinerary: null,
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-dubai",
+    name: "Dubai Extravaganza",
+    category: "international",
+    duration: "5D / 4N",
+    price: "54,999",
+    description: "Skyscrapers, desert safari, and luxury shopping experiences.",
+    image_url: null,
+    inclusions: null,
+    itinerary: null,
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-bali",
+    name: "Bali Island Escape",
+    category: "international",
+    duration: "6D / 5N",
+    price: "62,999",
+    description: "Temples, beaches, and a perfect tropical getaway.",
+    image_url: null,
+    inclusions: null,
+    itinerary: null,
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+  {
+    id: "fallback-thailand",
+    name: "Thailand Discovery",
+    category: "international",
+    duration: "6D / 5N",
+    price: "58,499",
+    description: "Vibrant nightlife, island hopping, and cultural landmarks.",
+    image_url: null,
+    inclusions: null,
+    itinerary: null,
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
+];
+
 const Tours = () => {
   const [filter, setFilter] = useState<"all" | "domestic" | "international">("all");
   const [tours, setTours] = useState<Tour[]>([]);
 
   useEffect(() => {
-    supabase.from("tours").select("*").order("created_at").then(({ data }) => setTours(data ?? []));
+    if (!isSupabaseConfigured) {
+      setTours(fallbackTours);
+      return;
+    }
+    supabase
+      .from("tours")
+      .select("*")
+      .order("created_at")
+      .then(({ data, error }) => {
+        if (error || !data || data.length === 0) {
+          setTours(fallbackTours);
+          return;
+        }
+        setTours(data);
+      });
   }, []);
 
   const filtered = filter === "all" ? tours : tours.filter((t) => t.category === filter);
@@ -52,26 +147,36 @@ const Tours = () => {
               </Button>
             ))}
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filtered.map((tour) => (
-              <div key={tour.id} className="group bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-elevated transition-all duration-300 hover:-translate-y-1">
-                <div className="relative h-52 overflow-hidden">
-                  <img src={getImage(tour)} alt={tour.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
-                    {tour.category === "domestic" ? "Domestic" : "International"}
-                  </span>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-semibold text-lg text-foreground">{tour.name}</h3>
-                  <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
-                    <span className="flex items-center gap-1"><Clock size={14} /> {tour.duration}</span>
-                    <span className="flex items-center gap-0.5 font-semibold text-primary"><IndianRupee size={14} /> {tour.price}</span>
+          {filtered.length === 0 ? (
+            <div className="text-center text-muted-foreground py-16">
+              <p className="text-lg font-medium text-foreground">No tours found for this category.</p>
+              <p className="mt-2">Try selecting “All Tours” to see available packages.</p>
+              <Button variant="outline" className="mt-6" onClick={() => setFilter("all")}>
+                Show All Tours
+              </Button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filtered.map((tour) => (
+                <div key={tour.id} className="group bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-elevated transition-all duration-300 hover:-translate-y-1">
+                  <div className="relative h-52 overflow-hidden">
+                    <img src={getImage(tour)} alt={tour.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
+                      {tour.category === "domestic" ? "Domestic" : "International"}
+                    </span>
                   </div>
-                  <Link to={`/tours/${tour.id}`}><Button className="w-full mt-4" size="sm">View Details</Button></Link>
+                  <div className="p-5">
+                    <h3 className="font-semibold text-lg text-foreground">{tour.name}</h3>
+                    <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1"><Clock size={14} /> {tour.duration}</span>
+                      <span className="flex items-center gap-0.5 font-semibold text-primary"><IndianRupee size={14} /> {tour.price}</span>
+                    </div>
+                    <Link to={`/tours/${tour.id}`}><Button className="w-full mt-4" size="sm">View Details</Button></Link>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </div>
