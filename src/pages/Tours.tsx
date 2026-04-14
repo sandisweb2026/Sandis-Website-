@@ -120,7 +120,7 @@ const fallbackTours: Tour[] = [
 ];
 
 const Tours = () => {
-  const [filter, setFilter] = useState<"all" | "domestic" | "international">("all");
+  const [filter, setFilter] = useState<"maharashtra" | "domestic" | "international">("domestic");
   const [tours, setTours] = useState<Tour[]>([]);
 
   useEffect(() => {
@@ -141,33 +141,43 @@ const Tours = () => {
       });
   }, []);
 
-  const filtered = filter === "all" ? tours : tours.filter((t) => t.category === filter);
+  const isMaharashtraTour = (tour: Tour) => {
+    const haystack = `${tour.name} ${tour.description ?? ""}`.toLowerCase();
+    const keywords = ["maharashtra", "mumbai", "pune", "shirdi", "nagpur", "nashik", "aurangabad", "kolhapur"];
+    return keywords.some((k) => haystack.includes(k));
+  };
+
+  const filtered = tours.filter((t) => {
+    if (filter === "domestic") return t.category === "domestic";
+    if (filter === "international") return t.category === "international";
+    return t.category === "domestic" && isMaharashtraTour(t);
+  });
   const getImage = (tour: Tour) => tour.image_url || fallbackImages[tour.name] || tourGoa;
 
   return (
     <div className="pt-16">
       <section className="bg-primary py-16 px-4">
         <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold text-primary-foreground">Tour Packages</h1>
-          <p className="text-primary-foreground/80 mt-2">Discover your next adventure with our curated packages</p>
+          <h1 className="text-4xl font-bold text-primary-foreground">Holiday Packages</h1>
+          <p className="text-primary-foreground/80 mt-2">Discover your next adventure with our curated holiday packages</p>
         </div>
       </section>
 
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="flex justify-center gap-3 mb-10">
-            {(["all", "domestic", "international"] as const).map((f) => (
+            {(["maharashtra", "domestic", "international"] as const).map((f) => (
               <Button key={f} variant={filter === f ? "default" : "outline"} onClick={() => setFilter(f)} className="capitalize">
-                {f === "all" ? "All Tours" : f}
+                {f === "maharashtra" ? "Maharashtra" : f === "domestic" ? "India" : "World"}
               </Button>
             ))}
           </div>
           {filtered.length === 0 ? (
             <div className="text-center text-muted-foreground py-16">
-              <p className="text-lg font-medium text-foreground">No tours found for this category.</p>
-              <p className="mt-2">Try selecting “All Tours” to see available packages.</p>
-              <Button variant="outline" className="mt-6" onClick={() => setFilter("all")}>
-                Show All Tours
+              <p className="text-lg font-medium text-foreground">No holidays found for this category.</p>
+              <p className="mt-2">Try selecting a different region to see available packages.</p>
+              <Button variant="outline" className="mt-6" onClick={() => setFilter("domestic")}>
+                Show India Holidays
               </Button>
             </div>
           ) : (
@@ -191,7 +201,7 @@ const Tours = () => {
                       <span className="flex items-center gap-1"><Clock size={14} /> {tour.duration}</span>
                       <span className="flex items-center gap-0.5 font-semibold text-primary"><IndianRupee size={14} /> {tour.price}</span>
                     </div>
-                    <Link to={`/tours/${tour.id}`}><Button className="w-full mt-4" size="sm">View Details</Button></Link>
+                    <Link to={`/holidays/${tour.id}`}><Button className="w-full mt-4" size="sm">View Details</Button></Link>
                   </div>
                 </div>
               ))}

@@ -26,7 +26,7 @@ const Footer = () => (
           <nav className="flex flex-col gap-2 text-sm opacity-70">
             <Link to="/" className="hover:opacity-100 transition-opacity">Home</Link>
             <Link to="/services" className="hover:opacity-100 transition-opacity">Services</Link>
-            <Link to="/tours" className="hover:opacity-100 transition-opacity">Tours</Link>
+            <Link to="/holidays" className="hover:opacity-100 transition-opacity">Holidays</Link>
             <Link to="/about" className="hover:opacity-100 transition-opacity">About Us</Link>
             <Link to="/contact" className="hover:opacity-100 transition-opacity">Contact</Link>
           </nav>

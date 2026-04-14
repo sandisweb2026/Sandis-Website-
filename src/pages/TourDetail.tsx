@@ -28,7 +28,6 @@ const fallbackImages: Record<string, string> = {
 
 type Tour = Database["public"]["Tables"]["tours"]["Row"];
 type ItineraryItem = { day: string; title: string; description: string };
-type FaqItem = { q: string; a: string } | string;
 
 const fallbackTours: Tour[] = [
   {
@@ -279,7 +278,6 @@ const extractExtras = (itinerary: Json | null) => {
     exclusions: [] as string[],
     terms: [] as string[],
     gallery: [] as string[],
-    faqs: [] as FaqItem[],
   };
 
   if (Array.isArray(itinerary)) {
@@ -294,7 +292,6 @@ const extractExtras = (itinerary: Json | null) => {
     if (Array.isArray(obj.exclusions)) extras.exclusions = obj.exclusions as string[];
     if (Array.isArray(obj.terms)) extras.terms = obj.terms as string[];
     if (Array.isArray(obj.gallery)) extras.gallery = obj.gallery as string[];
-    if (Array.isArray(obj.faqs)) extras.faqs = obj.faqs as FaqItem[];
   }
 
   return extras;
@@ -305,6 +302,7 @@ const TourDetail = () => {
   const [tour, setTour] = useState<Tour | null>(null);
   const [loading, setLoading] = useState(true);
   const [heroIndex, setHeroIndex] = useState(0);
+  const [enquiryChoice, setEnquiryChoice] = useState<"whatsapp" | "email" | null>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -336,7 +334,7 @@ const TourDetail = () => {
     return (
       <div className="pt-32 text-center min-h-screen">
         <h1 className="text-2xl font-bold">Tour not found</h1>
-        <Link to="/tours"><Button className="mt-4">Back to Tours</Button></Link>
+        <Link to="/holidays"><Button className="mt-4">Back to Tours</Button></Link>
       </div>
     );
   }
@@ -344,7 +342,7 @@ const TourDetail = () => {
   const image = tour.image_url || fallbackImages[tour.name] || tourGoa;
   const isShirdi = tour.name === "Pune to Shirdi (Round Trip)";
   const heroImages = isShirdi ? [shirdiCarousel1, shirdiCarousel2, shirdiCarousel3] : [image];
-  const { itinerary, highlights, exclusions, terms, gallery, faqs } = extractExtras(tour.itinerary ?? null);
+  const { itinerary, highlights, exclusions, terms, gallery } = extractExtras(tour.itinerary ?? null);
 
   return (
     <div className="pt-16">
@@ -375,7 +373,7 @@ const TourDetail = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold text-foreground">About This Tour</h2>
+            <h2 className="text-2xl font-bold text-foreground">About Tour</h2>
             <p className="text-muted-foreground mt-3 leading-relaxed">{tour.description}</p>
 
             {isShirdi && (
@@ -419,19 +417,6 @@ const TourDetail = () => {
               </div>
             )}
 
-            {tour.inclusions && tour.inclusions.length > 0 && (
-              <>
-                <h3 className="text-xl font-bold mt-8 text-foreground">What's Included</h3>
-                <div className="grid grid-cols-2 gap-3 mt-4">
-                  {tour.inclusions.map((inc) => (
-                    <div key={inc} className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <CheckCircle size={16} className="text-primary shrink-0" /> {inc}
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-
             {itinerary.length > 0 && (
               <>
                 <h3 className="text-xl font-bold mt-8 text-foreground">Itinerary</h3>
@@ -467,9 +452,22 @@ const TourDetail = () => {
               </>
             )}
 
+            {tour.inclusions && tour.inclusions.length > 0 && (
+              <>
+                <h3 className="text-xl font-bold mt-8 text-foreground">What's Included</h3>
+                <div className="grid grid-cols-2 gap-3 mt-4">
+                  {tour.inclusions.map((inc) => (
+                    <div key={inc} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <CheckCircle size={16} className="text-primary shrink-0" /> {inc}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
             {exclusions.length > 0 && (
               <>
-                <h3 className="text-xl font-bold mt-8 text-foreground">Exclusions</h3>
+                <h3 className="text-xl font-bold mt-8 text-foreground">What's Excluded</h3>
                 <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
                   {exclusions.map((item) => (
                     <li key={item} className="flex items-start gap-2">
@@ -511,37 +509,44 @@ const TourDetail = () => {
               </>
             )}
 
-            {faqs.length > 0 && (
-              <>
-                <h3 className="text-xl font-bold mt-8 text-foreground">FAQ</h3>
-                <div className="mt-4 space-y-4">
-                  {faqs.map((faq) => (
-                    typeof faq === "string" ? (
-                      <div key={faq} className="bg-card rounded-xl p-4 shadow-card">
-                        <p className="text-sm text-muted-foreground">{faq}</p>
-                      </div>
-                    ) : (
-                      <div key={faq.q} className="bg-card rounded-xl p-4 shadow-card">
-                        <h4 className="font-semibold text-foreground">{faq.q}</h4>
-                        <p className="text-sm text-muted-foreground mt-2">{faq.a}</p>
-                      </div>
-                    )
-                  ))}
-                </div>
-              </>
-            )}
           </div>
 
           <div>
             <div className="bg-card rounded-2xl shadow-card p-6 sticky top-24">
-              <h3 className="font-bold text-lg text-foreground">Book This Tour</h3>
-              <p className="text-sm text-muted-foreground mt-1">Starting from</p>
-              <p className="text-3xl font-bold text-primary mt-1 flex items-center"><IndianRupee size={24} />{tour.price}</p>
-              <p className="text-xs text-muted-foreground">per person</p>
-              <Link to="/contact"><Button className="w-full mt-6" size="lg">Enquire Now</Button></Link>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer">
+              <h3 className="text-center text-2xl font-bold text-primary">Enquire Now</h3>
+              <p className="text-sm text-muted-foreground mt-2 text-center">Get quick assistance for this holiday package. Choose one enquiry option below.</p>
+              <a
+                href="https://wa.me/919876543210"
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => {
+                  if (enquiryChoice === "email") {
+                    e.preventDefault();
+                    return;
+                  }
+                  setEnquiryChoice("whatsapp");
+                }}
+                aria-disabled={enquiryChoice === "email"}
+                className={enquiryChoice === "email" ? "pointer-events-none opacity-50" : ""}
+              >
+                <Button className="w-full mt-6" size="lg">
+                  <MapPin size={16} className="mr-2" /> WhatsApp Enquiry
+                </Button>
+              </a>
+              <a
+                href="mailto:info@sandistours.com?subject=Tour%20Enquiry"
+                onClick={(e) => {
+                  if (enquiryChoice === "whatsapp") {
+                    e.preventDefault();
+                    return;
+                  }
+                  setEnquiryChoice("email");
+                }}
+                aria-disabled={enquiryChoice === "whatsapp"}
+                className={enquiryChoice === "whatsapp" ? "pointer-events-none opacity-50" : ""}
+              >
                 <Button variant="outline" className="w-full mt-3" size="lg">
-                  <MapPin size={16} className="mr-2" /> WhatsApp Us
+                  Email Enquiry
                 </Button>
               </a>
             </div>

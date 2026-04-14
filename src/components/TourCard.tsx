@@ -31,7 +31,7 @@ const TourCard = ({ tour }: { tour: Tour }) => (
         <span className="flex items-center gap-1"><Clock size={14} /> {tour.duration}</span>
         <span className="flex items-center gap-0.5 font-semibold text-primary"><IndianRupee size={14} /> {tour.price}</span>
       </div>
-      <Link to={`/tours/${tour.id}`}>
+      <Link to={`/holidays/${tour.id}`}>
         <Button className="w-full mt-4" size="sm">View Details</Button>
       </Link>
     </div>

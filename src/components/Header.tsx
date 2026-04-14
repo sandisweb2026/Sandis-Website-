@@ -7,7 +7,7 @@ import sandisLogo from "@/assets/sandis logo .png";
 const navLinks = [
   { label: "Home", path: "/" },
   { label: "Services", path: "/services" },
-  { label: "Tours", path: "/tours" },
+  { label: "Holidays", path: "/holidays" },
   { label: "About Us", path: "/about" },
   { label: "Contact", path: "/contact" },
 ];
