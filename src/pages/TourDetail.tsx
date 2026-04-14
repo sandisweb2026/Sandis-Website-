@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { Clock, IndianRupee, CheckCircle, MapPin } from "lucide-react";
+import { Clock, IndianRupee, CheckCircle, MapPin, Users, Bus, Heart, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase, isSupabaseConfigured } from "@/integrations/supabase/client";
 import type { Database, Json } from "@/integrations/supabase/types";
@@ -11,8 +11,13 @@ import tourKerala from "@/assets/tour-kerala.jpg";
 import tourDubai from "@/assets/tour-dubai.jpg";
 import tourBali from "@/assets/tour-bali.jpg";
 import tourThailand from "@/assets/tour-thailand.jpg";
+import tourShirdi from "@/assets/tour-shirdi.png";
+import shirdiCarousel1 from "@/assets/shirdi/carousel/Shirdi 1.png";
+import shirdiCarousel2 from "@/assets/shirdi/carousel/Shirdi 2.png";
+import shirdiCarousel3 from "@/assets/shirdi/carousel/Shirdi 3.png";
 
 const fallbackImages: Record<string, string> = {
+  "Pune to Shirdi (Round Trip)": tourShirdi,
   "Goa Beach Paradise": tourGoa,
   "Manali Adventure": tourManali,
   "Kerala Backwaters": tourKerala,
@@ -26,6 +31,34 @@ type ItineraryItem = { day: string; title: string; description: string };
 type FaqItem = { q: string; a: string } | string;
 
 const fallbackTours: Tour[] = [
+  {
+    id: "fallback-shirdi",
+    name: "Pune to Shirdi (Round Trip)",
+    category: "domestic",
+    duration: "1D / Round Trip",
+    price: "On Request",
+    description: "Visit the famous Sai Baba Temple in Shirdi. We take you from Pune to Shirdi and bring you back safely.",
+    image_url: null,
+    inclusions: [
+      "Good for: Families and people who want to pray at the Samadhi Mandir.",
+      "Cars: Small cars (4 seats) to big buses (49 seats).",
+    ],
+    itinerary: {
+      itinerary: [
+        { day: "Day 1", title: "Pune to Shirdi Darshan", description: "Pickup from Pune, travel to Shirdi, visit Sai Baba Temple and Samadhi Mandir, then return to Pune safely." },
+      ],
+      highlights: ["Comfortable round-trip travel", "Sai Baba Temple and Samadhi Mandir darshan", "Flexible vehicle options"],
+      exclusions: ["Meals and personal expenses", "Temple donations or offerings"],
+      terms: ["Departure time can be customized", "Vehicle allocation depends on group size"],
+      gallery: [shirdiCarousel1, shirdiCarousel2, shirdiCarousel3],
+      faqs: [
+        { q: "Is this a same-day trip?", a: "Yes, this is a round trip from Pune to Shirdi and back on the same day." },
+        { q: "What vehicle sizes are available?", a: "We offer options from small cars (4 seats) to big buses (49 seats)." },
+      ],
+    },
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
   {
     id: "fallback-goa",
     name: "Goa Beach Paradise",
@@ -271,6 +304,7 @@ const TourDetail = () => {
   const { id } = useParams();
   const [tour, setTour] = useState<Tour | null>(null);
   const [loading, setLoading] = useState(true);
+  const [heroIndex, setHeroIndex] = useState(0);
 
   useEffect(() => {
     if (!id) return;
@@ -285,6 +319,17 @@ const TourDetail = () => {
     });
   }, [id]);
 
+  useEffect(() => {
+    if (!tour) return;
+    const isShirdiLocal = tour.name === "Pune to Shirdi (Round Trip)";
+    const heroCount = isShirdiLocal ? 3 : 1;
+    if (heroCount <= 1) return;
+    const timer = setInterval(() => {
+      setHeroIndex((i) => (i + 1) % heroCount);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, [tour]);
+
   if (loading) return <div className="min-h-screen flex items-center justify-center pt-16">Loading...</div>;
 
   if (!tour) {
@@ -297,12 +342,21 @@ const TourDetail = () => {
   }
 
   const image = tour.image_url || fallbackImages[tour.name] || tourGoa;
+  const isShirdi = tour.name === "Pune to Shirdi (Round Trip)";
+  const heroImages = isShirdi ? [shirdiCarousel1, shirdiCarousel2, shirdiCarousel3] : [image];
   const { itinerary, highlights, exclusions, terms, gallery, faqs } = extractExtras(tour.itinerary ?? null);
 
   return (
     <div className="pt-16">
-      <div className="relative h-[50vh] min-h-[350px]">
-        <img src={image} alt={tour.name} className="w-full h-full object-cover" />
+      <div className={`relative w-full ${isShirdi ? "aspect-[16/9]" : "h-[50vh] min-h-[350px]"} bg-foreground/5`}>
+        {heroImages.map((src, i) => (
+          <img
+            key={src}
+            src={src}
+            alt={tour.name}
+            className={`absolute inset-0 w-full h-full ${isShirdi ? "object-cover object-center" : "object-cover"} transition-opacity duration-700 ${i === heroIndex ? "opacity-100" : "opacity-0"}`}
+          />
+        ))}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <div className="container mx-auto">
@@ -323,6 +377,47 @@ const TourDetail = () => {
           <div className="lg:col-span-2">
             <h2 className="text-2xl font-bold text-foreground">About This Tour</h2>
             <p className="text-muted-foreground mt-3 leading-relaxed">{tour.description}</p>
+
+            {isShirdi && (
+              <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-card rounded-2xl p-4 shadow-card flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
+                    <Users size={26} className="text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Good For</p>
+                    <p className="text-xs text-muted-foreground">Families & devotees</p>
+                  </div>
+                </div>
+                <div className="bg-card rounded-2xl p-4 shadow-card flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
+                    <Bus size={26} className="text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Vehicles</p>
+                    <p className="text-xs text-muted-foreground">4 to 49 seats</p>
+                  </div>
+                </div>
+                <div className="bg-card rounded-2xl p-4 shadow-card flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
+                    <Heart size={26} className="text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Darshan</p>
+                    <p className="text-xs text-muted-foreground">Sai Baba & Samadhi</p>
+                  </div>
+                </div>
+                <div className="bg-card rounded-2xl p-4 shadow-card flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
+                    <ShieldCheck size={26} className="text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">Safe Trip</p>
+                    <p className="text-xs text-muted-foreground">Round‑trip comfort</p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {tour.inclusions && tour.inclusions.length > 0 && (
               <>
@@ -401,10 +496,15 @@ const TourDetail = () => {
             {gallery.length > 0 && (
               <>
                 <h3 className="text-xl font-bold mt-8 text-foreground">Gallery</h3>
-                <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
+                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {gallery.map((src) => (
-                    <div key={src} className="aspect-[4/3] overflow-hidden rounded-xl bg-muted">
-                      <img src={src} alt={`${tour.name} gallery`} className="w-full h-full object-cover" loading="lazy" />
+                    <div key={src} className={`${isShirdi ? "aspect-[16/9]" : "aspect-[4/3]"} overflow-hidden rounded-xl bg-muted`}>
+                      <img
+                        src={src}
+                        alt={`${tour.name} gallery`}
+                        className={`w-full h-full ${isShirdi ? "object-contain" : "object-cover"}`}
+                        loading="lazy"
+                      />
                     </div>
                   ))}
                 </div>

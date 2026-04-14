@@ -12,6 +12,22 @@ export interface Tour {
 
 export const tours: Tour[] = [
   {
+    id: "shirdi",
+    name: "Pune to Shirdi (Round Trip)",
+    duration: "1 Day / Round Trip",
+    price: "On Request",
+    image: "tour-shirdi",
+    category: "domestic",
+    description: "Visit the famous Sai Baba Temple in Shirdi. We take you from Pune to Shirdi and bring you back safely.",
+    inclusions: [
+      "Good for: Families and people who want to pray at the Samadhi Mandir.",
+      "Cars: Small cars (4 seats) to big buses (49 seats).",
+    ],
+    itinerary: [
+      { day: "Day 1", title: "Pune to Shirdi Darshan", description: "Pickup from Pune, travel to Shirdi, visit Sai Baba Temple and Samadhi Mandir, then return to Pune safely." },
+    ],
+  },
+  {
     id: "goa",
     name: "Goa Beach Paradise",
     duration: "4 Days / 3 Nights",

@@ -11,8 +11,10 @@ import tourKerala from "@/assets/tour-kerala.jpg";
 import tourDubai from "@/assets/tour-dubai.jpg";
 import tourBali from "@/assets/tour-bali.jpg";
 import tourThailand from "@/assets/tour-thailand.jpg";
+import tourShirdi from "@/assets/tour-shirdi.png";
 
 const fallbackImages: Record<string, string> = {
+  "Pune to Shirdi (Round Trip)": tourShirdi,
   "Goa Beach Paradise": tourGoa,
   "Manali Adventure": tourManali,
   "Kerala Backwaters": tourKerala,
@@ -24,6 +26,19 @@ const fallbackImages: Record<string, string> = {
 type Tour = Database["public"]["Tables"]["tours"]["Row"];
 
 const fallbackTours: Tour[] = [
+  {
+    id: "fallback-shirdi",
+    name: "Pune to Shirdi (Round Trip)",
+    category: "domestic",
+    duration: "1D / Round Trip",
+    price: "On Request",
+    description: "Visit the famous Sai Baba Temple in Shirdi. We take you from Pune to Shirdi and bring you back safely.",
+    image_url: null,
+    inclusions: null,
+    itinerary: null,
+    created_at: "2026-01-01T00:00:00.000Z",
+    updated_at: "2026-01-01T00:00:00.000Z",
+  },
   {
     id: "fallback-goa",
     name: "Goa Beach Paradise",
@@ -159,8 +174,13 @@ const Tours = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((tour) => (
                 <div key={tour.id} className="group bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-elevated transition-all duration-300 hover:-translate-y-1">
-                  <div className="relative h-52 overflow-hidden">
-                    <img src={getImage(tour)} alt={tour.name} loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <div className="relative w-full aspect-[4/3] overflow-hidden bg-muted">
+                    <img
+                      src={getImage(tour)}
+                      alt={tour.name}
+                      loading="lazy"
+                      className="w-full h-full object-contain"
+                    />
                     <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
                       {tour.category === "domestic" ? "Domestic" : "International"}
                     </span>
