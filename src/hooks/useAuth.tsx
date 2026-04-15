@@ -1,9 +1,15 @@
-import { useEffect, useState, createContext, useContext } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import type { User } from "@supabase/supabase-js";
+import { createContext, useContext, useEffect, useState } from "react";
+
+import {
+  apiRequest,
+  clearAdminToken,
+  getAdminToken,
+  setAdminToken,
+} from "@/lib/api-client";
+import type { AdminUser } from "@/lib/content-types";
 
 interface AuthContextType {
-  user: User | null;
+  user: AdminUser | null;
   isAdmin: boolean;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
@@ -13,61 +19,68 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const useAuth = () => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within AuthProvider");
+  }
+  return context;
 };
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [user, setUser] = useState<AdminUser | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const checkAdmin = async (userId: string) => {
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId)
-      .eq("role", "admin")
-      .maybeSingle();
-    setIsAdmin(!!data);
-  };
-
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
-      const u = session?.user ?? null;
-      setUser(u);
-      if (u) {
-        await checkAdmin(u.id);
-      } else {
-        setIsAdmin(false);
-      }
+    const token = getAdminToken();
+    if (!token) {
       setLoading(false);
-    });
+      return;
+    }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      const u = session?.user ?? null;
-      setUser(u);
-      if (u) checkAdmin(u.id);
-      else setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    apiRequest<{ admin: AdminUser }>("/admin/me", { auth: true })
+      .then(({ admin }) => setUser(admin))
+      .catch(() => {
+        clearAdminToken();
+        setUser(null);
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error ? new Error(error.message) : null };
+    try {
+      const response = await apiRequest<{ token: string; admin: AdminUser }>(
+        "/admin/login",
+        {
+          method: "POST",
+          body: JSON.stringify({ email, password }),
+        },
+      );
+
+      setAdminToken(response.token);
+      setUser(response.admin);
+      return { error: null };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Login failed. Please try again.";
+      return { error: new Error(message) };
+    }
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    clearAdminToken();
     setUser(null);
-    setIsAdmin(false);
   };
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading, signIn, signOut }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        isAdmin: Boolean(user),
+        loading,
+        signIn,
+        signOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

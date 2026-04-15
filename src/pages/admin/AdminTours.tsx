@@ -1,91 +1,141 @@
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Pencil, Plus, Trash2, Upload } from "lucide-react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { Plus, Pencil, Trash2, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
-import type { Database, Json } from "@/integrations/supabase/types";
+import {
+  buildTourExtras,
+  createEmptyFaqItem,
+  createEmptyItineraryItem,
+  extractTourExtras,
+  joinLines,
+  splitLines,
+  type TourFaqItem,
+  type TourItineraryItem,
+} from "@/lib/content-types";
+import {
+  createTour,
+  fetchTours,
+  removeTour,
+  updateTour,
+  uploadTourImage,
+  uploadTourImages,
+  type TourRecord,
+} from "@/lib/travel-cms";
 
-type Tour = Database["public"]["Tables"]["tours"]["Row"];
-type ItineraryItem = { day: string; title: string; description: string };
-
-const parseList = (value: string) =>
-  value
-    .split("\n")
-    .map((item) => item.trim())
-    .filter(Boolean);
-
-const parseItinerary = (value: string): ItineraryItem[] => {
-  const lines = value.split("\n").map((l) => l.trim()).filter(Boolean);
-  return lines.map((line, idx) => ({
-    day: `Day ${idx + 1}`,
-    title: line,
-    description: "",
-  }));
+type TourFormState = {
+  id?: string;
+  name: string;
+  duration: string;
+  price: string;
+  category: "domestic" | "international";
+  description: string;
+  image_url: string;
+  inclusionsText: string;
+  highlightsText: string;
+  exclusionsText: string;
+  termsText: string;
+  galleryText: string;
+  itinerary: TourItineraryItem[];
+  faqs: TourFaqItem[];
 };
 
-const extractExtras = (itinerary: Json | null) => {
-  const extras = {
-    itinerary: [] as ItineraryItem[],
-    highlights: [] as string[],
-    exclusions: [] as string[],
-    terms: [] as string[],
-    gallery: [] as string[],
-    faqs: [] as FaqItem[],
+const createBlankTourForm = (): TourFormState => ({
+  name: "",
+  duration: "",
+  price: "",
+  category: "domestic",
+  description: "",
+  image_url: "",
+  inclusionsText: "",
+  highlightsText: "",
+  exclusionsText: "",
+  termsText: "",
+  galleryText: "",
+  itinerary: [createEmptyItineraryItem()],
+  faqs: [createEmptyFaqItem()],
+});
+
+const createTourForm = (tour?: TourRecord): TourFormState => {
+  if (!tour) return createBlankTourForm();
+
+  const extras = extractTourExtras(tour.itinerary ?? null);
+
+  return {
+    id: tour.id,
+    name: tour.name,
+    duration: tour.duration,
+    price: tour.price,
+    category:
+      tour.category === "international" ? "international" : "domestic",
+    description: tour.description ?? "",
+    image_url: tour.image_url ?? "",
+    inclusionsText: joinLines(tour.inclusions),
+    highlightsText: joinLines(extras.highlights),
+    exclusionsText: joinLines(extras.exclusions),
+    termsText: joinLines(extras.terms),
+    galleryText: joinLines(extras.gallery),
+    itinerary:
+      extras.itinerary.length > 0
+        ? extras.itinerary
+        : [createEmptyItineraryItem()],
+    faqs: extras.faqs.length > 0 ? extras.faqs : [createEmptyFaqItem()],
   };
+};
 
-  if (Array.isArray(itinerary)) {
-    extras.itinerary = itinerary as unknown as ItineraryItem[];
-    return extras;
-  }
+const normalizeFaqs = (faqs: TourFaqItem[]) =>
+  faqs
+    .map((faq) => ({
+      q: faq.q.trim(),
+      a: faq.a.trim(),
+    }))
+    .filter((faq) => faq.q || faq.a);
 
-  if (itinerary && typeof itinerary === "object") {
-    const obj = itinerary as Record<string, unknown>;
-    if (Array.isArray(obj.itinerary)) extras.itinerary = obj.itinerary as ItineraryItem[];
-    if (Array.isArray(obj.highlights)) extras.highlights = obj.highlights as string[];
-    if (Array.isArray(obj.exclusions)) extras.exclusions = obj.exclusions as string[];
-    if (Array.isArray(obj.terms)) extras.terms = obj.terms as string[];
-    if (Array.isArray(obj.gallery)) extras.gallery = obj.gallery as string[];
-    if (Array.isArray(obj.faqs)) extras.faqs = obj.faqs as FaqItem[];
-  }
-  return extras;
+const normalizeItinerary = (itinerary: TourItineraryItem[]) =>
+  itinerary
+    .map((item, index) => ({
+      day: item.day.trim() || `Day ${index + 1}`,
+      title: item.title.trim(),
+      description: item.description.trim(),
+    }))
+    .filter((item) => item.title || item.description);
+
+const toNullableList = (value: string) => {
+  const lines = splitLines(value);
+  return lines.length > 0 ? lines : null;
 };
 
 const AdminTours = () => {
-  const [tours, setTours] = useState<Tour[]>([]);
-  const [editing, setEditing] = useState<Partial<Tour> | null>(null);
+  const [tours, setTours] = useState<TourRecord[]>([]);
+  const [editing, setEditing] = useState<TourFormState | null>(null);
   const [loading, setLoading] = useState(false);
-  const [itineraryText, setItineraryText] = useState("");
-  const [highlightsText, setHighlightsText] = useState("");
-  const [exclusionsText, setExclusionsText] = useState("");
-  const [termsText, setTermsText] = useState("");
-  const [galleryText, setGalleryText] = useState("");
-  const [faqText, setFaqText] = useState("");
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingGallery, setUploadingGallery] = useState(false);
 
-  const fetchTours = async () => {
-    const { data } = await supabase.from("tours").select("*").order("created_at", { ascending: false });
-    setTours(data ?? []);
+  const loadTours = async () => {
+    try {
+      setTours(await fetchTours());
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to load tours.";
+      toast.error(message);
+    }
   };
 
-  useEffect(() => { fetchTours(); }, []);
   useEffect(() => {
-    if (!editing) return;
-    const extras = extractExtras(editing.itinerary ?? null);
-    setItineraryText(extras.itinerary.map((i) => i.title).join("\n"));
-    setHighlightsText(extras.highlights.join("\n"));
-    setExclusionsText(extras.exclusions.join("\n"));
-    setTermsText(extras.terms.join("\n"));
-    setGalleryText(extras.gallery.join("\n"));
-    setFaqText(extras.faqs.map((f) => (typeof f === "string" ? f : f.q)).join("\n"));
-  }, [editing]);
+    loadTours();
+  }, []);
 
   const handleSave = async () => {
-    const name = editing?.name?.trim() || "";
-    const duration = editing?.duration?.trim() || "";
-    const price = editing?.price?.trim() || "";
-    const category = editing?.category?.toString().trim() || "";
+    if (!editing) return;
+
+    const name = editing.name.trim();
+    const duration = editing.duration.trim();
+    const price = editing.price.trim();
+    const category = editing.category;
 
     const missing: string[] = [];
     if (!name) missing.push("Tour Name");
@@ -97,123 +147,512 @@ const AdminTours = () => {
       toast.error(`Please fill required: ${missing.join(", ")}`);
       return;
     }
+
     setLoading(true);
 
-    let inclusionsArray: string[] = [];
-    if (typeof editing.inclusions === "string") {
-      inclusionsArray = (editing.inclusions as string).split(",").map((s) => s.trim()).filter(Boolean);
-    } else if (Array.isArray(editing.inclusions)) {
-      inclusionsArray = editing.inclusions;
-    }
+    const itinerary = normalizeItinerary(editing.itinerary);
+    const faqs = normalizeFaqs(editing.faqs);
 
     const payload = {
       name,
       duration,
       price,
       category,
-      description: editing.description || null,
-      inclusions: inclusionsArray,
-      image_url: editing.image_url || null,
-      itinerary: {
-        itinerary: parseItinerary(itineraryText),
-        highlights: parseList(highlightsText),
-        exclusions: parseList(exclusionsText),
-        terms: parseList(termsText),
-        gallery: parseList(galleryText),
-        faqs: parseList(faqText),
-      },
+      description: editing.description.trim() || null,
+      image_url: editing.image_url.trim() || null,
+      inclusions: toNullableList(editing.inclusionsText),
+      itinerary: buildTourExtras({
+        itinerary,
+        highlights: splitLines(editing.highlightsText),
+        exclusions: splitLines(editing.exclusionsText),
+        terms: splitLines(editing.termsText),
+        gallery: splitLines(editing.galleryText),
+        faqs,
+      }),
     };
 
-    if (editing.id) {
-      const { error } = await supabase.from("tours").update(payload).eq("id", editing.id);
-      if (error) toast.error(error.message); else toast.success("Tour updated!");
-    } else {
-      const { error } = await supabase.from("tours").insert(payload);
-      if (error) toast.error(error.message); else toast.success("Tour created!");
+    try {
+      if (editing.id) {
+        await updateTour(editing.id, payload);
+        toast.success("Tour updated.");
+      } else {
+        await createTour(payload);
+        toast.success("Tour created.");
+      }
+
+      setEditing(null);
+      await loadTours();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to save the tour.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-    setEditing(null);
-    setItineraryText("");
-    setHighlightsText("");
-    setExclusionsText("");
-    setTermsText("");
-    setGalleryText("");
-    setFaqText("");
-    fetchTours();
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this tour?")) return;
-    const { error } = await supabase.from("tours").delete().eq("id", id);
-    if (error) toast.error(error.message); else { toast.success("Deleted!"); fetchTours(); }
+
+    try {
+      await removeTour(id);
+      toast.success("Tour deleted.");
+      await loadTours();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to delete the tour.";
+      toast.error(message);
+    }
+  };
+
+  const updateItineraryItem = (
+    index: number,
+    field: keyof TourItineraryItem,
+    value: string,
+  ) => {
+    if (!editing) return;
+
+    const next = editing.itinerary.map((item, itemIndex) =>
+      itemIndex === index ? { ...item, [field]: value } : item,
+    );
+    setEditing({ ...editing, itinerary: next });
+  };
+
+  const updateFaqItem = (
+    index: number,
+    field: keyof TourFaqItem,
+    value: string,
+  ) => {
+    if (!editing) return;
+
+    const next = editing.faqs.map((item, itemIndex) =>
+      itemIndex === index ? { ...item, [field]: value } : item,
+    );
+    setEditing({ ...editing, faqs: next });
+  };
+
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file || !editing) return;
+
+    const allowedTypes = new Set(["image/png", "image/jpeg"]);
+    if (!allowedTypes.has(file.type)) {
+      toast.error("Please upload a PNG, JPG, or JPEG image.");
+      event.target.value = "";
+      return;
+    }
+
+    setUploadingImage(true);
+
+    try {
+      const uploadedUrl = await uploadTourImage(file);
+      setEditing({ ...editing, image_url: uploadedUrl });
+      toast.success("Image uploaded.");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to upload image.";
+      toast.error(message);
+    } finally {
+      setUploadingImage(false);
+      event.target.value = "";
+    }
+  };
+
+  const handleGalleryUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = event.target.files;
+    if (!files?.length || !editing) return;
+
+    const allowedTypes = new Set(["image/png", "image/jpeg"]);
+    const invalidFile = Array.from(files).find(
+      (file) => !allowedTypes.has(file.type),
+    );
+
+    if (invalidFile) {
+      toast.error("Please upload only PNG, JPG, or JPEG images.");
+      event.target.value = "";
+      return;
+    }
+
+    setUploadingGallery(true);
+
+    try {
+      const urls = await uploadTourImages(files);
+      const nextGallery = [...splitLines(editing.galleryText), ...urls];
+      setEditing({ ...editing, galleryText: joinLines(nextGallery) });
+      toast.success(`${urls.length} gallery image(s) uploaded.`);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to upload gallery images.";
+      toast.error(message);
+    } finally {
+      setUploadingGallery(false);
+      event.target.value = "";
+    }
   };
 
   if (editing) {
     return (
       <div className="pt-20 pb-12 px-4">
-        <div className="container mx-auto max-w-2xl">
-          <button onClick={() => setEditing(null)} className="flex items-center gap-1 text-muted-foreground hover:text-foreground mb-4">
+        <div className="container mx-auto max-w-4xl">
+          <button
+            onClick={() => setEditing(null)}
+            className="flex items-center gap-1 text-muted-foreground hover:text-foreground mb-4"
+          >
             <ArrowLeft size={16} /> Back
           </button>
-          <h1 className="text-2xl font-bold mb-6 text-foreground">{editing.id ? "Edit Tour" : "Add Tour"}</h1>
-          <div className="bg-card rounded-2xl shadow-card p-6 flex flex-col gap-4">
-            <Input placeholder="Tour Name *" value={editing.name || ""} onChange={(e) => setEditing({ ...editing, name: e.target.value })} />
-            <div className="grid grid-cols-2 gap-4">
-              <Input placeholder="Duration *" value={editing.duration || ""} onChange={(e) => setEditing({ ...editing, duration: e.target.value })} />
-              <Input placeholder="Price *" value={editing.price || ""} onChange={(e) => setEditing({ ...editing, price: e.target.value })} />
+          <h1 className="text-2xl font-bold mb-2 text-foreground">
+            {editing.id ? "Edit Tour" : "Add Tour"}
+          </h1>
+          <p className="text-sm text-muted-foreground mb-6">
+            Fill the same content blocks that appear on the Holidays package
+            detail page.
+          </p>
+
+          <div className="bg-card rounded-2xl shadow-card p-6 flex flex-col gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                placeholder="Tour Name *"
+                value={editing.name}
+                onChange={(event) =>
+                  setEditing({ ...editing, name: event.target.value })
+                }
+              />
+              <select
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+                value={editing.category}
+                onChange={(event) =>
+                  setEditing({
+                    ...editing,
+                    category: event.target.value as TourFormState["category"],
+                  })
+                }
+              >
+                <option value="domestic">Domestic</option>
+                <option value="international">International</option>
+              </select>
             </div>
-            <select
-              className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
-              value={editing.category || "domestic"}
-              onChange={(e) => setEditing({ ...editing, category: e.target.value })}
-            >
-              <option value="domestic">Domestic</option>
-              <option value="international">International</option>
-            </select>
-            <Textarea placeholder="Description" value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} rows={3} />
-            <Input placeholder="Image URL" value={editing.image_url || ""} onChange={(e) => setEditing({ ...editing, image_url: e.target.value })} />
-            <Input
-              placeholder="Inclusions (comma separated)"
-              value={Array.isArray(editing.inclusions) ? editing.inclusions.join(", ") : (editing.inclusions || "")}
-              onChange={(e) => setEditing({ ...editing, inclusions: e.target.value as any })}
-            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Input
+                placeholder="Duration *"
+                value={editing.duration}
+                onChange={(event) =>
+                  setEditing({ ...editing, duration: event.target.value })
+                }
+              />
+              <Input
+                placeholder="Price *"
+                value={editing.price}
+                onChange={(event) =>
+                  setEditing({ ...editing, price: event.target.value })
+                }
+              />
+            </div>
+
+            <div className="space-y-4 rounded-2xl border p-4">
+              <div>
+                <h2 className="font-semibold text-foreground">Hero Image</h2>
+                <p className="text-sm text-muted-foreground">
+                  Upload a PNG, JPG, or JPEG image from your computer, or paste
+                  an image URL manually.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-[1.2fr,0.8fr] gap-4 items-start">
+                <Input
+                  placeholder="Hero Image URL"
+                  value={editing.image_url}
+                  onChange={(event) =>
+                    setEditing({ ...editing, image_url: event.target.value })
+                  }
+                />
+                <div className="space-y-2">
+                  <label
+                    htmlFor="tour-image-upload"
+                    className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
+                  >
+                    <Upload size={16} />
+                    {uploadingImage ? "Uploading..." : "Upload From Computer"}
+                  </label>
+                  <input
+                    id="tour-image-upload"
+                    type="file"
+                    accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+                    className="hidden"
+                    onChange={handleImageUpload}
+                    disabled={uploadingImage}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Accepted formats: PNG, JPG, JPEG. Max size: 5 MB.
+                  </p>
+                </div>
+              </div>
+
+              {editing.image_url && (
+                <div className="overflow-hidden rounded-xl border bg-muted max-w-md">
+                  <img
+                    src={editing.image_url}
+                    alt="Tour preview"
+                    className="h-56 w-full object-cover"
+                  />
+                </div>
+              )}
+            </div>
+
             <Textarea
-              placeholder="Itinerary (one item per line)"
-              value={itineraryText}
-              onChange={(e) => setItineraryText(e.target.value)}
+              placeholder="Description"
+              value={editing.description}
+              onChange={(event) =>
+                setEditing({ ...editing, description: event.target.value })
+              }
               rows={4}
             />
+
             <Textarea
-              placeholder="Highlights (one per line)"
-              value={highlightsText}
-              onChange={(e) => setHighlightsText(e.target.value)}
-              rows={3}
+              placeholder="Inclusions (one item per line)"
+              value={editing.inclusionsText}
+              onChange={(event) =>
+                setEditing({ ...editing, inclusionsText: event.target.value })
+              }
+              rows={4}
             />
-            <Textarea
-              placeholder="Exclusions (one per line)"
-              value={exclusionsText}
-              onChange={(e) => setExclusionsText(e.target.value)}
-              rows={3}
-            />
-            <Textarea
-              placeholder="Terms & Conditions (one per line)"
-              value={termsText}
-              onChange={(e) => setTermsText(e.target.value)}
-              rows={3}
-            />
-            <Textarea
-              placeholder="Gallery Image URLs (one per line)"
-              value={galleryText}
-              onChange={(e) => setGalleryText(e.target.value)}
-              rows={3}
-            />
-            <Textarea
-              placeholder="FAQ (one per line)"
-              value={faqText}
-              onChange={(e) => setFaqText(e.target.value)}
-              rows={3}
-            />
-            <Button onClick={handleSave} disabled={loading}>{loading ? "Saving..." : "Save Tour"}</Button>
+
+            <div className="space-y-4 rounded-2xl border p-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="font-semibold text-foreground">Itinerary</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Add each day exactly as you want it shown on the tour page.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    setEditing({
+                      ...editing,
+                      itinerary: [
+                        ...editing.itinerary,
+                        createEmptyItineraryItem(editing.itinerary.length + 1),
+                      ],
+                    })
+                  }
+                  className="gap-1"
+                >
+                  <Plus size={16} /> Add Day
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {editing.itinerary.map((item, index) => (
+                  <div
+                    key={`itinerary-${index}`}
+                    className="rounded-xl border bg-muted/40 p-4 space-y-3"
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="font-medium text-foreground">
+                        Itinerary Item {index + 1}
+                      </p>
+                      {editing.itinerary.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            setEditing({
+                              ...editing,
+                              itinerary: editing.itinerary.filter(
+                                (_, itemIndex) => itemIndex !== index,
+                              ),
+                            })
+                          }
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <Input
+                        placeholder="Day label"
+                        value={item.day}
+                        onChange={(event) =>
+                          updateItineraryItem(index, "day", event.target.value)
+                        }
+                      />
+                      <Input
+                        placeholder="Title"
+                        value={item.title}
+                        onChange={(event) =>
+                          updateItineraryItem(index, "title", event.target.value)
+                        }
+                      />
+                    </div>
+                    <Textarea
+                      placeholder="Description"
+                      value={item.description}
+                      onChange={(event) =>
+                        updateItineraryItem(
+                          index,
+                          "description",
+                          event.target.value,
+                        )
+                      }
+                      rows={3}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <Textarea
+                placeholder="Highlights (one item per line)"
+                value={editing.highlightsText}
+                onChange={(event) =>
+                  setEditing({ ...editing, highlightsText: event.target.value })
+                }
+                rows={5}
+              />
+              <Textarea
+                placeholder="Exclusions (one item per line)"
+                value={editing.exclusionsText}
+                onChange={(event) =>
+                  setEditing({ ...editing, exclusionsText: event.target.value })
+                }
+                rows={5}
+              />
+              <Textarea
+                placeholder="Terms & Conditions (one item per line)"
+                value={editing.termsText}
+                onChange={(event) =>
+                  setEditing({ ...editing, termsText: event.target.value })
+                }
+                rows={5}
+              />
+              <Textarea
+                placeholder="Gallery image URLs (one URL per line)"
+                value={editing.galleryText}
+                onChange={(event) =>
+                  setEditing({ ...editing, galleryText: event.target.value })
+                }
+                rows={5}
+              />
+            </div>
+
+            <div className="rounded-2xl border p-4 bg-background">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <h2 className="font-semibold text-foreground">
+                    Upload Gallery Images
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Select one or more images from your computer to add to the
+                    gallery.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="tour-gallery-upload"
+                    className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
+                  >
+                    {uploadingGallery ? "Uploading..." : "Upload Gallery Images"}
+                  </label>
+                  <input
+                    id="tour-gallery-upload"
+                    type="file"
+                    accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+                    multiple
+                    className="hidden"
+                    onChange={handleGalleryUpload}
+                    disabled={uploadingGallery}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Accepted formats: PNG, JPG, JPEG. Max size: 5 MB per file.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 rounded-2xl border p-4">
+              <div className="flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="font-semibold text-foreground">FAQs</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Add common customer questions and answers for this package.
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() =>
+                    setEditing({
+                      ...editing,
+                      faqs: [...editing.faqs, createEmptyFaqItem()],
+                    })
+                  }
+                  className="gap-1"
+                >
+                  <Plus size={16} /> Add FAQ
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {editing.faqs.map((faq, index) => (
+                  <div
+                    key={`faq-${index}`}
+                    className="rounded-xl border bg-muted/40 p-4 space-y-3"
+                  >
+                    <div className="flex items-center justify-between gap-4">
+                      <p className="font-medium text-foreground">
+                        FAQ {index + 1}
+                      </p>
+                      {editing.faqs.length > 1 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() =>
+                            setEditing({
+                              ...editing,
+                              faqs: editing.faqs.filter(
+                                (_, itemIndex) => itemIndex !== index,
+                              ),
+                            })
+                          }
+                        >
+                          Remove
+                        </Button>
+                      )}
+                    </div>
+                    <Input
+                      placeholder="Question"
+                      value={faq.q}
+                      onChange={(event) =>
+                        updateFaqItem(index, "q", event.target.value)
+                      }
+                    />
+                    <Textarea
+                      placeholder="Answer"
+                      value={faq.a}
+                      onChange={(event) =>
+                        updateFaqItem(index, "a", event.target.value)
+                      }
+                      rows={3}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <Button onClick={handleSave} disabled={loading}>
+              {loading ? "Saving..." : "Save Tour"}
+            </Button>
           </div>
         </div>
       </div>
@@ -225,26 +664,58 @@ const AdminTours = () => {
       <div className="container mx-auto max-w-4xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <Link to="/admin" className="text-muted-foreground hover:text-foreground"><ArrowLeft size={20} /></Link>
+            <Link
+              to="/admin"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft size={20} />
+            </Link>
             <h1 className="text-2xl font-bold text-foreground">Manage Tours</h1>
           </div>
-          <Button onClick={() => setEditing({ category: "domestic" } as Partial<Tour>)} className="gap-1"><Plus size={16} /> Add Tour</Button>
+          <Button
+            onClick={() => setEditing(createBlankTourForm())}
+            className="gap-1"
+          >
+            <Plus size={16} /> Add Tour
+          </Button>
         </div>
 
         <div className="space-y-3">
-          {tours.map((t) => (
-            <div key={t.id} className="bg-card rounded-xl shadow-card p-4 flex items-center justify-between">
+          {tours.map((tour) => (
+            <div
+              key={tour.id}
+              className="bg-card rounded-xl shadow-card p-4 flex items-center justify-between"
+            >
               <div>
-                <h3 className="font-semibold text-foreground">{t.name}</h3>
-                <p className="text-sm text-muted-foreground">{t.duration} • {t.price} • {t.category}</p>
+                <h3 className="font-semibold text-foreground">{tour.name}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {tour.duration} | {tour.price} | {tour.category}
+                </p>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setEditing(t)}><Pencil size={14} /></Button>
-                <Button size="sm" variant="outline" onClick={() => handleDelete(t.id)} className="text-destructive"><Trash2 size={14} /></Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setEditing(createTourForm(tour))}
+                >
+                  <Pencil size={14} />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleDelete(tour.id)}
+                  className="text-destructive"
+                >
+                  <Trash2 size={14} />
+                </Button>
               </div>
             </div>
           ))}
-          {tours.length === 0 && <p className="text-center text-muted-foreground py-8">No tours yet. Add your first tour!</p>}
+          {tours.length === 0 && (
+            <p className="text-center text-muted-foreground py-8">
+              No tours yet. Add your first tour.
+            </p>
+          )}
         </div>
       </div>
     </div>

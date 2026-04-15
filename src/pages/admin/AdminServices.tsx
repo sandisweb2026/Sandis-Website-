@@ -1,71 +1,153 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { Link } from "react-router-dom";
+import { ArrowLeft, Pencil, Plus, Trash2 } from "lucide-react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "sonner";
-import { Plus, Pencil, Trash2, ArrowLeft } from "lucide-react";
-import { Link } from "react-router-dom";
-import type { Database } from "@/integrations/supabase/types";
+import {
+  createService,
+  fetchServices,
+  removeService,
+  updateService,
+  type ServiceRecord,
+} from "@/lib/travel-cms";
 
-type Service = Database["public"]["Tables"]["services"]["Row"];
+const iconOptions = ["Plane", "Bus", "Train", "Hotel", "FileText", "Car"];
+
+type ServiceFormState = {
+  id?: string;
+  title: string;
+  description: string;
+  icon: string;
+};
+
+const createBlankService = (): ServiceFormState => ({
+  title: "",
+  description: "",
+  icon: "Plane",
+});
+
+const createServiceForm = (service?: ServiceRecord): ServiceFormState => ({
+  id: service?.id,
+  title: service?.title ?? "",
+  description: service?.description ?? "",
+  icon: service?.icon ?? "Plane",
+});
 
 const AdminServices = () => {
-  const [services, setServices] = useState<Service[]>([]);
-  const [editing, setEditing] = useState<Partial<Service> | null>(null);
+  const [services, setServices] = useState<ServiceRecord[]>([]);
+  const [editing, setEditing] = useState<ServiceFormState | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const fetchServices = async () => {
-    const { data } = await supabase.from("services").select("*").order("created_at");
-    setServices(data ?? []);
+  const loadServices = async () => {
+    try {
+      setServices(await fetchServices());
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to load services.";
+      toast.error(message);
+    }
   };
 
-  useEffect(() => { fetchServices(); }, []);
+  useEffect(() => {
+    loadServices();
+  }, []);
 
   const handleSave = async () => {
-    if (!editing?.title) { toast.error("Title is required"); return; }
-    setLoading(true);
-    const payload = { title: editing.title, description: editing.description || null, icon: editing.icon || "Plane" };
-
-    if (editing.id) {
-      const { error } = await supabase.from("services").update(payload).eq("id", editing.id);
-      if (error) toast.error(error.message); else toast.success("Service updated!");
-    } else {
-      const { error } = await supabase.from("services").insert(payload);
-      if (error) toast.error(error.message); else toast.success("Service created!");
+    if (!editing?.title.trim()) {
+      toast.error("Service title is required.");
+      return;
     }
-    setLoading(false);
-    setEditing(null);
-    fetchServices();
+
+    setLoading(true);
+
+    const payload = {
+      title: editing.title.trim(),
+      description: editing.description.trim() || null,
+      icon: editing.icon || "Plane",
+    };
+
+    try {
+      if (editing.id) {
+        await updateService(editing.id, payload);
+        toast.success("Service updated.");
+      } else {
+        await createService(payload);
+        toast.success("Service created.");
+      }
+
+      setEditing(null);
+      await loadServices();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to save the service.";
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this service?")) return;
-    const { error } = await supabase.from("services").delete().eq("id", id);
-    if (error) toast.error(error.message); else { toast.success("Deleted!"); fetchServices(); }
+
+    try {
+      await removeService(id);
+      toast.success("Service deleted.");
+      await loadServices();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to delete the service.";
+      toast.error(message);
+    }
   };
 
   if (editing) {
     return (
       <div className="pt-20 pb-12 px-4">
         <div className="container mx-auto max-w-2xl">
-          <button onClick={() => setEditing(null)} className="flex items-center gap-1 text-muted-foreground hover:text-foreground mb-4">
+          <button
+            onClick={() => setEditing(null)}
+            className="flex items-center gap-1 text-muted-foreground hover:text-foreground mb-4"
+          >
             <ArrowLeft size={16} /> Back
           </button>
-          <h1 className="text-2xl font-bold mb-6 text-foreground">{editing.id ? "Edit Service" : "Add Service"}</h1>
+          <h1 className="text-2xl font-bold mb-6 text-foreground">
+            {editing.id ? "Edit Service" : "Add Service"}
+          </h1>
           <div className="bg-card rounded-2xl shadow-card p-6 flex flex-col gap-4">
-            <Input placeholder="Service Title *" value={editing.title || ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} />
-            <Textarea placeholder="Description" value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} rows={3} />
+            <Input
+              placeholder="Service Title *"
+              value={editing.title}
+              onChange={(event) =>
+                setEditing({ ...editing, title: event.target.value })
+              }
+            />
+            <Textarea
+              placeholder="Description"
+              value={editing.description}
+              onChange={(event) =>
+                setEditing({ ...editing, description: event.target.value })
+              }
+              rows={4}
+            />
             <select
               className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
-              value={editing.icon || "Plane"}
-              onChange={(e) => setEditing({ ...editing, icon: e.target.value })}
+              value={editing.icon}
+              onChange={(event) =>
+                setEditing({ ...editing, icon: event.target.value })
+              }
             >
-              {["Plane", "Bus", "Train", "Hotel", "FileText", "Car"].map((i) => (
-                <option key={i} value={i}>{i}</option>
+              {iconOptions.map((icon) => (
+                <option key={icon} value={icon}>
+                  {icon}
+                </option>
               ))}
             </select>
-            <Button onClick={handleSave} disabled={loading}>{loading ? "Saving..." : "Save Service"}</Button>
+            <Button onClick={handleSave} disabled={loading}>
+              {loading ? "Saving..." : "Save Service"}
+            </Button>
           </div>
         </div>
       </div>
@@ -77,24 +159,62 @@ const AdminServices = () => {
       <div className="container mx-auto max-w-4xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <Link to="/admin" className="text-muted-foreground hover:text-foreground"><ArrowLeft size={20} /></Link>
-            <h1 className="text-2xl font-bold text-foreground">Manage Services</h1>
+            <Link
+              to="/admin"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <ArrowLeft size={20} />
+            </Link>
+            <h1 className="text-2xl font-bold text-foreground">
+              Manage Services
+            </h1>
           </div>
-          <Button onClick={() => setEditing({})} className="gap-1"><Plus size={16} /> Add Service</Button>
+          <Button
+            onClick={() => setEditing(createBlankService())}
+            className="gap-1"
+          >
+            <Plus size={16} /> Add Service
+          </Button>
         </div>
+
         <div className="space-y-3">
-          {services.map((s) => (
-            <div key={s.id} className="bg-card rounded-xl shadow-card p-4 flex items-center justify-between">
+          {services.map((service) => (
+            <div
+              key={service.id}
+              className="bg-card rounded-xl shadow-card p-4 flex items-center justify-between"
+            >
               <div>
-                <h3 className="font-semibold text-foreground">{s.title}</h3>
-                <p className="text-sm text-muted-foreground">{s.description}</p>
+                <h3 className="font-semibold text-foreground">
+                  {service.title}
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {service.description}
+                </p>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setEditing(s)}><Pencil size={14} /></Button>
-                <Button size="sm" variant="outline" onClick={() => handleDelete(s.id)} className="text-destructive"><Trash2 size={14} /></Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setEditing(createServiceForm(service))}
+                >
+                  <Pencil size={14} />
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => handleDelete(service.id)}
+                  className="text-destructive"
+                >
+                  <Trash2 size={14} />
+                </Button>
               </div>
             </div>
           ))}
+          {services.length === 0 && (
+            <p className="text-center text-muted-foreground py-8">
+              No services yet. Add your first service.
+            </p>
+          )}
         </div>
       </div>
     </div>

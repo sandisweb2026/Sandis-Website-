@@ -1,15 +1,11 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { ChevronLeft, ChevronRight, Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileText, Car, Bus, Train, Clock, IndianRupee, Instagram, Facebook, Phone, MapPin, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroBeach from "@/assets/hero-beach.jpg";
 import heroFlight from "@/assets/hero-flight.jpg";
 import heroHotel from "@/assets/hero-hotel.jpg";
 import sandisLogo from "@/assets/sandis logo .png";
-import type { Database } from "@/integrations/supabase/types";
-
-type Tour = Database["public"]["Tables"]["tours"]["Row"];
 
 // Static images for fallback
 import tourGoa from "@/assets/tour-goa.jpg";
@@ -60,21 +56,14 @@ const testimonials = [
 
 const Index = () => {
   const [current, setCurrent] = useState(0);
-  const [tours, setTours] = useState<Tour[]>([]);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 5000);
     return () => clearInterval(timer);
   }, []);
 
-  useEffect(() => {
-    supabase.from("tours").select("*").limit(6).then(({ data }) => setTours(data ?? []));
-  }, []);
-
   const prev = () => setCurrent((c) => (c - 1 + slides.length) % slides.length);
   const next = () => setCurrent((c) => (c + 1) % slides.length);
-
-  const getTourImage = (tour: Tour) => tour.image_url || fallbackImages[tour.name] || tourGoa;
 
   return (
     <div>
