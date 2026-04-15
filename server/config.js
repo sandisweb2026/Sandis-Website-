@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 
-dotenv.config();
+dotenv.config({ quiet: true });
 
 export const config = {
   apiPort: Number(process.env.API_PORT ?? 4000),

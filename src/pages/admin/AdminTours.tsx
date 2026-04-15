@@ -389,7 +389,7 @@ const AdminTours = () => {
                     disabled={uploadingImage}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Accepted formats: PNG, JPG, JPEG. Max size: 5 MB.
+                    Accepted formats: PNG, JPG, JPEG. Max size: 4 MB.
                   </p>
                 </div>
               </div>
@@ -573,7 +573,7 @@ const AdminTours = () => {
                     disabled={uploadingGallery}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Accepted formats: PNG, JPG, JPEG. Max size: 5 MB per file.
+                    Accepted formats: PNG, JPG, JPEG. Max size: 4 MB per file.
                   </p>
                 </div>
               </div>

@@ -30,6 +30,7 @@ It creates:
 - `admins`
 - `tours`
 - `services`
+- `media_uploads`
 - `enquiries`
 
 ## 3. Create the single admin login
@@ -70,6 +71,23 @@ API health check:
 
 - `http://localhost:4000/api/health`
 
+## Vercel deployment note
+
+The Vercel frontend and API can only connect to a MySQL database that is reachable from the public internet.
+
+Your local MySQL server on your own computer will work for local development, but it will not work from `vercel.app`.
+
+For online admin login and online API access, set the Vercel project environment variables to a hosted MySQL database:
+
+- `DB_HOST`
+- `DB_PORT`
+- `DB_USER`
+- `DB_PASSWORD`
+- `DB_NAME`
+- `JWT_SECRET`
+
+If you leave Vercel pointing at a local-only MySQL server, the deployed site can build, but admin login and API requests will fail online.
+
 ## API overview
 
 Public routes:
@@ -84,6 +102,8 @@ Admin routes:
 - `POST /api/admin/login`
 - `GET /api/admin/me`
 - `GET /api/admin/dashboard`
+- `POST /api/admin/uploads/tour-image`
+- `GET /api/uploads/:id`
 - `GET /api/admin/enquiries`
 - `PATCH /api/admin/enquiries/:id/status`
 - `DELETE /api/admin/enquiries/:id`
