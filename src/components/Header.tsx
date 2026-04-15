@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import sandisLogo from "@/assets/sandis logo .png";
 
 const navLinks = [
-  { label: "About", path: "/about" },
+  { label: "Home", path: "/" },
   { label: "Services", path: "/services" },
   { label: "Holidays", path: "/holidays" },
+  { label: "About Us", path: "/about" },
+  { label: "Contact", path: "/contact" },
 ];
 
 const Header = () => {
@@ -28,25 +30,18 @@ const Header = () => {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-3">
+        <nav className="hidden md:flex items-center gap-6">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
-              className={`group flex items-center gap-3 rounded-full px-5 py-2.5 text-sm font-semibold uppercase tracking-[0.14em] transition-all ${
+              className={`text-sm font-medium transition-colors hover:text-primary ${
                 location.pathname === link.path
-                  ? "bg-gradient-to-r from-primary via-orange-400 to-amber-400 text-primary-foreground shadow-elevated"
-                  : "bg-stone-500/45 text-white backdrop-blur hover:bg-stone-500/60"
+                  ? "text-primary"
+                  : "text-muted-foreground"
               }`}
             >
-              <span
-                className={`h-2.5 w-2.5 rounded-full transition-transform group-hover:scale-110 ${
-                  location.pathname === link.path
-                    ? "bg-white shadow-[0_0_10px_rgba(255,255,255,0.65)]"
-                    : "bg-primary shadow-[0_0_10px_rgba(255,140,0,0.55)]"
-                }`}
-              />
-              <span>{link.label}</span>
+              {link.label}
             </Link>
           ))}
         </nav>
@@ -81,18 +76,13 @@ const Header = () => {
                 key={link.path}
                 to={link.path}
                 onClick={() => setMobileOpen(false)}
-                className={`flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.14em] py-2.5 px-4 rounded-full transition-all ${
+                className={`text-sm font-medium py-2 px-3 rounded-lg transition-colors ${
                   location.pathname === link.path
-                    ? "bg-gradient-to-r from-primary via-orange-400 to-amber-400 text-primary-foreground"
-                    : "bg-stone-500/15 text-foreground hover:bg-stone-500/25"
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-accent"
                 }`}
               >
-                <span
-                  className={`h-2.5 w-2.5 rounded-full ${
-                    location.pathname === link.path ? "bg-white" : "bg-primary"
-                  }`}
-                />
-                <span>{link.label}</span>
+                {link.label}
               </Link>
             ))}
             <div className="flex items-center gap-3 pt-2 border-t border-border">
