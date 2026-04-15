@@ -45,7 +45,7 @@ const serviceIcons = [
   { icon: Car, label: "Car Rental / Bus Booking", bg: "bg-red-500", iconClass: "text-white" },
   { icon: Plane, label: "Flight Booking", bg: "bg-yellow-400", iconClass: "text-white" },
   { icon: Bus, label: "Bus / Train Booking", bg: "bg-green-500", iconClass: "text-white" },
-  { icon: MapPin, label: "Tour Booking", bg: "bg-blue-500", iconClass: "text-white" },
+  { icon: MapPin, label: "Holidays", bg: "bg-blue-500", iconClass: "text-white" },
   { icon: Hotel, label: "Hotel Booking", bg: "bg-indigo-500", iconClass: "text-white" },
   { icon: FileText, label: "Visa Assistance", bg: "bg-violet-500", iconClass: "text-white" },
   { icon: IndianRupee, label: "Forex Assistance", bg: "bg-pink-500", iconClass: "text-white" },
@@ -127,25 +127,25 @@ const Index = () => {
                     <div className="h-28 w-[2px] bg-gradient-to-b from-primary/80 via-amber-300/70 to-transparent" />
                     <nav className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-white">
                       <Link
+                        to="/"
+                        className="group flex items-center gap-3 rounded-lg bg-white/10 px-4 py-2 backdrop-blur transition-all hover:bg-white/20 hover:translate-x-1"
+                      >
+                        <span className="h-2.5 w-2.5 rounded-full bg-primary/90 shadow-[0_0_10px_rgba(255,140,0,0.6)] group-hover:scale-110 transition-transform" />
+                        <span>Home</span>
+                      </Link>
+                      <Link
                         to="/about"
                         className="group flex items-center gap-3 rounded-lg bg-white/10 px-4 py-2 backdrop-blur transition-all hover:bg-white/20 hover:translate-x-1"
                       >
                         <span className="h-2.5 w-2.5 rounded-full bg-primary/90 shadow-[0_0_10px_rgba(255,140,0,0.6)] group-hover:scale-110 transition-transform" />
-                        <span>About</span>
+                        <span>About us</span>
                       </Link>
                       <Link
-                        to="/services"
-                        className="group flex items-center gap-3 rounded-lg bg-white/10 px-4 py-2 backdrop-blur transition-all hover:bg-white/20 hover:translate-x-1"
-                      >
-                        <span className="h-2.5 w-2.5 rounded-full bg-primary/90 shadow-[0_0_10px_rgba(255,140,0,0.6)] group-hover:scale-110 transition-transform" />
-                        <span>Services</span>
-                      </Link>
-                      <Link
-                        to="/holidays"
+                        to="/contact"
                         className="group flex items-center gap-3 rounded-lg bg-gradient-to-r from-primary/90 via-orange-400/90 to-amber-400/90 px-4 py-2 text-primary-foreground shadow-elevated transition-all hover:brightness-110 hover:translate-x-1"
                       >
                         <span className="h-2.5 w-2.5 rounded-full bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.7)] group-hover:scale-110 transition-transform" />
-                        <span>Holidays</span>
+                        <span>Contact us</span>
                       </Link>
                     </nav>
                   </div>

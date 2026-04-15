@@ -23,12 +23,28 @@ const Footer = () => (
 
         <div>
           <h4 className="font-semibold mb-4">Quick Links</h4>
-          <nav className="flex flex-col gap-2 text-sm opacity-70">
-            <Link to="/" className="hover:opacity-100 transition-opacity">Home</Link>
-            <Link to="/services" className="hover:opacity-100 transition-opacity">Services</Link>
-            <Link to="/holidays" className="hover:opacity-100 transition-opacity">Holidays</Link>
-            <Link to="/about" className="hover:opacity-100 transition-opacity">About Us</Link>
-            <Link to="/contact" className="hover:opacity-100 transition-opacity">Contact</Link>
+          <nav className="flex flex-col gap-3 text-sm">
+            <Link
+              to="/about"
+              className="flex items-center gap-3 rounded-full bg-background/12 px-4 py-2 font-semibold uppercase tracking-[0.14em] text-background transition-all hover:bg-background/20"
+            >
+              <span className="h-2.5 w-2.5 rounded-full bg-primary shadow-[0_0_10px_rgba(255,140,0,0.55)]" />
+              <span>About</span>
+            </Link>
+            <Link
+              to="/services"
+              className="flex items-center gap-3 rounded-full bg-background/12 px-4 py-2 font-semibold uppercase tracking-[0.14em] text-background transition-all hover:bg-background/20"
+            >
+              <span className="h-2.5 w-2.5 rounded-full bg-primary shadow-[0_0_10px_rgba(255,140,0,0.55)]" />
+              <span>Services</span>
+            </Link>
+            <Link
+              to="/holidays"
+              className="flex items-center gap-3 rounded-full bg-gradient-to-r from-primary via-orange-400 to-amber-400 px-4 py-2 font-semibold uppercase tracking-[0.14em] text-primary-foreground transition-all hover:brightness-110"
+            >
+              <span className="h-2.5 w-2.5 rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.65)]" />
+              <span>Holidays</span>
+            </Link>
           </nav>
         </div>
 
