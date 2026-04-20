@@ -31,9 +31,10 @@ type TourFormState = {
   name: string;
   duration: string;
   price: string;
-  category: "domestic" | "international";
+  category: "maharashtra" | "india" | "international";
   description: string;
   image_url: string;
+  heroGalleryText: string;
   inclusionsText: string;
   highlightsText: string;
   exclusionsText: string;
@@ -47,9 +48,10 @@ const createBlankTourForm = (): TourFormState => ({
   name: "",
   duration: "",
   price: "",
-  category: "domestic",
+  category: "india",
   description: "",
   image_url: "",
+  heroGalleryText: "",
   inclusionsText: "",
   highlightsText: "",
   exclusionsText: "",
@@ -63,6 +65,20 @@ const createTourForm = (tour?: TourRecord): TourFormState => {
   if (!tour) return createBlankTourForm();
 
   const extras = extractTourExtras(tour.itinerary ?? null);
+  const haystack = `${tour.name} ${tour.description ?? ""}`.toLowerCase();
+  const maharashtraKeywords = [
+    "maharashtra",
+    "mumbai",
+    "pune",
+    "shirdi",
+    "nagpur",
+    "nashik",
+    "aurangabad",
+    "kolhapur",
+  ];
+  const isMaharashtraTour = maharashtraKeywords.some((keyword) =>
+    haystack.includes(keyword),
+  );
 
   return {
     id: tour.id,
@@ -70,9 +86,18 @@ const createTourForm = (tour?: TourRecord): TourFormState => {
     duration: tour.duration,
     price: tour.price,
     category:
-      tour.category === "international" ? "international" : "domestic",
+      tour.category === "international"
+        ? "international"
+        : tour.category === "maharashtra"
+          ? "maharashtra"
+          : tour.category === "india"
+            ? "india"
+            : isMaharashtraTour
+              ? "maharashtra"
+              : "india",
     description: tour.description ?? "",
     image_url: tour.image_url ?? "",
+    heroGalleryText: joinLines(extras.heroGallery),
     inclusionsText: joinLines(tour.inclusions),
     highlightsText: joinLines(extras.highlights),
     exclusionsText: joinLines(extras.exclusions),
@@ -113,6 +138,7 @@ const AdminTours = () => {
   const [editing, setEditing] = useState<TourFormState | null>(null);
   const [loading, setLoading] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingHeroGallery, setUploadingHeroGallery] = useState(false);
   const [uploadingGallery, setUploadingGallery] = useState(false);
 
   const loadTours = async () => {
@@ -152,6 +178,19 @@ const AdminTours = () => {
 
     const itinerary = normalizeItinerary(editing.itinerary);
     const faqs = normalizeFaqs(editing.faqs);
+    const heroGallery = splitLines(editing.heroGalleryText);
+
+    if (heroGallery.length > 0 && heroGallery.length < 3) {
+      toast.error("Please add at least 3 hero carousel images.");
+      setLoading(false);
+      return;
+    }
+
+    if (heroGallery.length > 5) {
+      toast.error("Hero carousel supports a maximum of 5 images.");
+      setLoading(false);
+      return;
+    }
 
     const payload = {
       name,
@@ -166,6 +205,7 @@ const AdminTours = () => {
         highlights: splitLines(editing.highlightsText),
         exclusions: splitLines(editing.exclusionsText),
         terms: splitLines(editing.termsText),
+        heroGallery,
         gallery: splitLines(editing.galleryText),
         faqs,
       }),
@@ -296,6 +336,57 @@ const AdminTours = () => {
     }
   };
 
+  const handleHeroGalleryUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const files = event.target.files;
+    if (!files?.length || !editing) return;
+
+    const allowedTypes = new Set(["image/png", "image/jpeg"]);
+    const invalidFile = Array.from(files).find(
+      (file) => !allowedTypes.has(file.type),
+    );
+
+    if (invalidFile) {
+      toast.error("Please upload only PNG, JPG, or JPEG images.");
+      event.target.value = "";
+      return;
+    }
+
+    const currentHeroGallery = splitLines(editing.heroGalleryText);
+    if (currentHeroGallery.length + files.length > 5) {
+      toast.error("Hero carousel supports up to 5 images.");
+      event.target.value = "";
+      return;
+    }
+
+    setUploadingHeroGallery(true);
+
+    try {
+      const urls = await uploadTourImages(files);
+      const nextHeroGallery = [...currentHeroGallery, ...urls];
+      setEditing({
+        ...editing,
+        heroGalleryText: joinLines(nextHeroGallery),
+      });
+      toast.success(`${urls.length} hero image(s) uploaded.`);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Unable to upload hero images.";
+      toast.error(message);
+    } finally {
+      setUploadingHeroGallery(false);
+      event.target.value = "";
+    }
+  };
+
+  const removeLineItem = (value: string, indexToRemove: number) =>
+    joinLines(
+      splitLines(value).filter((_, currentIndex) => currentIndex !== indexToRemove),
+    );
+
   if (editing) {
     return (
       <div className="pt-20 pb-12 px-4">
@@ -333,7 +424,8 @@ const AdminTours = () => {
                   })
                 }
               >
-                <option value="domestic">Domestic</option>
+                <option value="maharashtra">Maharashtra</option>
+                <option value="india">India</option>
                 <option value="international">International</option>
               </select>
             </div>
@@ -401,6 +493,97 @@ const AdminTours = () => {
                     alt="Tour preview"
                     className="h-56 w-full object-cover"
                   />
+                </div>
+              )}
+            </div>
+
+            <div className="space-y-4 rounded-2xl border p-4 bg-background">
+              <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <h2 className="font-semibold text-foreground">
+                    Hero Carousel Images
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Upload 3 to 5 images for the top hero carousel on the tour
+                    detail page. If you leave this empty, the single hero image
+                    above will be used.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <label
+                    htmlFor="tour-hero-gallery-upload"
+                    className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
+                  >
+                    {uploadingHeroGallery
+                      ? "Uploading..."
+                      : "Upload Hero Carousel Images"}
+                  </label>
+                  <input
+                    id="tour-hero-gallery-upload"
+                    type="file"
+                    accept=".png,.jpg,.jpeg,image/png,image/jpeg"
+                    multiple
+                    className="hidden"
+                    onChange={handleHeroGalleryUpload}
+                    disabled={uploadingHeroGallery}
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Accepted formats: PNG, JPG, JPEG. Use 3 to 5 images. Max
+                    size: 4 MB per file.
+                  </p>
+                </div>
+              </div>
+
+              <Textarea
+                placeholder="Hero carousel image URLs (one URL per line)"
+                value={editing.heroGalleryText}
+                onChange={(event) =>
+                  setEditing({ ...editing, heroGalleryText: event.target.value })
+                }
+                rows={4}
+              />
+
+              {splitLines(editing.heroGalleryText).length > 0 && (
+                <div className="space-y-3">
+                  <p className="text-sm text-muted-foreground">
+                    {splitLines(editing.heroGalleryText).length} hero image(s)
+                    selected
+                  </p>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {splitLines(editing.heroGalleryText).map((src, index) => (
+                      <div
+                        key={`${src}-${index}`}
+                        className="overflow-hidden rounded-xl border bg-muted"
+                      >
+                        <img
+                          src={src}
+                          alt={`Hero carousel ${index + 1}`}
+                          className="h-40 w-full object-cover"
+                        />
+                        <div className="flex items-center justify-between border-t bg-background px-3 py-2">
+                          <span className="text-xs text-muted-foreground">
+                            Image {index + 1}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                              setEditing({
+                                ...editing,
+                                heroGalleryText: removeLineItem(
+                                  editing.heroGalleryText,
+                                  index,
+                                ),
+                              })
+                            }
+                          >
+                            Remove
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>

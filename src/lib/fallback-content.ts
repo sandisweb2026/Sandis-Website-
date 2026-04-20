@@ -27,7 +27,7 @@ export const fallbackTours: TourRecord[] = [
   {
     id: "fallback-shirdi",
     name: "Pune to Shirdi (Round Trip)",
-    category: "domestic",
+    category: "maharashtra",
     duration: "1D / Round Trip",
     price: "On Request",
     description:
@@ -77,7 +77,7 @@ export const fallbackTours: TourRecord[] = [
   {
     id: "fallback-goa",
     name: "Goa Beach Paradise",
-    category: "domestic",
+    category: "india",
     duration: "4D / 3N",
     price: "12,999",
     description:
@@ -151,7 +151,7 @@ export const fallbackTours: TourRecord[] = [
   {
     id: "fallback-manali",
     name: "Manali Adventure",
-    category: "domestic",
+    category: "india",
     duration: "5D / 4N",
     price: "15,499",
     description:
@@ -228,7 +228,7 @@ export const fallbackTours: TourRecord[] = [
   {
     id: "fallback-kerala",
     name: "Kerala Backwaters",
-    category: "domestic",
+    category: "india",
     duration: "5D / 4N",
     price: "18,999",
     description:

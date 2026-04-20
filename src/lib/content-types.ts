@@ -6,7 +6,12 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[];
 
-export type TourCategory = "domestic" | "international" | string;
+export type TourCategory =
+  | "maharashtra"
+  | "india"
+  | "international"
+  | "domestic"
+  | string;
 export type EnquiryStatus = "new" | "contacted" | "closed";
 
 export type TourItineraryItem = {
@@ -25,6 +30,7 @@ export type TourExtras = {
   highlights: string[];
   exclusions: string[];
   terms: string[];
+  heroGallery: string[];
   gallery: string[];
   faqs: TourFaqItem[];
 };
@@ -124,6 +130,7 @@ export const createEmptyTourExtras = (): TourExtras => ({
   highlights: [],
   exclusions: [],
   terms: [],
+  heroGallery: [],
   gallery: [],
   faqs: [],
 });
@@ -200,6 +207,7 @@ export const extractTourExtras = (value: Json | null): TourExtras => {
     extras.highlights = normalizeStringList(record.highlights);
     extras.exclusions = normalizeStringList(record.exclusions);
     extras.terms = normalizeStringList(record.terms);
+    extras.heroGallery = normalizeStringList(record.heroGallery);
     extras.gallery = normalizeStringList(record.gallery);
     extras.faqs = normalizeFaqs(record.faqs);
   }
@@ -212,6 +220,7 @@ export const buildTourExtras = (extras: TourExtras): Json => ({
   highlights: normalizeStringList(extras.highlights),
   exclusions: normalizeStringList(extras.exclusions),
   terms: normalizeStringList(extras.terms),
+  heroGallery: normalizeStringList(extras.heroGallery),
   gallery: normalizeStringList(extras.gallery),
   faqs: normalizeFaqs(extras.faqs),
 });

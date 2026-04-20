@@ -105,6 +105,77 @@ const validateServicePayload = (payload) => {
 
 const validEnquiryStatuses = new Set(["new", "contacted", "closed"]);
 
+app.get("/", (_req, res) => {
+  res.type("html").send(`
+    <!doctype html>
+    <html lang="en">
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Sandis API</title>
+        <style>
+          body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f3ea;
+            color: #1f2937;
+          }
+          .wrap {
+            max-width: 760px;
+            margin: 48px auto;
+            padding: 24px;
+          }
+          .card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+          }
+          h1 {
+            margin: 0 0 12px;
+            font-size: 28px;
+          }
+          p {
+            line-height: 1.6;
+          }
+          a {
+            color: #c96a00;
+            text-decoration: none;
+            font-weight: 600;
+          }
+          ul {
+            padding-left: 18px;
+          }
+          code {
+            background: #f4f4f5;
+            padding: 2px 6px;
+            border-radius: 6px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="wrap">
+          <div class="card">
+            <h1>Sandis API is running</h1>
+            <p>
+              This address is the backend server, so opening <code>localhost:4000</code>
+              will not show the website homepage.
+            </p>
+            <p>
+              Open the frontend in your browser at
+              <a href="http://localhost:8082" target="_blank" rel="noreferrer">http://localhost:8082</a>.
+            </p>
+            <ul>
+              <li>API health check: <a href="/api/health">/api/health</a></li>
+              <li>Admin login: open the frontend, then go to <code>/admin/login</code></li>
+            </ul>
+          </div>
+        </div>
+      </body>
+    </html>
+  `);
+});
+
 app.get("/api/health", async (_req, res, next) => {
   try {
     await query("SELECT 1 AS ok");

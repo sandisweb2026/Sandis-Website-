@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
+  ChevronLeft,
+  ChevronRight,
   Bus,
   CheckCircle,
   Clock,
@@ -25,6 +27,11 @@ import {
 } from "@/lib/travel-cms";
 
 const defaultImage = fallbackTourImages["Goa Beach Paradise"];
+const getCategoryLabel = (category: TourRecord["category"]) => {
+  if (category === "maharashtra") return "Maharashtra";
+  if (category === "international") return "International";
+  return "India";
+};
 
 const TourDetail = () => {
   const { id } = useParams();
@@ -53,7 +60,13 @@ const TourDetail = () => {
   const heroImage = tour
     ? getTourImage(tour, fallbackTourImages, defaultImage)
     : defaultImage;
-  const heroImages = extras.gallery.length > 0 ? extras.gallery : [heroImage];
+  const heroImages =
+    extras.heroGallery.length > 0 ? extras.heroGallery : [heroImage];
+  const isShirdi = tour?.name.toLowerCase().includes("shirdi") ?? false;
+
+  useEffect(() => {
+    setHeroIndex(0);
+  }, [id]);
 
   useEffect(() => {
     if (heroImages.length <= 1) return;
@@ -110,10 +123,36 @@ const TourDetail = () => {
           />
         ))}
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
+        {heroImages.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={() =>
+                setHeroIndex(
+                  (current) => (current - 1 + heroImages.length) % heroImages.length,
+                )
+              }
+              className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/35 p-2 text-white transition hover:bg-black/55"
+              aria-label="Previous hero image"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              type="button"
+              onClick={() =>
+                setHeroIndex((current) => (current + 1) % heroImages.length)
+              }
+              className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/35 p-2 text-white transition hover:bg-black/55"
+              aria-label="Next hero image"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </>
+        )}
         <div className="absolute bottom-0 left-0 right-0 p-6">
           <div className="container mx-auto">
             <span className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full font-medium">
-              {tour.category === "domestic" ? "Domestic" : "International"}
+              {getCategoryLabel(tour.category)}
             </span>
             <h1 className="text-3xl md:text-4xl font-bold text-background mt-3">
               {tour.name}
@@ -128,6 +167,21 @@ const TourDetail = () => {
             </div>
           </div>
         </div>
+        {heroImages.length > 1 && (
+          <div className="absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 gap-2">
+            {heroImages.map((image, index) => (
+              <button
+                key={`${image}-${index}`}
+                type="button"
+                onClick={() => setHeroIndex(index)}
+                className={`h-2.5 rounded-full transition-all ${
+                  index === heroIndex ? "w-8 bg-white" : "w-2.5 bg-white/55"
+                }`}
+                aria-label={`Show hero image ${index + 1}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="container mx-auto px-4 py-12">

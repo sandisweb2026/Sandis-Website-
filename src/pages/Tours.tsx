@@ -24,8 +24,8 @@ const isMaharashtraTour = (tour: TourRecord) => {
 
 const Tours = () => {
   const [filter, setFilter] = useState<
-    "maharashtra" | "domestic" | "international"
-  >("domestic");
+    "maharashtra" | "india" | "international"
+  >("india");
   const [tours, setTours] = useState<TourRecord[]>([]);
 
   useEffect(() => {
@@ -35,9 +35,15 @@ const Tours = () => {
   }, []);
 
   const filtered = tours.filter((tour) => {
-    if (filter === "domestic") return tour.category === "domestic";
+    if (filter === "india") {
+      return tour.category === "india" || tour.category === "domestic";
+    }
     if (filter === "international") return tour.category === "international";
-    return tour.category === "domestic" && isMaharashtraTour(tour);
+    return (
+      tour.category === "maharashtra" ||
+      ((tour.category === "india" || tour.category === "domestic") &&
+        isMaharashtraTour(tour))
+    );
   });
 
   return (
@@ -56,7 +62,7 @@ const Tours = () => {
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="flex justify-center gap-3 mb-10">
-            {(["maharashtra", "domestic", "international"] as const).map(
+            {(["maharashtra", "india", "international"] as const).map(
               (currentFilter) => (
                 <Button
                   key={currentFilter}
@@ -66,9 +72,9 @@ const Tours = () => {
                 >
                   {currentFilter === "maharashtra"
                     ? "Maharashtra"
-                    : currentFilter === "domestic"
+                    : currentFilter === "india"
                       ? "India"
-                      : "World"}
+                      : "International"}
                 </Button>
               ),
             )}
@@ -85,7 +91,7 @@ const Tours = () => {
               <Button
                 variant="outline"
                 className="mt-6"
-                onClick={() => setFilter("domestic")}
+                onClick={() => setFilter("india")}
               >
                 Show India Holidays
               </Button>
@@ -109,9 +115,11 @@ const Tours = () => {
                       className="w-full h-full object-contain"
                     />
                     <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
-                      {tour.category === "domestic"
-                        ? "Domestic"
-                        : "International"}
+                      {tour.category === "maharashtra"
+                        ? "Maharashtra"
+                        : tour.category === "international"
+                          ? "International"
+                          : "India"}
                     </span>
                   </div>
                   <div className="p-5">
