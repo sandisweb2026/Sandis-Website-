@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileText, Car, Bus, Train, Clock, IndianRupee, Instagram, Facebook, Phone, MapPin, Mail } from "lucide-react";
+import { ChevronLeft, ChevronRight, Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileText, Car, Bus, Train, Clock, IndianRupee, Instagram, Facebook, Phone, MapPin, Mail, MessageCircle, House, Info, Contact } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import heroBeach from "@/assets/hero-beach.jpg";
-import heroFlight from "@/assets/hero-flight.jpg";
+import banner1 from "@/assets/banners/banner 1.png";
+import banner2 from "@/assets/banners/banner2.png";
 import heroHotel from "@/assets/hero-hotel.jpg";
 import sandisLogo from "@/assets/sandis logo .png";
 
@@ -25,8 +25,8 @@ const fallbackImages: Record<string, string> = {
 };
 
 const slides = [
-  { image: heroBeach, headline: "30+ Years of Trusted Travel Experience", sub: "Creating unforgettable journeys since 1995", cta: "Explore Tours", link: "/holidays" },
-  { image: heroFlight, headline: "Why Choose Sandis Tours?", sub: "Trusted Service • Best Pricing • Complete Travel Support", cta: "Why Choose Us", link: "/about" },
+  { image: banner1, headline: "30+ Years of Trusted Travel Experience", sub: "Creating unforgettable journeys since 1995", cta: "Explore Tours", link: "/holidays" },
+  { image: banner2, headline: "Why Choose Sandis Tours?", sub: "Trusted Service • Best Pricing • Complete Travel Support", cta: "Why Choose Us", link: "/about" },
   { image: heroHotel, headline: "Complete Travel Solutions in One Place", sub: "Flights • Hotels • Visa • Car Rental • Tour Packages", cta: "View Services", link: "/services" },
 ];
 
@@ -54,8 +54,15 @@ const testimonials = [
   { name: "Amit Patel", text: "Best Dubai package at unbeatable price. Will definitely book again.", rating: 5 },
 ];
 
+const bannerNavItems = [
+  { icon: House, label: "Home", path: "/" },
+  { icon: Info, label: "About Us", path: "/about" },
+  { icon: Contact, label: "Contact Us", path: "/contact" },
+];
+
 const Index = () => {
   const [current, setCurrent] = useState(0);
+  const [activeBannerNav, setActiveBannerNav] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 5000);
@@ -108,34 +115,45 @@ const Index = () => {
         {slides.map((slide, i) => (
           <div key={i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
             <img src={slide.image} alt="" className="w-full h-full object-cover" width={1920} height={1080} />
-            <div className="absolute inset-0 bg-gradient-to-r from-foreground/70 to-foreground/30" />
             <div className="absolute inset-0 flex items-center">
               <div className="container mx-auto px-4">
                 <div className="relative flex items-center justify-center min-h-[320px] lg:min-h-[360px]">
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 hidden md:flex items-center gap-4">
+                  <div className="absolute -left-3 top-1/2 hidden -translate-y-1/2 md:flex items-center gap-4">
                     <div className="h-28 w-[2px] bg-gradient-to-b from-primary/80 via-amber-300/70 to-transparent" />
-                    <nav className="flex flex-col gap-2 text-xs font-semibold uppercase tracking-[0.12em] text-white">
-                      <Link
-                        to="/"
-                        className="group flex items-center gap-3 rounded-lg bg-white/10 px-4 py-2 backdrop-blur transition-all hover:bg-white/20 hover:translate-x-1"
-                      >
-                        <span className="h-2.5 w-2.5 rounded-full bg-primary/90 shadow-[0_0_10px_rgba(255,140,0,0.6)] group-hover:scale-110 transition-transform" />
-                        <span>Home</span>
-                      </Link>
-                      <Link
-                        to="/about"
-                        className="group flex items-center gap-3 rounded-lg bg-white/10 px-4 py-2 backdrop-blur transition-all hover:bg-white/20 hover:translate-x-1"
-                      >
-                        <span className="h-2.5 w-2.5 rounded-full bg-primary/90 shadow-[0_0_10px_rgba(255,140,0,0.6)] group-hover:scale-110 transition-transform" />
-                        <span>About us</span>
-                      </Link>
-                      <Link
-                        to="/contact"
-                        className="group flex items-center gap-3 rounded-lg bg-gradient-to-r from-primary/90 via-orange-400/90 to-amber-400/90 px-4 py-2 text-primary-foreground shadow-elevated transition-all hover:brightness-110 hover:translate-x-1"
-                      >
-                        <span className="h-2.5 w-2.5 rounded-full bg-white/90 shadow-[0_0_10px_rgba(255,255,255,0.7)] group-hover:scale-110 transition-transform" />
-                        <span>Contact us</span>
-                      </Link>
+                    <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.12em] text-white">
+                      {bannerNavItems.map(({ icon: Icon, label, path }) => {
+                        const isActive = activeBannerNav === label;
+
+                        return (
+                          <div key={label} className="flex items-center gap-3">
+                            <button
+                              type="button"
+                              onClick={() => setActiveBannerNav((currentNav) => currentNav === label ? null : label)}
+                              className={`flex h-12 w-12 items-center justify-center rounded-full border transition-all ${
+                                isActive
+                                  ? "border-amber-200/70 bg-gradient-to-br from-primary via-orange-400 to-amber-300 text-white shadow-[0_12px_26px_rgba(255,140,0,0.45)]"
+                                  : "border-white/45 bg-white/18 text-white shadow-[0_12px_30px_rgba(0,0,0,0.22)] ring-1 ring-white/18 backdrop-blur-md hover:bg-white/28 hover:border-white/65"
+                              }`}
+                              aria-label={`Show ${label} link`}
+                              aria-expanded={isActive}
+                            >
+                              <Icon size={18} />
+                            </button>
+                            <Link
+                              to={path}
+                              className={`overflow-hidden rounded-full border text-sm font-semibold uppercase tracking-[0.18em] transition-all ${
+                                isActive
+                                  ? "w-44 border-amber-200/60 bg-[linear-gradient(135deg,rgba(255,153,0,0.95),rgba(255,196,61,0.95))] px-5 py-3 text-white shadow-[0_14px_30px_rgba(255,140,0,0.32)]"
+                                  : "pointer-events-none w-0 border-transparent px-0 py-3 text-transparent"
+                              }`}
+                              aria-hidden={!isActive}
+                              tabIndex={isActive ? 0 : -1}
+                            >
+                              {label}
+                            </Link>
+                          </div>
+                        );
+                      })}
                     </nav>
                   </div>
                   <div className="max-w-xl mx-auto animate-fade-up text-center px-6">
@@ -143,22 +161,22 @@ const Index = () => {
                     <p className="text-base md:text-lg text-background/80 mt-3">{slide.sub}</p>
                     <Link to={slide.link}><Button size="lg" className="mt-5 text-sm md:text-base px-7">{slide.cta}</Button></Link>
                   </div>
-                  <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col gap-3 items-end">
+                  <div className="absolute -right-3 top-1/2 hidden -translate-y-1/2 overflow-hidden rounded-2xl shadow-[0_18px_40px_rgba(0,0,0,0.28)] ring-1 ring-white/20 md:flex md:flex-col">
                     <a
-                      href="https://wa.me/919876543210?text=Hi%20Sandis%20Tours%2C%20I%20have%20a%20quick%20message%20enquiry."
+                      href="https://wa.me/919876543210?text=Hi%20Sandis%20Tours%2C%20I%20would%20like%20to%20connect%20on%20WhatsApp."
                       target="_blank"
                       rel="noreferrer"
-                      className="w-auto inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_26px_rgba(0,0,0,0.25)] backdrop-blur hover:bg-white/25 transition-all"
+                      className="flex h-16 w-16 items-center justify-center bg-[linear-gradient(180deg,#42c96b_0%,#2fa856_100%)] text-white transition-transform hover:scale-[1.03]"
+                      aria-label="Chat on WhatsApp"
                     >
-                      <span>Quick Message</span>
-                      <Mail size={18} />
+                      <MessageCircle size={20} />
                     </a>
                     <a
-                      href="mailto:info@sandistours.com?subject=Quick%20Email%20Enquiry"
-                      className="w-auto inline-flex items-center gap-2 rounded-full border border-white/35 bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-[0_10px_26px_rgba(0,0,0,0.25)] backdrop-blur hover:bg-white/25 transition-all"
+                      href="tel:+919876543210"
+                      className="flex h-16 w-16 items-center justify-center bg-[linear-gradient(180deg,#e56d74_0%,#cc4f58_100%)] text-white transition-transform hover:scale-[1.03]"
+                      aria-label="Call Sandis Tours"
                     >
-                      <span>Quick Email</span>
-                      <Mail size={18} />
+                      <Phone size={20} />
                     </a>
                   </div>
                 </div>
@@ -167,7 +185,7 @@ const Index = () => {
           </div>
         ))}
         <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 bg-background/20 hover:bg-background/40 text-background rounded-full p-2"><ChevronLeft size={24} /></button>
-        <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 bg-background/20 hover:bg-background/40 text-background rounded-full p-2"><ChevronRight size={24} /></button>
+        <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 bg-background/20 hover:bg-background/40 text-background rounded-full p-2 md:right-20"><ChevronRight size={24} /></button>
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)} className={`w-3 h-3 rounded-full transition-all ${i === current ? "bg-primary w-8" : "bg-background/50"}`} />
