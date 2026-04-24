@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Instagram, Facebook } from "lucide-react";
-import sandisLogo from "@/assets/sandis logo .png";
+import sandisLogo from "@/assets/sandis logo.png";
 
 const Footer = () => (
   <footer className="bg-foreground text-background">

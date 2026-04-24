@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileText, Car, Bus, Train, Clock, IndianRupee, Instagram, Facebook, Phone, MapPin, Mail, MessageCircle, House, Info, Contact } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileText, Car, Bus, IndianRupee, Instagram, Facebook, Phone, MapPin, House, Info, Contact } from "lucide-react";
 import banner1 from "@/assets/banners/banner 1.png";
 import banner2 from "@/assets/banners/banner2.png";
 import heroHotel from "@/assets/hero-hotel.jpg";
-import sandisLogo from "@/assets/sandis logo .png";
+import sandisLogo from "@/assets/sandis logo.png";
 
 // Static images for fallback
 import tourGoa from "@/assets/tour-goa.jpg";
@@ -38,7 +37,7 @@ const whyUs = [
 
 const serviceIcons = [
   { icon: Plane, label: "Mumbai / Pune Airport Transport", bg: "bg-white", iconClass: "text-primary" },
-  { icon: Car, label: "Car Rental / Bus Booking", bg: "bg-red-500", iconClass: "text-white" },
+  { icon: Car, label: "Car/ Bus Rental", bg: "bg-red-500", iconClass: "text-white" },
   { icon: Plane, label: "Flight Booking", bg: "bg-yellow-400", iconClass: "text-white" },
   { icon: Bus, label: "Bus / Train Booking", bg: "bg-green-500", iconClass: "text-white" },
   { icon: MapPin, label: "Holidays", bg: "bg-blue-500", iconClass: "text-white" },
@@ -54,6 +53,13 @@ const testimonials = [
   { name: "Amit Patel", text: "Best Dubai package at unbeatable price. Will definitely book again.", rating: 5 },
 ];
 
+const tourStats = [
+  { value: 10, suffix: "K+", label: "Visitors Reached" },
+  { value: 5, suffix: "K+", label: "Happy Customers" },
+  { value: 250, suffix: "+", label: "Tours Arranged" },
+  { value: 4.9, suffix: "/5", label: "Google Reviews", decimals: 1 },
+];
+
 const bannerNavItems = [
   { icon: House, label: "Home", path: "/" },
   { icon: Info, label: "About Us", path: "/about" },
@@ -63,14 +69,60 @@ const bannerNavItems = [
 const Index = () => {
   const [current, setCurrent] = useState(0);
   const [activeBannerNav, setActiveBannerNav] = useState<string | null>(null);
+  const [visibleStats, setVisibleStats] = useState(() =>
+    tourStats.map(() => 0),
+  );
+  const [statsStarted, setStatsStarted] = useState(false);
+  const statsSectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 5000);
     return () => clearInterval(timer);
   }, []);
 
-  const prev = () => setCurrent((c) => (c - 1 + slides.length) % slides.length);
-  const next = () => setCurrent((c) => (c + 1) % slides.length);
+  useEffect(() => {
+    const statsNode = statsSectionRef.current;
+    if (!statsNode || statsStarted) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStatsStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.35 },
+    );
+
+    observer.observe(statsNode);
+    return () => observer.disconnect();
+  }, [statsStarted]);
+
+  useEffect(() => {
+    if (!statsStarted) return;
+
+    const duration = 1400;
+    const startTime = performance.now();
+
+    const animateStats = (now: number) => {
+      const progress = Math.min((now - startTime) / duration, 1);
+      const easedProgress = 1 - Math.pow(1 - progress, 3);
+
+      setVisibleStats(
+        tourStats.map((stat) => {
+          const nextValue = stat.value * easedProgress;
+          return stat.decimals ? Number(nextValue.toFixed(stat.decimals)) : Math.round(nextValue);
+        }),
+      );
+
+      if (progress < 1) {
+        window.requestAnimationFrame(animateStats);
+      }
+    };
+
+    const frameId = window.requestAnimationFrame(animateStats);
+    return () => window.cancelAnimationFrame(frameId);
+  }, [statsStarted]);
 
   return (
     <div>
@@ -83,7 +135,7 @@ const Index = () => {
                 <img
                   src={sandisLogo}
                   alt="Sandis Tours logo"
-                  className="h-14 w-auto"
+                  className="h-16 w-auto md:h-20 lg:h-24"
                   loading="eager"
                   decoding="async"
                 />
@@ -159,33 +211,12 @@ const Index = () => {
                   <div className="max-w-xl mx-auto animate-fade-up text-center px-6">
                     <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-background leading-tight">{slide.headline}</h1>
                     <p className="text-base md:text-lg text-background/80 mt-3">{slide.sub}</p>
-                    <Link to={slide.link}><Button size="lg" className="mt-5 text-sm md:text-base px-7">{slide.cta}</Button></Link>
-                  </div>
-                  <div className="absolute -right-3 top-1/2 hidden -translate-y-1/2 overflow-hidden rounded-2xl shadow-[0_18px_40px_rgba(0,0,0,0.28)] ring-1 ring-white/20 md:flex md:flex-col">
-                    <a
-                      href="https://wa.me/919876543210?text=Hi%20Sandis%20Tours%2C%20I%20would%20like%20to%20connect%20on%20WhatsApp."
-                      target="_blank"
-                      rel="noreferrer"
-                      className="flex h-16 w-16 items-center justify-center bg-[linear-gradient(180deg,#42c96b_0%,#2fa856_100%)] text-white transition-transform hover:scale-[1.03]"
-                      aria-label="Chat on WhatsApp"
-                    >
-                      <MessageCircle size={20} />
-                    </a>
-                    <a
-                      href="tel:+919876543210"
-                      className="flex h-16 w-16 items-center justify-center bg-[linear-gradient(180deg,#e56d74_0%,#cc4f58_100%)] text-white transition-transform hover:scale-[1.03]"
-                      aria-label="Call Sandis Tours"
-                    >
-                      <Phone size={20} />
-                    </a>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         ))}
-        <button onClick={prev} className="absolute left-4 top-1/2 -translate-y-1/2 bg-background/20 hover:bg-background/40 text-background rounded-full p-2"><ChevronLeft size={24} /></button>
-        <button onClick={next} className="absolute right-4 top-1/2 -translate-y-1/2 bg-background/20 hover:bg-background/40 text-background rounded-full p-2 md:right-20"><ChevronRight size={24} /></button>
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)} className={`w-3 h-3 rounded-full transition-all ${i === current ? "bg-primary w-8" : "bg-background/50"}`} />
@@ -207,14 +238,23 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Strip */}
-      <section className="bg-primary py-10 px-4 mt-10">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
-          <div>
-            <h3 className="text-2xl font-bold text-primary-foreground">Ready to explore the world?</h3>
-            <p className="text-primary-foreground/80 mt-1">Let us plan your perfect getaway today!</p>
+      {/* Tour Stats */}
+      <section ref={statsSectionRef} className="mt-10 px-4">
+        <div className="container mx-auto">
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+            {tourStats.map(({ value, suffix, label, decimals }, index) => (
+              <div
+                key={label}
+                className="rounded-3xl bg-[linear-gradient(135deg,hsl(27_91%_48%),hsl(35_95%_55%))] p-6 text-center text-white shadow-[0_16px_34px_rgba(236,117,0,0.24)]"
+              >
+                <div className="text-3xl font-extrabold tracking-tight">
+                  {decimals ? visibleStats[index].toFixed(decimals) : visibleStats[index]}
+                  {suffix}
+                </div>
+                <p className="mt-1 text-sm font-medium uppercase tracking-[0.14em] text-white/78">{label}</p>
+              </div>
+            ))}
           </div>
-          <Link to="/contact"><Button variant="secondary" size="lg" className="px-8">Get In Touch</Button></Link>
         </div>
       </section>
 

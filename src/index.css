@@ -99,6 +99,10 @@
   .animate-slide-in {
     animation: slideIn 0.4s ease-out forwards;
   }
+
+  .animate-float-pop {
+    animation: floatPop 1.9s ease-in-out infinite;
+  }
 }
 
 @keyframes fadeUp {
@@ -125,5 +129,28 @@
   to {
     opacity: 1;
     transform: translateX(0);
+  }
+}
+
+@keyframes floatPop {
+  0% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 12px 40px -8px hsla(27, 91%, 48%, 0.2);
+  }
+  25% {
+    transform: translateY(-6px) scale(1.06);
+    box-shadow: 0 16px 48px -10px hsla(27, 91%, 48%, 0.3);
+  }
+  50% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 12px 40px -8px hsla(27, 91%, 48%, 0.24);
+  }
+  75% {
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 18px 52px -12px hsla(27, 91%, 48%, 0.34);
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 12px 40px -8px hsla(27, 91%, 48%, 0.2);
   }
 }

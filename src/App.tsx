@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import CallButton from "@/components/CallButton";
 import EnquiryPopup from "@/components/EnquiryPopup";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
@@ -59,6 +60,7 @@ const AppLayout = () => {
         </Routes>
       </main>
       {!isHome && <Footer />}
+      <CallButton />
       <WhatsAppButton />
       <EnquiryPopup />
     </>

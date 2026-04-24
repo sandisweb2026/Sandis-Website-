@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Phone, Instagram, Facebook, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import sandisLogo from "@/assets/sandis logo .png";
+import sandisLogo from "@/assets/sandis logo.png";
 
 const navLinks = [
   { label: "Home", path: "/" },
