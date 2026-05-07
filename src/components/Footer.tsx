@@ -2,6 +2,14 @@ import { Link } from "react-router-dom";
 import { Phone, Mail, MapPin, Instagram, Facebook } from "lucide-react";
 import sandisLogo from "@/assets/sandis logo.png";
 
+const quickLinks = [
+  { label: "Home", path: "/" },
+  { label: "Services", path: "/services" },
+  { label: "Holidays", path: "/holidays" },
+  { label: "About Us", path: "/about" },
+  { label: "Contact", path: "/contact" },
+];
+
 const Footer = () => (
   <footer className="bg-foreground text-background">
     <div className="container mx-auto px-4 py-12">
@@ -27,24 +35,15 @@ const Footer = () => (
             Quick Links
           </h4>
           <nav className="flex flex-col gap-2 text-sm opacity-70">
-            <Link
-              to="/about"
-              className="flex items-center px-5 py-3 text-sm font-medium text-background transition-all hover:opacity-100"
-            >
-              <span>About</span>
-            </Link>
-            <Link
-              to="/services"
-              className="flex items-center px-5 py-3 text-sm font-medium text-background transition-all hover:opacity-100"
-            >
-              <span>Services</span>
-            </Link>
-            <Link
-              to="/holidays"
-              className="flex items-center px-5 py-4 text-sm font-medium text-background transition-all hover:opacity-100"
-            >
-              <span>Holidays</span>
-            </Link>
+            {quickLinks.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className="font-medium text-background transition-opacity hover:opacity-100"
+              >
+                <span>{link.label}</span>
+              </Link>
+            ))}
           </nav>
         </div>
 
