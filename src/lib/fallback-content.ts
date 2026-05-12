@@ -577,6 +577,15 @@ export const fallbackServices: ServiceRecord[] = [
     updated_at: fallbackTimestamp,
   },
   {
+    id: "fallback-forex",
+    title: "Foreign Exchange Services",
+    description:
+      "Secure currency exchange, travel cards, and traveler's cheques with transparent rate support.",
+    icon: "DollarSign",
+    created_at: fallbackTimestamp,
+    updated_at: fallbackTimestamp,
+  },
+  {
     id: "fallback-car",
     title: "Car Rentals",
     description:
@@ -596,9 +605,9 @@ export const fallbackServices: ServiceRecord[] = [
   },
   {
     id: "fallback-train",
-    title: "Train Tickets",
+    title: "Railway Reservation",
     description:
-      "Quick train bookings with preferred classes and timings.",
+      "Authorized railway ticket booking with Tatkaal guidance, e-ticket delivery, SMS updates, and print copy support.",
     icon: "Train",
     created_at: fallbackTimestamp,
     updated_at: fallbackTimestamp,

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileText, Car, Bus, IndianRupee, Instagram, Facebook, Phone, MapPin, House, Info, Contact } from "lucide-react";
-import banner1 from "@/assets/banners/banner 1.png";
-import banner2 from "@/assets/banners/banner2.png";
-import heroHotel from "@/assets/hero-hotel.jpg";
+import banner1 from "@/assets/banners/banner 1.jpeg";
+import banner2 from "@/assets/banners/banner 2.jpeg";
+import banner3 from "@/assets/banners/banner 3.jpeg";
 import sandisLogo from "@/assets/sandis logo.png";
 
 // Static images for fallback
@@ -24,9 +24,9 @@ const fallbackImages: Record<string, string> = {
 };
 
 const slides = [
-  { image: banner1, headline: "30+ Years of Trusted Travel Experience", sub: "Creating unforgettable journeys since 1995", cta: "Explore Tours", link: "/holidays" },
-  { image: banner2, headline: "Why Choose Sandis Tours?", sub: "Trusted Service • Best Pricing • Complete Travel Support", cta: "Why Choose Us", link: "/about" },
-  { image: heroHotel, headline: "Complete Travel Solutions in One Place", sub: "Flights • Hotels • Visa • Car Rental • Tour Packages", cta: "View Services", link: "/services" },
+  { image: banner1, headline: "Luxury Holidays, Thoughtfully Planned", sub: "Handpicked stays, scenic escapes, and seamless travel support", cta: "Explore Tours", link: "/holidays" },
+  { image: banner2, headline: "International Tours Made Effortless", sub: "Trusted itineraries for families, couples, and group travelers", cta: "Why Choose Us", link: "/about" },
+  { image: banner3, headline: "Explore Iconic Destinations With Confidence", sub: "Domestic and international journeys backed by 30+ years of care", cta: "View Services", link: "/services" },
 ];
 
 const whyUs = [
