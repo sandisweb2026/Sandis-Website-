@@ -171,9 +171,18 @@ const Index = () => {
               <div className="container mx-auto px-4">
                 <div className="relative flex items-center justify-center min-h-[320px] lg:min-h-[360px]">
                   <div className="max-w-2xl mx-auto animate-fade-up text-center px-10 sm:px-12 md:px-6">
-                    <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/45 bg-primary/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-white shadow-[0_16px_34px_rgba(236,117,0,0.36)] backdrop-blur">
-                      <Plane size={15} />
-                      Trusted Travel Since 1995
+                    <div className="inline-flex items-center gap-3 border-l-4 border-primary bg-black/28 px-4 py-3 text-left text-white shadow-[0_18px_38px_rgba(0,0,0,0.34)] ring-1 ring-white/20 backdrop-blur-md">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-[0_10px_24px_rgba(255,255,255,0.22)]">
+                        <Plane size={18} />
+                      </span>
+                      <span className="flex flex-col leading-none">
+                        <span className="text-[0.68rem] font-bold uppercase tracking-[0.28em] text-amber-200">
+                          Established 1995
+                        </span>
+                        <span className="mt-1 text-sm font-extrabold tracking-[0.08em] text-white sm:text-base">
+                          30+ Years Of Travel Care
+                        </span>
+                      </span>
                     </div>
                     <h1 className="mt-5 text-3xl font-extrabold leading-tight text-white drop-shadow-[0_5px_22px_rgba(0,0,0,0.92)] sm:text-4xl lg:text-6xl">
                       {slide.headline}
