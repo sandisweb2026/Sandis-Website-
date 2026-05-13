@@ -68,7 +68,6 @@ const bannerNavItems = [
 
 const Index = () => {
   const [current, setCurrent] = useState(0);
-  const [activeBannerNav, setActiveBannerNav] = useState<string | null>(null);
   const [visibleStats, setVisibleStats] = useState(() =>
     tourStats.map(() => 0),
   );
@@ -167,56 +166,62 @@ const Index = () => {
         {slides.map((slide, i) => (
           <div key={i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
             <img src={slide.image} alt="" className="w-full h-full object-cover" width={1920} height={1080} />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,7,18,0.62),rgba(15,23,42,0.34),rgba(3,7,18,0.58)),linear-gradient(180deg,rgba(3,7,18,0.24),rgba(3,7,18,0.5))]" />
             <div className="absolute inset-0 flex items-center">
               <div className="container mx-auto px-4">
                 <div className="relative flex items-center justify-center min-h-[320px] lg:min-h-[360px]">
-                  <div className="absolute -left-1 top-1/2 flex -translate-y-1/2 items-center gap-2 sm:-left-2 sm:gap-3 md:-left-3 md:gap-4">
-                    <div className="h-32 w-[2px] bg-gradient-to-b from-primary/80 via-amber-300/70 to-transparent md:h-28" />
-                    <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.12em] text-white">
-                      {bannerNavItems.map(({ icon: Icon, label, path }) => {
-                        const isActive = activeBannerNav === label;
-
-                        return (
-                          <div key={label} className="flex items-center gap-3">
-                            <button
-                              type="button"
-                              onClick={() => setActiveBannerNav((currentNav) => currentNav === label ? null : label)}
-                              className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all sm:h-12 sm:w-12 ${
-                                isActive
-                                  ? "border-amber-200/70 bg-gradient-to-br from-primary via-orange-400 to-amber-300 text-white shadow-[0_12px_26px_rgba(255,140,0,0.45)]"
-                                  : "border-white/45 bg-white/18 text-white shadow-[0_12px_30px_rgba(0,0,0,0.22)] ring-1 ring-white/18 backdrop-blur-md hover:bg-white/28 hover:border-white/65"
-                              }`}
-                              aria-label={`Show ${label} link`}
-                              aria-expanded={isActive}
-                            >
-                              <Icon size={18} />
-                            </button>
-                            <Link
-                              to={path}
-                              className={`overflow-hidden rounded-full border text-xs font-semibold uppercase tracking-[0.14em] transition-all sm:text-sm sm:tracking-[0.18em] ${
-                                isActive
-                                  ? "w-32 border-amber-200/60 bg-[linear-gradient(135deg,rgba(255,153,0,0.95),rgba(255,196,61,0.95))] px-4 py-3 text-white shadow-[0_14px_30px_rgba(255,140,0,0.32)] sm:w-40 md:w-44 md:px-5"
-                                  : "pointer-events-none w-0 border-transparent px-0 py-3 text-transparent"
-                              }`}
-                              aria-hidden={!isActive}
-                              tabIndex={isActive ? 0 : -1}
-                            >
-                              {label}
-                            </Link>
-                          </div>
-                        );
-                      })}
-                    </nav>
-                  </div>
-                  <div className="max-w-xl mx-auto animate-fade-up text-center px-6">
-                    <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-background leading-tight">{slide.headline}</h1>
-                    <p className="text-base md:text-lg text-background/80 mt-3">{slide.sub}</p>
+                  <div className="max-w-2xl mx-auto animate-fade-up text-center px-10 sm:px-12 md:px-6">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-amber-200/45 bg-primary/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-white shadow-[0_16px_34px_rgba(236,117,0,0.36)] backdrop-blur">
+                      <Plane size={15} />
+                      Trusted Travel Since 1995
+                    </div>
+                    <h1 className="mt-5 text-3xl font-extrabold leading-tight text-white drop-shadow-[0_5px_22px_rgba(0,0,0,0.92)] sm:text-4xl lg:text-6xl">
+                      {slide.headline}
+                    </h1>
+                    <p className="mx-auto mt-4 max-w-xl text-base font-semibold leading-7 text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)] sm:text-lg lg:text-xl">{slide.sub}</p>
+                    <Link
+                      to={slide.link}
+                      className="mt-7 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-orange-400 to-amber-300 px-6 py-3 text-sm font-bold text-white shadow-[0_18px_38px_rgba(236,117,0,0.38)] ring-1 ring-white/30 transition hover:-translate-y-0.5 hover:shadow-[0_24px_46px_rgba(236,117,0,0.48)]"
+                    >
+                      {slide.cta}
+                      <Plane size={16} />
+                    </Link>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         ))}
+        <div className="pointer-events-none absolute inset-0 z-10 flex items-center">
+          <div className="container mx-auto px-4">
+            <div className="relative min-h-[320px] lg:min-h-[360px]">
+              <div className="pointer-events-auto absolute -left-1 top-1/2 flex -translate-y-1/2 items-center gap-2 sm:-left-2 sm:gap-3 md:-left-3 md:gap-4">
+                <div className="h-32 w-[2px] bg-gradient-to-b from-primary/80 via-amber-300/70 to-transparent md:h-28" />
+                <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.12em] text-white">
+                  {bannerNavItems.map(({ icon: Icon, label, path }) => (
+                    <div key={label} className="group flex items-center gap-3">
+                      <Link
+                        to={path}
+                        className="flex h-11 w-11 items-center justify-center rounded-full border border-white/55 bg-white/18 text-white shadow-[0_12px_30px_rgba(0,0,0,0.28)] ring-1 ring-white/18 backdrop-blur-md transition-all hover:scale-105 hover:border-amber-200/70 hover:bg-gradient-to-br hover:from-primary hover:via-orange-400 hover:to-amber-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-200 sm:h-12 sm:w-12"
+                        aria-label={`Go to ${label}`}
+                      >
+                        <Icon size={18} />
+                      </Link>
+                      <Link
+                        to={path}
+                        className="pointer-events-none w-0 overflow-hidden rounded-full border border-transparent px-0 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-transparent transition-all group-hover:pointer-events-auto group-hover:w-32 group-hover:border-amber-200/60 group-hover:bg-[linear-gradient(135deg,rgba(255,153,0,0.95),rgba(255,196,61,0.95))] group-hover:px-4 group-hover:text-white group-hover:shadow-[0_14px_30px_rgba(255,140,0,0.32)] group-focus-within:pointer-events-auto group-focus-within:w-32 group-focus-within:border-amber-200/60 group-focus-within:bg-[linear-gradient(135deg,rgba(255,153,0,0.95),rgba(255,196,61,0.95))] group-focus-within:px-4 group-focus-within:text-white group-focus-within:shadow-[0_14px_30px_rgba(255,140,0,0.32)] sm:text-sm sm:tracking-[0.18em] sm:group-hover:w-40 sm:group-focus-within:w-40 md:group-hover:w-44 md:group-hover:px-5 md:group-focus-within:w-44 md:group-focus-within:px-5"
+                        aria-hidden="true"
+                        tabIndex={-1}
+                      >
+                        {label}
+                      </Link>
+                    </div>
+                  ))}
+                </nav>
+              </div>
+            </div>
+          </div>
+        </div>
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)} className={`w-3 h-3 rounded-full transition-all ${i === current ? "bg-primary w-8" : "bg-background/50"}`} />
