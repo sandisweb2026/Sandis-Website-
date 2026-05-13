@@ -174,6 +174,17 @@ const isRailwayService = (service: ServiceRecord) => {
   );
 };
 
+const isForexService = (service: ServiceRecord) => {
+  const title = service.title.toLowerCase();
+
+  return (
+    service.icon === "DollarSign" ||
+    title.includes("foreign exchange") ||
+    title.includes("forex") ||
+    title.includes("currency")
+  );
+};
+
 const RailwayReservationDetails = () => (
   <div className="relative isolate overflow-hidden rounded-[8px] border border-primary/15 bg-white text-foreground shadow-elevated">
     <div className="absolute inset-0 -z-10 opacity-75 [background-image:linear-gradient(hsl(27_91%_48%_/_0.06)_1px,transparent_1px),linear-gradient(90deg,hsl(199_89%_48%_/_0.05)_1px,transparent_1px)] [background-size:34px_34px]" />
@@ -424,12 +435,21 @@ const RailwayReservationDetails = () => (
 const Services = () => {
   const [services, setServices] = useState<ServiceRecord[]>([]);
   const [isRailwayDialogOpen, setIsRailwayDialogOpen] = useState(false);
+  const [isForexDialogOpen, setIsForexDialogOpen] = useState(false);
 
   useEffect(() => {
     fetchServices()
       .then(setServices)
       .catch(() => setServices(fallbackServices));
   }, []);
+
+  const railwayService =
+    services.find(isRailwayService) ?? fallbackServices.find(isRailwayService);
+  const forexService =
+    services.find(isForexService) ?? fallbackServices.find(isForexService);
+  const serviceCards = [railwayService, forexService].filter(
+    (service): service is ServiceRecord => Boolean(service),
+  );
 
   return (
     <div className="pt-16">
@@ -703,7 +723,20 @@ const Services = () => {
             </div>
           </div>
 
-          <div className="relative isolate mb-16 overflow-hidden rounded-[8px] border border-emerald-200 bg-white text-foreground shadow-elevated">
+          <Dialog
+            open={isForexDialogOpen}
+            onOpenChange={setIsForexDialogOpen}
+          >
+            <DialogContent className="max-h-[92vh] max-w-[1180px] overflow-y-auto border-0 bg-transparent p-0 shadow-none sm:rounded-[8px]">
+              <DialogTitle className="sr-only">
+                Foreign Exchange Services
+              </DialogTitle>
+              <DialogDescription className="sr-only">
+                Details about Sandi&apos;s foreign exchange services,
+                transparent currency exchange, travel card support, traveler&apos;s
+                cheques, and international travel money planning.
+              </DialogDescription>
+              <div className="relative isolate overflow-hidden rounded-[8px] border border-emerald-200 bg-white text-foreground shadow-elevated">
             <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_18%_18%,hsl(151_81%_96%),transparent_30%),radial-gradient(circle_at_82%_12%,hsl(199_89%_96%),transparent_28%),linear-gradient(135deg,hsl(0_0%_100%),hsl(40_33%_98%))]" />
             <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-emerald-500 via-primary to-sky-500" />
 
@@ -941,7 +974,9 @@ const Services = () => {
                 </div>
               </div>
             </div>
-          </div>
+              </div>
+            </DialogContent>
+          </Dialog>
 
           <Dialog
             open={isRailwayDialogOpen}
@@ -960,61 +995,41 @@ const Services = () => {
             </DialogContent>
           </Dialog>
 
-          {services.length === 0 ? (
-            <div className="text-center text-muted-foreground py-16">
-              <p className="text-lg font-medium text-foreground">
-                No services available right now.
-              </p>
-              <p className="mt-2">
-                Please check back soon or contact us for custom requests.
-              </p>
-              <Link to="/contact">
-                <Button variant="outline" className="mt-6">
-                  Contact Us
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {services.map((service) => {
-                const Icon = iconMap[service.icon] || Plane;
-                const showRailwayDetails = isRailwayService(service);
+          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
+            {serviceCards.map((service) => {
+              const Icon = iconMap[service.icon] || Plane;
+              const showRailwayDetails = isRailwayService(service);
 
-                return (
-                  <div
-                    key={service.id}
-                    className="bg-card rounded-2xl p-8 shadow-card hover:shadow-elevated transition-all hover:-translate-y-1"
-                  >
-                    <div className="w-14 h-14 rounded-xl bg-accent flex items-center justify-center">
-                      <Icon size={28} className="text-primary" />
-                    </div>
-                    <h3 className="font-semibold text-lg mt-4 text-foreground">
-                      {service.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      {service.description}
-                    </p>
-                    {showRailwayDetails ? (
-                      <Button
-                        size="sm"
-                        className="mt-4"
-                        type="button"
-                        onClick={() => setIsRailwayDialogOpen(true)}
-                      >
-                        Know More
-                      </Button>
-                    ) : (
-                      <Link to="/contact">
-                        <Button size="sm" className="mt-4">
-                          Enquire Now
-                        </Button>
-                      </Link>
-                    )}
+              return (
+                <div
+                  key={service.id}
+                  className="bg-card rounded-2xl p-8 shadow-card hover:shadow-elevated transition-all hover:-translate-y-1"
+                >
+                  <div className="w-14 h-14 rounded-xl bg-accent flex items-center justify-center">
+                    <Icon size={28} className="text-primary" />
                   </div>
-                );
-              })}
-            </div>
-          )}
+                  <h3 className="font-semibold text-lg mt-4 text-foreground">
+                    {service.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    {service.description}
+                  </p>
+                  <Button
+                    size="sm"
+                    className="mt-4"
+                    type="button"
+                    onClick={() =>
+                      showRailwayDetails
+                        ? setIsRailwayDialogOpen(true)
+                        : setIsForexDialogOpen(true)
+                    }
+                  >
+                    Know More
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
     </div>
