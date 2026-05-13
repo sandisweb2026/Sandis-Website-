@@ -65,5 +65,9 @@ export const apiRequest = async <T>(
     throw new Error(message);
   }
 
+  if (typeof data === "string") {
+    throw new Error("Invalid API response format.");
+  }
+
   return data as T;
 };
