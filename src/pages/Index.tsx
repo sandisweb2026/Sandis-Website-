@@ -143,7 +143,7 @@ const Index = () => {
                 href="https://wa.me/919876543210?text=Hi%20Sandis%20Tours%2C%20I%20want%20to%20book%20Mumbai%20Airport%20pickup%2Fdrop.%20Please%20share%20details."
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-orange-400 to-amber-400 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[0_10px_26px_hsla(27,91%,48%,0.35)] ring-1 ring-white/30 backdrop-blur transition-all hover:scale-[1.02] hover:shadow-[0_16px_32px_hsla(27,91%,48%,0.5)]"
+                className="flex -translate-x-3 items-center gap-2 rounded-full bg-gradient-to-r from-primary via-orange-400 to-amber-400 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[0_10px_26px_hsla(27,91%,48%,0.35)] ring-1 ring-white/30 backdrop-blur transition-all hover:scale-[1.02] hover:shadow-[0_16px_32px_hsla(27,91%,48%,0.5)] sm:-translate-x-5 lg:-translate-x-7"
                 aria-label="Mumbai Airport booking on WhatsApp"
               >
                 <Plane size={16} />
