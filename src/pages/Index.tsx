@@ -170,8 +170,8 @@ const Index = () => {
             <div className="absolute inset-0 flex items-center">
               <div className="container mx-auto px-4">
                 <div className="relative flex items-center justify-center min-h-[320px] lg:min-h-[360px]">
-                  <div className="absolute -left-3 top-1/2 hidden -translate-y-1/2 md:flex items-center gap-4">
-                    <div className="h-28 w-[2px] bg-gradient-to-b from-primary/80 via-amber-300/70 to-transparent" />
+                  <div className="absolute -left-1 top-1/2 flex -translate-y-1/2 items-center gap-2 sm:-left-2 sm:gap-3 md:-left-3 md:gap-4">
+                    <div className="h-32 w-[2px] bg-gradient-to-b from-primary/80 via-amber-300/70 to-transparent md:h-28" />
                     <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.12em] text-white">
                       {bannerNavItems.map(({ icon: Icon, label, path }) => {
                         const isActive = activeBannerNav === label;
@@ -181,7 +181,7 @@ const Index = () => {
                             <button
                               type="button"
                               onClick={() => setActiveBannerNav((currentNav) => currentNav === label ? null : label)}
-                              className={`flex h-12 w-12 items-center justify-center rounded-full border transition-all ${
+                              className={`flex h-11 w-11 items-center justify-center rounded-full border transition-all sm:h-12 sm:w-12 ${
                                 isActive
                                   ? "border-amber-200/70 bg-gradient-to-br from-primary via-orange-400 to-amber-300 text-white shadow-[0_12px_26px_rgba(255,140,0,0.45)]"
                                   : "border-white/45 bg-white/18 text-white shadow-[0_12px_30px_rgba(0,0,0,0.22)] ring-1 ring-white/18 backdrop-blur-md hover:bg-white/28 hover:border-white/65"
@@ -193,9 +193,9 @@ const Index = () => {
                             </button>
                             <Link
                               to={path}
-                              className={`overflow-hidden rounded-full border text-sm font-semibold uppercase tracking-[0.18em] transition-all ${
+                              className={`overflow-hidden rounded-full border text-xs font-semibold uppercase tracking-[0.14em] transition-all sm:text-sm sm:tracking-[0.18em] ${
                                 isActive
-                                  ? "w-44 border-amber-200/60 bg-[linear-gradient(135deg,rgba(255,153,0,0.95),rgba(255,196,61,0.95))] px-5 py-3 text-white shadow-[0_14px_30px_rgba(255,140,0,0.32)]"
+                                  ? "w-32 border-amber-200/60 bg-[linear-gradient(135deg,rgba(255,153,0,0.95),rgba(255,196,61,0.95))] px-4 py-3 text-white shadow-[0_14px_30px_rgba(255,140,0,0.32)] sm:w-40 md:w-44 md:px-5"
                                   : "pointer-events-none w-0 border-transparent px-0 py-3 text-transparent"
                               }`}
                               aria-hidden={!isActive}
