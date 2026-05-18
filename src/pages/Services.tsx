@@ -10,6 +10,7 @@ import {
   Briefcase,
   Bus,
   CalendarCheck,
+  ChevronRight,
   Car,
   Clock3,
   CreditCard,
@@ -19,6 +20,7 @@ import {
   GraduationCap,
   HandCoins,
   Hotel,
+  Home,
   IdCard,
   Landmark,
   MailCheck,
@@ -52,6 +54,7 @@ import {
 import { fallbackServices } from "@/lib/fallback-content";
 import { fetchServices, type ServiceRecord } from "@/lib/travel-cms";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
+import servicesHeroImage from "@/assets/hero-hotel.jpg";
 
 const iconMap: Record<string, React.ElementType> = {
   Plane,
@@ -2572,6 +2575,60 @@ const AirportTransferDetails = () => (
   </div>
 );
 
+type ServiceCardTheme = {
+  bar: string;
+  border: string;
+  button: string;
+  chip: string;
+  glow: string;
+  icon: string;
+  iconWrap: string;
+  tag: string;
+};
+
+const serviceCardThemes: ServiceCardTheme[] = [
+  {
+    bar: "bg-gradient-to-r from-amber-500 via-orange-500 to-sky-500",
+    border: "border-amber-200/80",
+    button: "bg-orange-500 text-white hover:bg-orange-600",
+    chip: "border-amber-200 bg-amber-50 text-orange-700",
+    glow: "bg-amber-200/65",
+    icon: "text-orange-600",
+    iconWrap: "bg-amber-50",
+    tag: "border-amber-200 bg-amber-50 text-orange-700",
+  },
+  {
+    bar: "bg-gradient-to-r from-cyan-500 via-sky-500 to-emerald-500",
+    border: "border-sky-200/80",
+    button: "bg-sky-600 text-white hover:bg-sky-700",
+    chip: "border-sky-200 bg-sky-50 text-sky-700",
+    glow: "bg-sky-200/65",
+    icon: "text-sky-700",
+    iconWrap: "bg-sky-50",
+    tag: "border-sky-200 bg-sky-50 text-sky-700",
+  },
+  {
+    bar: "bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500",
+    border: "border-emerald-200/80",
+    button: "bg-emerald-600 text-white hover:bg-emerald-700",
+    chip: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    glow: "bg-emerald-200/70",
+    icon: "text-emerald-700",
+    iconWrap: "bg-emerald-50",
+    tag: "border-emerald-200 bg-emerald-50 text-emerald-700",
+  },
+  {
+    bar: "bg-gradient-to-r from-indigo-500 via-violet-500 to-sky-500",
+    border: "border-indigo-200/80",
+    button: "bg-indigo-600 text-white hover:bg-indigo-700",
+    chip: "border-indigo-200 bg-indigo-50 text-indigo-700",
+    glow: "bg-indigo-200/70",
+    icon: "text-indigo-700",
+    iconWrap: "bg-indigo-50",
+    tag: "border-indigo-200 bg-indigo-50 text-indigo-700",
+  },
+];
+
 const Services = () => {
   const [services, setServices] = useState<ServiceRecord[]>([]);
   const [isRailwayDialogOpen, setIsRailwayDialogOpen] = useState(false);
@@ -2629,13 +2686,38 @@ const Services = () => {
 
   return (
     <div className="pt-16">
-      <section className="bg-primary py-16 px-4">
-        <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold text-primary-foreground">
+      <section className="relative overflow-hidden px-4 py-20 sm:py-24">
+        <img
+          src={servicesHeroImage}
+          alt="Luxury travel planning services"
+          className="services-hero-image absolute inset-0 h-full w-full object-cover"
+        />
+        <div className="services-hero-light absolute -left-24 top-0 h-[340px] w-[340px] rounded-full" />
+        <div className="services-hero-light-delayed absolute -right-20 bottom-0 h-[320px] w-[320px] rounded-full" />
+        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,42,0.8),rgba(236,117,0,0.64)),linear-gradient(180deg,rgba(15,23,42,0.2),rgba(15,23,42,0.54))]" />
+        <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_18%_30%,rgba(255,255,255,0.35),transparent_32%),radial-gradient(circle_at_80%_70%,rgba(255,255,255,0.22),transparent_28%)]" />
+
+        <div className="container relative z-10 mx-auto flex min-h-[230px] flex-col items-center justify-center text-center text-white">
+          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-950/10 backdrop-blur-md">
+            <Home size={15} />
+            <Link to="/" className="transition hover:text-white/80">
+              Home
+            </Link>
+            <ChevronRight size={15} className="text-white/70" />
+            <span>Services</span>
+          </div>
+
+          <div className="animate-fade-up mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-foreground shadow-[0_16px_30px_rgba(236,117,0,0.28)] [animation-delay:120ms]">
+            <Plane size={15} />
+            Curated Travel Services
+          </div>
+
+          <h1 className="animate-fade-up mt-5 text-4xl font-extrabold leading-tight sm:text-5xl [animation-delay:180ms]">
             Our Services
           </h1>
-          <p className="text-primary-foreground/80 mt-2">
-            Complete travel solutions under one roof
+          <p className="animate-fade-up mt-3 max-w-2xl text-base leading-7 text-white/90 sm:text-lg [animation-delay:240ms]">
+            Complete travel solutions under one roof for smooth, secure, and
+            memorable journeys.
           </p>
         </div>
       </section>
@@ -3285,7 +3367,7 @@ const Services = () => {
           </Dialog>
 
           <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-            {serviceCards.map((service) => {
+            {serviceCards.map((service, cardIndex) => {
               const Icon = iconMap[service.icon] || Plane;
               const showMemoriesDetails = isMemoriesService(service);
               const showAirportDetails = isAirportTransferService(service);
@@ -3298,88 +3380,136 @@ const Services = () => {
               const showRentalDetails = isRentalService(service);
               const cardTitle = showRentalDetails
                 ? "Rent A Car / Bus"
+                : showMemoriesDetails
+                  ? "We Create Memories"
                 : showAirportDetails
                   ? "Airport Transfers"
                 : showAirDetails
                   ? "Air Ticketing Services"
                   : service.title;
               const cardDescription = showRentalDetails
-                ? "4 to 40+ seater vehicles with reliable chauffeur support for city, outstation, and group travel."
+                ? "Well-maintained cars and buses from four to forty-plus seats, with chauffeurs for city and outstation trips."
+                : showMemoriesDetails
+                  ? "Personalized domestic and international journeys crafted around your interests, comfort, style, and meaningful travel experiences seamlessly."
                 : showAirportDetails
-                  ? "Mumbai (CSMIA/NMIA) and Pune airport pickups/drops with safe, reliable, and stress-free transfer coordination."
+                  ? "Reliable airport pickups and drops across Mumbai and Pune, with punctual chauffeurs and safe travel coordination."
                 : showAirDetails
-                  ? "Smart domestic and international flight bookings with best-fare guidance, route planning, and quick support."
-                  : service.description;
+                  ? "Smart domestic and international flight bookings with best-fare guidance, route planning, and responsive travel support always."
+                  : showRailwayDetails
+                    ? "Authorized railway ticket bookings with Tatkaal guidance, e-ticket delivery, SMS updates, and dependable journey assistance nationwide."
+                    : showHotelDetails
+                      ? "Comfortable hotel stays from budget to luxury categories, with curated options and trusted booking support worldwide."
+                      : showVisaDetails
+                        ? "Complete visa support with documentation guidance, application checks, status updates, and faster processing assistance for travelers."
+                        : showPassportDetails
+                          ? "End-to-end passport support for new applications, renewals, corrections, and Tatkaal processing with accurate documentation guidance throughout."
+                          : showInsuranceDetails
+                            ? "Comprehensive travel insurance plans for individuals, families, students, groups, and corporate travelers needing dependable protection worldwide."
+                            : "Secure currency exchange, travel cards, and traveller's cheques with transparent rates and reliable assistance for travelers.";
+              const cardTag = showMemoriesDetails
+                ? "Signature Tours"
+                : showAirportDetails
+                  ? "Transfers"
+                  : showAirDetails
+                    ? "Flights"
+                    : showRailwayDetails
+                      ? "Rail Desk"
+                      : showVisaDetails
+                        ? "Documentation"
+                        : showPassportDetails
+                          ? "Identity"
+                          : showInsuranceDetails
+                            ? "Protection"
+                            : showHotelDetails
+                              ? "Stays"
+                              : showRentalDetails
+                                ? "Mobility"
+                                : "Travel";
+              const cardTheme =
+                serviceCardThemes[cardIndex % serviceCardThemes.length];
 
               return (
                 <div
                   key={service.id}
-                  className="bg-card rounded-2xl p-8 shadow-card hover:shadow-elevated transition-all hover:-translate-y-1"
+                  className={`group relative isolate h-full min-h-[385px] overflow-hidden rounded-[24px] border bg-white/95 p-5 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated sm:p-6 ${cardTheme.border}`}
                 >
-                  <div className="w-14 h-14 rounded-xl bg-accent flex items-center justify-center">
-                    <Icon size={28} className="text-primary" />
+                  <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${cardTheme.bar}`} />
+                  <div className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full blur-2xl ${cardTheme.glow}`} />
+                  <div className="pointer-events-none absolute inset-0 opacity-[0.05] [background-image:linear-gradient(to_right,hsl(0_0%_0%)_1px,transparent_1px),linear-gradient(to_bottom,hsl(0_0%_0%)_1px,transparent_1px)] [background-size:22px_22px]" />
+
+                  <div className="relative flex h-full flex-col">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-card ${cardTheme.iconWrap}`}>
+                        <Icon size={28} className={cardTheme.icon} />
+                      </div>
+                      <span className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${cardTheme.tag}`}>
+                        {cardTag}
+                      </span>
+                    </div>
+                    <h3 className="mt-5 min-h-[62px] text-center text-2xl font-bold leading-tight text-foreground sm:min-h-[68px]">
+                      {cardTitle}
+                    </h3>
+                    <p className="mt-2.5 h-[112px] overflow-hidden text-justify text-base leading-7 text-muted-foreground">
+                      {cardDescription}
+                    </p>
+                    <div className="mt-auto flex justify-center border-t border-border/70 pt-4">
+                      <Button
+                        size="sm"
+                        className={`rounded-full px-5 font-semibold ${cardTheme.button}`}
+                        type="button"
+                        onClick={() => {
+                          if (showMemoriesDetails) {
+                            setIsMemoriesDialogOpen(true);
+                            return;
+                          }
+
+                          if (showAirportDetails) {
+                            setIsAirportDialogOpen(true);
+                            return;
+                          }
+
+                          if (showAirDetails) {
+                            setIsAirDialogOpen(true);
+                            return;
+                          }
+
+                          if (showRailwayDetails) {
+                            setIsRailwayDialogOpen(true);
+                            return;
+                          }
+
+                          if (showVisaDetails) {
+                            setIsVisaDialogOpen(true);
+                            return;
+                          }
+
+                          if (showPassportDetails) {
+                            setIsPassportDialogOpen(true);
+                            return;
+                          }
+
+                          if (showInsuranceDetails) {
+                            setIsInsuranceDialogOpen(true);
+                            return;
+                          }
+
+                          if (showHotelDetails) {
+                            setIsHotelDialogOpen(true);
+                            return;
+                          }
+
+                          if (showRentalDetails) {
+                            setIsRentalDialogOpen(true);
+                            return;
+                          }
+
+                          setIsForexDialogOpen(true);
+                        }}
+                      >
+                        Know More
+                      </Button>
+                    </div>
                   </div>
-                  <h3 className="font-semibold text-lg mt-4 text-foreground">
-                    {cardTitle}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {cardDescription}
-                  </p>
-                  <Button
-                    size="sm"
-                    className="mt-4"
-                    type="button"
-                    onClick={() => {
-                      if (showMemoriesDetails) {
-                        setIsMemoriesDialogOpen(true);
-                        return;
-                      }
-
-                      if (showAirportDetails) {
-                        setIsAirportDialogOpen(true);
-                        return;
-                      }
-
-                      if (showAirDetails) {
-                        setIsAirDialogOpen(true);
-                        return;
-                      }
-
-                      if (showRailwayDetails) {
-                        setIsRailwayDialogOpen(true);
-                        return;
-                      }
-
-                      if (showVisaDetails) {
-                        setIsVisaDialogOpen(true);
-                        return;
-                      }
-
-                      if (showPassportDetails) {
-                        setIsPassportDialogOpen(true);
-                        return;
-                      }
-
-                      if (showInsuranceDetails) {
-                        setIsInsuranceDialogOpen(true);
-                        return;
-                      }
-
-                      if (showHotelDetails) {
-                        setIsHotelDialogOpen(true);
-                        return;
-                      }
-
-                      if (showRentalDetails) {
-                        setIsRentalDialogOpen(true);
-                        return;
-                      }
-
-                      setIsForexDialogOpen(true);
-                    }}
-                  >
-                    Know More
-                  </Button>
                 </div>
               );
             })}
