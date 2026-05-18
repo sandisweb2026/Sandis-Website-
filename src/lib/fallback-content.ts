@@ -568,11 +568,56 @@ export const fallbackServices: ServiceRecord[] = [
     updated_at: fallbackTimestamp,
   },
   {
+    id: "fallback-memories",
+    title: "Sandi's - We Create Memories, Not Just Tours",
+    description:
+      "Personalized domestic and international tour experiences designed around your interests, comfort, and travel style.",
+    icon: "Globe",
+    created_at: fallbackTimestamp,
+    updated_at: fallbackTimestamp,
+  },
+  {
     id: "fallback-visa",
     title: "Visa Assistance",
     description:
       "Hassle-free visa support with document guidance and fast processing.",
     icon: "FileText",
+    created_at: fallbackTimestamp,
+    updated_at: fallbackTimestamp,
+  },
+  {
+    id: "fallback-passport",
+    title: "Passport Assistance",
+    description:
+      "Complete passport support for new applications, renewals, and Tatkaal processing guidance.",
+    icon: "IdCard",
+    created_at: fallbackTimestamp,
+    updated_at: fallbackTimestamp,
+  },
+  {
+    id: "fallback-insurance",
+    title: "Travel Insurance",
+    description:
+      "Comprehensive travel insurance plans for individuals, families, students, groups, and corporate travelers.",
+    icon: "ShieldCheck",
+    created_at: fallbackTimestamp,
+    updated_at: fallbackTimestamp,
+  },
+  {
+    id: "fallback-rental",
+    title: "Rent A Car / Bus",
+    description:
+      "4 to 40+ seater rental options with experienced chauffeurs for family, group, corporate, and outstation travel.",
+    icon: "Car",
+    created_at: fallbackTimestamp,
+    updated_at: fallbackTimestamp,
+  },
+  {
+    id: "fallback-airport-transfer",
+    title: "Airport Transfers - Mumbai / Navi Mumbai / Pune",
+    description:
+      "Safe and reliable airport pickup/drop services for CSMIA, NMIA, and Pune Airport with smooth coordination.",
+    icon: "Car",
     created_at: fallbackTimestamp,
     updated_at: fallbackTimestamp,
   },

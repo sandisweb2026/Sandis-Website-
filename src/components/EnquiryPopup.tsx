@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { X } from "lucide-react";
+import { Mail, MessageCircle, X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createEnquiry } from "@/lib/travel-cms";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const EnquiryPopup = () => {
   const [open, setOpen] = useState(false);
@@ -58,6 +59,29 @@ const EnquiryPopup = () => {
         >
           <X size={20} />
         </button>
+        <div className="mb-5 mt-2 flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground">
+              Enquire Now
+            </span>
+            <a
+              href={getWhatsAppUrl()}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3.5 py-1.5 text-sm font-semibold text-green-700 transition-colors hover:bg-green-100"
+            >
+              <MessageCircle size={15} />
+              WhatsApp Us
+            </a>
+            <a
+              href="mailto:info@sandistours.com?subject=Tour%20Enquiry"
+              className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-1.5 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
+            >
+              <Mail size={15} />
+              Mail Us
+            </a>
+          </div>
+        </div>
         <div className="text-center mb-5">
           <h3 className="text-xl font-bold text-foreground">
             Plan Your Dream Trip

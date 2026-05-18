@@ -25,6 +25,7 @@ import {
   getTourImage,
   type TourRecord,
 } from "@/lib/travel-cms";
+import { getWhatsAppUrl, WHATSAPP_PREFILLED_MESSAGE } from "@/lib/whatsapp";
 
 const defaultImage = fallbackTourImages["Goa Beach Paradise"];
 const getCategoryLabel = (category: TourRecord["category"]) => {
@@ -412,9 +413,9 @@ const TourDetail = () => {
                 option below.
               </p>
               <a
-                href={`https://wa.me/919876543210?text=${encodeURIComponent(
-                  `Hi Sandis Tours, I want details for ${tour.name}.`,
-                )}`}
+                href={getWhatsAppUrl(
+                  `${WHATSAPP_PREFILLED_MESSAGE}\n\nTour Enquiry: ${tour.name}`,
+                )}
                 target="_blank"
                 rel="noreferrer"
                 onClick={(event) => {

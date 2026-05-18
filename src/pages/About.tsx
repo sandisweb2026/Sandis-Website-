@@ -23,9 +23,9 @@ const services = [
 ];
 
 const trustHighlights = [
-  { value: "1995", label: "Pioneer in Pune airport transfers" },
-  { value: "1000+", label: "Travelers served annually" },
-  { value: "3C", label: "Comfortable, Caring, Convenient" },
+  { value: "1995", title: "Pioneer in Pune", subtitle: "Airport Transfers" },
+  { value: "1000+", title: "Travelers Served", subtitle: "Annually" },
+  { value: "3C", title: "Comfortable, Caring,", subtitle: "Convenient" },
 ];
 
 const About = () => (
@@ -106,9 +106,13 @@ const About = () => (
 
             <div className="mt-6 grid gap-3 sm:grid-cols-3">
               {trustHighlights.map((item) => (
-                <div key={item.value} className="rounded-lg border border-primary/15 bg-primary/5 p-4">
-                  <p className="text-2xl font-extrabold leading-none text-primary">{item.value}</p>
-                  <p className="mt-2 text-xs font-semibold leading-5 text-foreground sm:text-sm">{item.label}</p>
+                <div
+                  key={item.value}
+                  className="overflow-hidden rounded-xl bg-[linear-gradient(135deg,hsl(27_96%_53%),hsl(35_98%_56%))] px-5 py-5 text-white shadow-[0_16px_34px_rgba(236,117,0,0.24)] transition-transform duration-300 hover:-translate-y-1"
+                >
+                  <p className="text-3xl font-extrabold leading-none tracking-tight">{item.value}</p>
+                  <p className="mt-2.5 text-base font-bold leading-tight sm:text-lg">{item.title}</p>
+                  <p className="mt-1 text-sm font-semibold leading-tight text-white/90 sm:text-base">{item.subtitle}</p>
                 </div>
               ))}
             </div>

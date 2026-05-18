@@ -13,6 +13,7 @@ import tourKerala from "@/assets/tour-kerala.jpg";
 import tourDubai from "@/assets/tour-dubai.jpg";
 import tourBali from "@/assets/tour-bali.jpg";
 import tourThailand from "@/assets/tour-thailand.jpg";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const fallbackImages: Record<string, string> = {
   "Goa Beach Paradise": tourGoa,
@@ -43,6 +44,7 @@ const serviceIcons = [
   { icon: MapPin, label: "Holidays", bg: "bg-blue-500", iconClass: "text-white" },
   { icon: Hotel, label: "Hotel Booking", bg: "bg-indigo-500", iconClass: "text-white" },
   { icon: FileText, label: "Visa Assistance", bg: "bg-violet-500", iconClass: "text-white" },
+  { icon: FileText, label: "Passport Assistance", bg: "bg-purple-500", iconClass: "text-white" },
   { icon: IndianRupee, label: "Forex Assistance", bg: "bg-pink-500", iconClass: "text-white" },
   { icon: Shield, label: "Travel Insurance", bg: "bg-orange-500", iconClass: "text-white" },
 ];
@@ -65,6 +67,8 @@ const bannerNavItems = [
   { icon: Info, label: "About Us", path: "/about" },
   { icon: Contact, label: "Contact Us", path: "/contact" },
 ];
+
+const whiteSlidePanelClass = "mx-4 md:mx-auto max-w-5xl rounded-2xl bg-white shadow-card";
 
 const Index = () => {
   const [current, setCurrent] = useState(0);
@@ -128,44 +132,91 @@ const Index = () => {
       {/* Hero Carousel */}
       <section className="relative h-[75vh] min-h-[460px] lg:h-[88vh] lg:min-h-[640px] overflow-hidden">
         <div className="absolute top-0 left-0 right-0 z-20">
-          <div className="container mx-auto px-4">
-            <div className="flex items-center justify-between pt-5">
-              <div className="flex items-center">
-                <img
-                  src={sandisLogo}
-                  alt="Sandis Tours logo"
-                  className="h-16 w-auto md:h-20 lg:h-24"
-                  loading="eager"
-                  decoding="async"
-                />
-              </div>
-              <a
-                href="https://wa.me/919876543210?text=Hi%20Sandis%20Tours%2C%20I%20want%20to%20book%20Mumbai%20Airport%20pickup%2Fdrop.%20Please%20share%20details."
-                target="_blank"
-                rel="noreferrer"
-                className="flex -translate-x-3 items-center gap-2 rounded-full bg-gradient-to-r from-primary via-orange-400 to-amber-400 px-4 py-2 text-sm font-semibold text-primary-foreground shadow-[0_10px_26px_hsla(27,91%,48%,0.35)] ring-1 ring-white/30 backdrop-blur transition-all hover:scale-[1.02] hover:shadow-[0_16px_32px_hsla(27,91%,48%,0.5)] sm:-translate-x-5 lg:-translate-x-7"
-                aria-label="Mumbai Airport booking on WhatsApp"
-              >
-                <Plane size={16} />
-                <span className="hidden sm:inline">Mumbai Airport Booking</span>
-              </a>
-              <div className="flex items-center gap-4 text-background/80">
-                <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-background transition-colors">
-                  <Instagram size={24} />
+          <div className="pt-16 sm:pt-20 md:pt-24 lg:pt-28">
+            <div className={`${whiteSlidePanelClass} p-4 md:p-6`}>
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div className="flex items-center justify-between md:justify-start">
+                  <Link to="/" className="flex items-center">
+                    <img
+                      src={sandisLogo}
+                      alt="Sandis Tours logo"
+                      className="h-12 w-auto md:h-14 lg:h-16"
+                      loading="eager"
+                      decoding="async"
+                    />
+                  </Link>
+                  <div className="flex items-center gap-2 md:hidden">
+                    <a
+                      href="https://instagram.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-pink-300 hover:text-pink-600"
+                      aria-label="Instagram"
+                    >
+                      <Instagram size={16} />
+                    </a>
+                    <a
+                      href="https://facebook.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-600"
+                      aria-label="Facebook"
+                    >
+                      <Facebook size={16} />
+                    </a>
+                    <a
+                      href="tel:+919876543210"
+                      className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
+                      aria-label="Call Sandis Tours"
+                    >
+                      <Phone size={16} />
+                    </a>
+                  </div>
+                </div>
+                <a
+                  href={getWhatsAppUrl()}
+                  target="_blank"
+                  rel="noreferrer"
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-orange-400 to-amber-400 px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_10px_26px_hsla(27,91%,48%,0.35)] transition-all hover:scale-[1.01] hover:shadow-[0_16px_32px_hsla(27,91%,48%,0.5)] md:w-auto md:px-5"
+                  aria-label="Mumbai Airport booking on WhatsApp"
+                >
+                  <Plane size={16} />
+                  <span>Mumbai Airport Booking</span>
                 </a>
-                <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-background transition-colors">
-                  <Facebook size={24} />
-                </a>
-                <a href="tel:+919876543210" className="hover:text-background transition-colors">
-                  <Phone size={24} />
-                </a>
+                <div className="hidden items-center gap-2 md:flex lg:gap-3">
+                  <a
+                    href="https://instagram.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-pink-300 hover:text-pink-600"
+                    aria-label="Instagram"
+                  >
+                    <Instagram size={18} />
+                  </a>
+                  <a
+                    href="https://facebook.com"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-600"
+                    aria-label="Facebook"
+                  >
+                    <Facebook size={18} />
+                  </a>
+                  <a
+                    href="tel:+919876543210"
+                    className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
+                    aria-label="Call Sandis Tours"
+                  >
+                    <Phone size={18} />
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
         {slides.map((slide, i) => (
           <div key={i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
-            <img src={slide.image} alt="" className="w-full h-full object-cover" width={1920} height={1080} />
+            <img src={slide.image} alt="" className="h-full w-full object-cover object-[center_56%]" width={1920} height={1080} />
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,7,18,0.62),rgba(15,23,42,0.34),rgba(3,7,18,0.58)),linear-gradient(180deg,rgba(3,7,18,0.24),rgba(3,7,18,0.5))]" />
             <div className="absolute inset-0 flex items-center">
               <div className="container mx-auto px-4">
@@ -188,13 +239,6 @@ const Index = () => {
                       {slide.headline}
                     </h1>
                     <p className="mx-auto mt-4 max-w-xl text-base font-semibold leading-7 text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)] sm:text-lg lg:text-xl">{slide.sub}</p>
-                    <Link
-                      to={slide.link}
-                      className="mt-7 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-orange-400 to-amber-300 px-6 py-3 text-sm font-bold text-white shadow-[0_18px_38px_rgba(236,117,0,0.38)] ring-1 ring-white/30 transition hover:-translate-y-0.5 hover:shadow-[0_24px_46px_rgba(236,117,0,0.48)]"
-                    >
-                      {slide.cta}
-                      <Plane size={16} />
-                    </Link>
                   </div>
                 </div>
               </div>
@@ -205,7 +249,6 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="relative min-h-[320px] lg:min-h-[360px]">
               <div className="pointer-events-auto absolute -left-1 top-1/2 flex -translate-y-1/2 items-center gap-2 sm:-left-2 sm:gap-3 md:-left-3 md:gap-4">
-                <div className="h-32 w-[2px] bg-gradient-to-b from-primary/80 via-amber-300/70 to-transparent md:h-28" />
                 <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.12em] text-white">
                   {bannerNavItems.map(({ icon: Icon, label, path }) => (
                     <div key={label} className="group flex items-center gap-3">
@@ -239,8 +282,8 @@ const Index = () => {
       </section>
 
       {/* Quick Services Strip */}
-      <section className="bg-card shadow-card relative -mt-12 mx-4 md:mx-auto max-w-5xl rounded-2xl p-6 z-10">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-9 gap-4">
+      <section className={`${whiteSlidePanelClass} relative -mt-12 p-6 z-10`}>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-10">
           {serviceIcons.map(({ icon: Icon, label, bg, iconClass, labelClass }) => (
             <Link to="/services" key={label} className="flex flex-col items-center gap-2 text-foreground hover:text-primary transition-colors text-center">
               <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center shadow-sm`}>
@@ -249,6 +292,14 @@ const Index = () => {
               <span className={`text-[11px] leading-snug font-medium text-foreground ${labelClass ?? ""}`}>{label}</span>
             </Link>
           ))}
+        </div>
+        <div className="mt-5 flex justify-center">
+          <Link
+            to="/services"
+            className="inline-flex items-center rounded-lg border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-semibold text-primary transition-colors hover:bg-primary/10"
+          >
+            Click for more details
+          </Link>
         </div>
       </section>
 
