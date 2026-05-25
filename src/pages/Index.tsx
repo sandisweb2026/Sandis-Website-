@@ -236,6 +236,18 @@ const Index = () => {
                     <p className="mx-auto mt-4 w-full whitespace-nowrap text-center text-[clamp(0.5rem,1.9vw,1.25rem)] font-semibold leading-snug text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)]">
                       {slide.sub}
                     </p>
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-2 md:hidden">
+                      {bannerNavItems.map(({ icon: Icon, label, path }) => (
+                        <Link
+                          key={`${label}-mobile`}
+                          to={path}
+                          className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/60 bg-white/18 text-white shadow-[0_10px_24px_rgba(0,0,0,0.28)] backdrop-blur-md transition-all active:scale-[0.98]"
+                          aria-label={`Go to ${label}`}
+                        >
+                          <Icon size={14} />
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -282,11 +294,11 @@ const Index = () => {
       <section className={`${whiteSlidePanelClass} relative z-10 -mt-10 p-4 sm:-mt-12 sm:p-6`}>
         <div className="mx-auto grid max-w-6xl grid-cols-2 justify-items-center gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-9">
           {serviceIcons.map(({ icon: Icon, label, bg, iconClass, labelClass, popup }) => (
-            <Link
-              to={`/services?popup=${popup}`}
-              key={label}
-              className="flex w-full max-w-[112px] flex-col items-center gap-2 text-center text-foreground transition-colors hover:text-primary"
-            >
+              <Link
+                to={`/services?popup=${popup}`}
+                key={label}
+                className="flex w-full max-w-[112px] flex-col items-center gap-2 text-center text-foreground transition-colors hover:text-primary last:col-span-2 sm:last:col-span-1"
+              >
               <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center shadow-sm`}>
                 <Icon size={22} className={iconClass} />
               </div>
