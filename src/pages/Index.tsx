@@ -233,7 +233,7 @@ const Index = () => {
                     <h1 className="mt-2 text-3xl font-extrabold leading-tight text-white drop-shadow-[0_5px_22px_rgba(0,0,0,0.92)] sm:text-4xl lg:text-6xl">
                       {slide.headline}
                     </h1>
-                    <p className="mx-auto mt-4 max-w-2xl px-2 text-sm font-semibold leading-relaxed text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)] sm:text-base lg:text-xl">
+                    <p className="mx-auto mt-4 w-full whitespace-nowrap text-center text-[clamp(0.5rem,1.9vw,1.25rem)] font-semibold leading-snug text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)]">
                       {slide.sub}
                     </p>
                   </div>
