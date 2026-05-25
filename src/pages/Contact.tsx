@@ -77,10 +77,10 @@ const Contact = () => {
 
   return (
     <div className="pt-16">
-      <section className="py-20 px-4">
+      <section className="px-4 py-14 sm:py-20">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="bg-card rounded-2xl shadow-card p-8">
+            <div className="rounded-2xl bg-card p-5 shadow-card sm:p-8">
               <h2 className="text-2xl font-bold text-foreground">
                 Send us a Message
               </h2>

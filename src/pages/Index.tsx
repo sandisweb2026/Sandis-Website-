@@ -129,7 +129,7 @@ const Index = () => {
   return (
     <div>
       {/* Hero Carousel */}
-      <section className="relative h-[75vh] min-h-[460px] lg:h-[88vh] lg:min-h-[640px] overflow-hidden">
+      <section className="relative h-[68vh] min-h-[420px] overflow-hidden sm:h-[75vh] sm:min-h-[460px] lg:h-[88vh] lg:min-h-[640px]">
         <div className="absolute inset-x-0 top-0 z-20">
           <div className="pt-1">
             <div className={`${whiteSlidePanelClass} p-4 md:p-6`}>
@@ -228,21 +228,23 @@ const Index = () => {
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,7,18,0.62),rgba(15,23,42,0.34),rgba(3,7,18,0.58)),linear-gradient(180deg,rgba(3,7,18,0.24),rgba(3,7,18,0.5))]" />
             <div className="absolute inset-0 flex items-center">
               <div className="container mx-auto px-4">
-                <div className="relative flex items-center justify-center min-h-[320px] lg:min-h-[360px]">
-                  <div className="max-w-2xl mx-auto animate-fade-up text-center px-10 sm:px-12 md:px-6">
+                <div className="relative flex min-h-[260px] items-center justify-center sm:min-h-[320px] lg:min-h-[360px]">
+                  <div className="mx-auto max-w-2xl animate-fade-up px-6 text-center sm:px-12 md:px-6">
                     <h1 className="mt-2 text-3xl font-extrabold leading-tight text-white drop-shadow-[0_5px_22px_rgba(0,0,0,0.92)] sm:text-4xl lg:text-6xl">
                       {slide.headline}
                     </h1>
-                    <p className="mx-auto mt-4 max-w-full overflow-hidden text-ellipsis whitespace-nowrap px-2 text-sm font-semibold text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)] sm:text-base lg:text-xl">{slide.sub}</p>
+                    <p className="mx-auto mt-4 max-w-2xl px-2 text-sm font-semibold leading-relaxed text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)] sm:text-base lg:text-xl">
+                      {slide.sub}
+                    </p>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         ))}
-        <div className="pointer-events-none absolute inset-0 z-10 flex items-center">
+        <div className="pointer-events-none absolute inset-0 z-10 hidden items-center md:flex">
           <div className="container mx-auto px-4">
-            <div className="relative min-h-[320px] lg:min-h-[360px]">
+            <div className="relative min-h-[260px] sm:min-h-[320px] lg:min-h-[360px]">
               <div className="pointer-events-auto absolute -left-1 top-1/2 flex -translate-y-1/2 items-center gap-2 sm:-left-2 sm:gap-3 md:-left-3 md:gap-4">
                 <nav className="flex flex-col gap-3 text-xs font-semibold uppercase tracking-[0.12em] text-white">
                   {bannerNavItems.map(({ icon: Icon, label, path }) => (
@@ -269,7 +271,7 @@ const Index = () => {
             </div>
           </div>
         </div>
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2">
+        <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 sm:bottom-6">
           {slides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)} className={`w-3 h-3 rounded-full transition-all ${i === current ? "bg-primary w-8" : "bg-background/50"}`} />
           ))}
@@ -277,7 +279,7 @@ const Index = () => {
       </section>
 
       {/* Quick Services Strip */}
-      <section className={`${whiteSlidePanelClass} relative -mt-12 p-6 z-10`}>
+      <section className={`${whiteSlidePanelClass} relative z-10 -mt-10 p-4 sm:-mt-12 sm:p-6`}>
         <div className="mx-auto grid max-w-6xl grid-cols-2 justify-items-center gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-9">
           {serviceIcons.map(({ icon: Icon, label, bg, iconClass, labelClass, popup }) => (
             <Link

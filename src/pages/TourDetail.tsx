@@ -103,7 +103,7 @@ const TourDetail = () => {
     <div className="pt-16">
       <div
         className={`relative w-full ${
-          isShirdi ? "aspect-[16/9]" : "h-[50vh] min-h-[350px]"
+          isShirdi ? "aspect-[16/9]" : "h-[50vh] min-h-[320px] sm:min-h-[350px]"
         } bg-foreground/5`}
       >
         {heroImages.map((src, index) => (
@@ -145,15 +145,15 @@ const TourDetail = () => {
             </button>
           </>
         )}
-        <div className="absolute bottom-0 left-0 right-0 p-6">
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
           <div className="container mx-auto">
             <span className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full font-medium">
               {getCategoryLabel(tour.category)}
             </span>
-            <h1 className="text-3xl md:text-4xl font-bold text-background mt-3">
+            <h1 className="mt-3 text-2xl font-bold text-background sm:text-3xl md:text-4xl">
               {tour.name}
             </h1>
-            <div className="flex items-center gap-6 mt-2 text-background/80">
+            <div className="mt-2 flex flex-wrap items-center gap-4 text-background/80 sm:gap-6">
               <span className="flex items-center gap-1">
                 <Clock size={16} /> {tour.duration}
               </span>
@@ -297,7 +297,7 @@ const TourDetail = () => {
                 <h3 className="text-xl font-bold mt-8 text-foreground">
                   What's Included
                 </h3>
-                <div className="grid grid-cols-2 gap-3 mt-4">
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                   {tour.inclusions.map((item) => (
                     <div
                       key={item}
@@ -379,7 +379,7 @@ const TourDetail = () => {
           </div>
 
           <div>
-            <div className="bg-card rounded-2xl shadow-card p-6 sticky top-24">
+            <div className="sticky top-24 rounded-2xl bg-card p-5 shadow-card sm:p-6">
               <h3 className="text-center text-2xl font-bold text-primary">
                 Enquire Now
               </h3>

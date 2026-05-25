@@ -902,7 +902,7 @@ const RailwayReservationDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[500px] items-start justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[400px] sm:min-h-[500px] items-start justify-center p-6 sm:p-8 lg:p-10">
         <div className="absolute -right-4 bottom-10 hidden h-24 w-24 border-b border-r border-sky-300 lg:block" />
 
         <div className="relative w-full max-w-2xl rounded-[8px] border border-primary/15 bg-white/95 p-4 shadow-elevated md:p-5">
@@ -1158,7 +1158,7 @@ const VisaAssistanceDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-sky-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -1365,7 +1365,7 @@ const PassportAssistanceDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-indigo-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -1585,7 +1585,7 @@ const TravelInsuranceDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-emerald-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -1759,7 +1759,7 @@ const HotelBookingDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-amber-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -1942,7 +1942,7 @@ const RentCarBusDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-sky-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -2140,7 +2140,7 @@ const MemoriesTourDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-primary/20 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -2308,7 +2308,7 @@ const AirTicketingDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-sky-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -2479,7 +2479,7 @@ const AirportTransferDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-cyan-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -2733,7 +2733,7 @@ const Services = () => {
 
   return (
     <div className="pt-16">
-      <section className="py-20 px-4">
+      <section className="px-4 py-14 sm:py-20">
         <div className="container mx-auto">
           <div className="hidden">
             <div className={servicePopupBackdropClass} />
@@ -2825,7 +2825,7 @@ const Services = () => {
                 </div>
               </div>
 
-              <div className="relative flex min-h-[500px] items-center justify-center p-6 sm:p-8 lg:p-10">
+              <div className="relative flex min-h-[400px] sm:min-h-[500px] items-center justify-center p-6 sm:p-8 lg:p-10">
                 <div className="absolute -left-4 top-10 hidden h-24 w-24 border-l border-t border-primary/20 lg:block" />
                 <div className="absolute -right-4 bottom-10 hidden h-24 w-24 border-b border-r border-sky-300 lg:block" />
 
@@ -3095,7 +3095,7 @@ const Services = () => {
                 </div>
               </div>
 
-              <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+              <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
                 <div className="w-full max-w-2xl rounded-[8px] border border-emerald-200 bg-white/95 p-4 shadow-elevated md:p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -3458,7 +3458,7 @@ const Services = () => {
               return (
                 <div
                   key={service.id}
-                  className={`group relative isolate h-full min-h-[385px] overflow-hidden rounded-[24px] border bg-white/95 p-5 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated sm:p-6 ${cardTheme.border}`}
+                  className={`group relative isolate h-full overflow-hidden rounded-[24px] border bg-white/95 p-5 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated sm:min-h-[385px] sm:p-6 ${cardTheme.border}`}
                 >
                   <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${cardTheme.bar}`} />
                   <div className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full blur-2xl ${cardTheme.glow}`} />
@@ -3477,10 +3477,10 @@ const Services = () => {
                         {cardTag}
                       </span>
                     </div>
-                    <h3 className="mt-5 min-h-[62px] text-center text-2xl font-bold leading-tight text-foreground sm:min-h-[68px]">
+                    <h3 className="mt-5 text-center text-xl font-bold leading-tight text-foreground sm:min-h-[68px] sm:text-2xl">
                       {cardTitle}
                     </h3>
-                    <p className="mt-2.5 h-[112px] overflow-hidden text-justify text-base leading-7 text-muted-foreground">
+                    <p className="mt-2.5 text-justify text-sm leading-6 text-muted-foreground sm:h-[112px] sm:overflow-hidden sm:text-base sm:leading-7">
                       {cardDescription}
                     </p>
                     <div className="mt-auto flex justify-center border-t border-border/70 pt-4">
@@ -3552,6 +3552,7 @@ const Services = () => {
 };
 
 export default Services;
+
 
 
 

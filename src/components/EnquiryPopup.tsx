@@ -52,30 +52,30 @@ const EnquiryPopup = () => {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-foreground/40 animate-fade-in">
-      <div className="relative w-full max-w-md bg-card rounded-2xl shadow-elevated p-6 animate-fade-up">
+      <div className="relative w-full max-w-md rounded-2xl bg-card p-5 shadow-elevated animate-fade-up sm:p-6">
         <button
           onClick={() => setOpen(false)}
           className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
         >
           <X size={20} />
         </button>
-        <div className="mb-5 mt-2 flex items-start justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="rounded-full bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground">
+        <div className="mb-5 mt-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground sm:text-sm">
               Enquire Now
             </span>
             <a
               href={getWhatsAppUrl()}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3.5 py-1.5 text-sm font-semibold text-green-700 transition-colors hover:bg-green-100"
+              className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3.5 py-1.5 text-xs font-semibold text-green-700 transition-colors hover:bg-green-100 sm:text-sm"
             >
               <MessageCircle size={15} />
               WhatsApp Us
             </a>
             <a
               href="mailto:info@sandistours.com?subject=Tour%20Enquiry"
-              className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-1.5 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
+              className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-1.5 text-xs font-semibold text-sky-700 transition-colors hover:bg-sky-100 sm:text-sm"
             >
               <Mail size={15} />
               Mail Us

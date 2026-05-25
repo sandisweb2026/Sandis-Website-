@@ -33,8 +33,8 @@ const About = () => (
     <section className="overflow-hidden px-4 py-16 sm:py-20 lg:py-24">
       <div className="container mx-auto">
         <div className="grid items-center gap-12 xl:grid-cols-2 xl:gap-16">
-          <div className="relative mx-auto min-h-[560px] w-full max-w-[620px] sm:min-h-[650px] xl:min-h-[756px]">
-            <div className="absolute left-0 top-24 h-[410px] w-[77%] overflow-hidden rounded-br-xl rounded-tr-2xl rounded-tl-[5.5rem] shadow-2xl shadow-slate-300/50 sm:top-20 sm:h-[520px] sm:w-[70%] sm:rounded-tl-[8rem]">
+          <div className="relative mx-auto min-h-[470px] w-full max-w-[620px] sm:min-h-[650px] xl:min-h-[756px]">
+            <div className="absolute left-0 top-20 h-[320px] w-[76%] overflow-hidden rounded-br-xl rounded-tr-2xl rounded-tl-[4rem] shadow-2xl shadow-slate-300/50 sm:top-20 sm:h-[520px] sm:w-[70%] sm:rounded-tl-[8rem]">
               <img
                 src={aboutImage}
                 alt="Beach resort destination"
@@ -42,14 +42,14 @@ const About = () => (
               />
             </div>
 
-            <div className="absolute right-0 top-0 z-20 min-h-[158px] w-[66%] max-w-[330px] overflow-hidden rounded-xl bg-[linear-gradient(135deg,hsl(27_96%_53%),hsl(35_98%_56%))] px-6 py-8 text-white shadow-[0_20px_44px_rgba(236,117,0,0.24)] sm:min-h-[198px] sm:w-[52%] sm:px-12 sm:py-12">
+            <div className="absolute right-0 top-0 z-20 min-h-[140px] w-[70%] max-w-[330px] overflow-hidden rounded-xl bg-[linear-gradient(135deg,hsl(27_96%_53%),hsl(35_98%_56%))] px-5 py-6 text-white shadow-[0_20px_44px_rgba(236,117,0,0.24)] sm:min-h-[198px] sm:w-[52%] sm:px-12 sm:py-12">
               <div className="relative z-10">
                 <p className="text-2xl font-extrabold leading-none tracking-normal sm:text-[2.75rem]">30+ Years</p>
                 <p className="mt-3 text-xl font-bold leading-tight sm:text-2xl">Of Experience</p>
               </div>
             </div>
 
-            <div className="absolute right-[2%] top-[230px] z-30 flex h-48 w-48 items-center justify-center rounded-full bg-background p-4 shadow-[0_24px_55px_rgba(15,23,42,0.16)] sm:right-[6%] sm:top-[238px] sm:h-[276px] sm:w-[276px] sm:p-7">
+            <div className="absolute right-[3%] top-[170px] z-30 flex h-40 w-40 items-center justify-center rounded-full bg-background p-3 shadow-[0_24px_55px_rgba(15,23,42,0.16)] sm:right-[6%] sm:top-[238px] sm:h-[276px] sm:w-[276px] sm:p-7">
               <img
                 src={mountainImage}
                 alt="Mountain tour destination"
@@ -57,7 +57,7 @@ const About = () => (
               />
             </div>
 
-            <div className="absolute bottom-0 right-[6%] z-20 min-h-[180px] w-[72%] max-w-[350px] overflow-hidden rounded-xl bg-[linear-gradient(135deg,#9f00e8,#c000df)] px-8 pb-8 pt-16 text-white shadow-[0_24px_50px_rgba(143,0,232,0.24)] sm:bottom-9 sm:right-[12%] sm:min-h-[200px] sm:w-[54%] sm:px-12 sm:py-12">
+            <div className="absolute bottom-0 right-[4%] z-20 min-h-[150px] w-[76%] max-w-[350px] overflow-hidden rounded-xl bg-[linear-gradient(135deg,#9f00e8,#c000df)] px-6 pb-6 pt-12 text-white shadow-[0_24px_50px_rgba(143,0,232,0.24)] sm:bottom-9 sm:right-[12%] sm:min-h-[200px] sm:w-[54%] sm:px-12 sm:py-12">
               <div className="relative z-10">
                 <p className="text-4xl font-extrabold leading-none sm:text-5xl">50,000+</p>
                 <p className="mt-4 text-xl font-bold leading-tight sm:text-2xl">Happy Travelers</p>
@@ -105,7 +105,7 @@ const About = () => (
 
             <Link
               to="/services"
-              className="mt-8 inline-flex h-14 items-center justify-center rounded-xl bg-primary px-10 text-base font-bold text-primary-foreground shadow-[0_18px_34px_rgba(236,117,0,0.24)] transition hover:-translate-y-0.5 hover:bg-primary/90"
+              className="mt-8 inline-flex h-14 w-full items-center justify-center rounded-xl bg-primary px-10 text-base font-bold text-primary-foreground shadow-[0_18px_34px_rgba(236,117,0,0.24)] transition hover:-translate-y-0.5 hover:bg-primary/90 sm:w-auto"
             >
               View More
             </Link>
@@ -152,10 +152,10 @@ const About = () => (
     </section>
 
     {/* Mission & Vision */}
-    <section className="px-4 py-20">
+    <section className="px-4 py-14 sm:py-20">
       <div className="container mx-auto">
         <div className="grid gap-8 lg:grid-cols-2">
-          <div className="rounded-[2rem] border border-border bg-card p-10 shadow-xl shadow-slate-200/50 transition-transform duration-500 hover:-translate-y-2">
+          <div className="rounded-[2rem] border border-border bg-card p-6 shadow-xl shadow-slate-200/50 transition-transform duration-500 hover:-translate-y-2 sm:p-10">
             <div className="flex items-center gap-3 text-primary">
               <Sparkles size={28} />
               <h2 className="text-2xl font-bold">Our Mission</h2>
@@ -180,7 +180,7 @@ const About = () => (
             </ul>
           </div>
 
-          <div className="rounded-[2rem] border border-border bg-card p-10 shadow-xl shadow-slate-200/50 transition-transform duration-500 hover:-translate-y-2">
+          <div className="rounded-[2rem] border border-border bg-card p-6 shadow-xl shadow-slate-200/50 transition-transform duration-500 hover:-translate-y-2 sm:p-10">
             <div className="flex items-center gap-3 text-primary">
               <Compass size={28} />
               <h2 className="text-2xl font-bold">Our Vision</h2>
@@ -212,11 +212,11 @@ const About = () => (
     </section>
 
     {/* Why Sandi's */}
-    <section className="px-4 py-20">
+    <section className="px-4 py-14 sm:py-20">
       <div className="container mx-auto">
         <div className="mb-12 text-center">
           <p className="text-sm uppercase tracking-[0.3em] text-primary">Why Sandi's</p>
-          <h2 className="mt-4 text-3xl font-bold text-foreground">
+          <h2 className="mt-4 text-2xl font-bold text-foreground sm:text-3xl">
             <span className="text-foreground">Trusted</span>{" "}
             <span className="text-gradient">Travel Strengths</span>
           </h2>
@@ -226,7 +226,7 @@ const About = () => (
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-          <div className="group rounded-[2rem] border border-border bg-card p-8 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl">
+          <div className="group rounded-[2rem] border border-border bg-card p-6 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl sm:p-8">
             <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary transition duration-500 group-hover:bg-primary group-hover:text-white">
               <Globe2 size={28} />
             </div>
@@ -234,7 +234,7 @@ const About = () => (
             <p className="mt-3 text-sm text-muted-foreground">All travel services available under one trusted brand, saving you time, effort, and cost.</p>
           </div>
 
-          <div className="group rounded-[2rem] border border-border bg-card p-8 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl">
+          <div className="group rounded-[2rem] border border-border bg-card p-6 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl sm:p-8">
             <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary transition duration-500 group-hover:bg-primary group-hover:text-white">
               <Award size={28} />
             </div>
@@ -242,7 +242,7 @@ const About = () => (
             <p className="mt-3 text-sm text-muted-foreground">Trusted legacy with proven expertise and thousands of happy travelers served with consistent quality.</p>
           </div>
 
-          <div className="group rounded-[2rem] border border-border bg-card p-8 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl">
+          <div className="group rounded-[2rem] border border-border bg-card p-6 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl sm:p-8">
             <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary transition duration-500 group-hover:bg-primary group-hover:text-white">
               <MapPin size={28} />
             </div>
@@ -250,7 +250,7 @@ const About = () => (
             <p className="mt-3 text-sm text-muted-foreground">Proudly serving from Pune with strong local presence and reliable, accessible support.</p>
           </div>
 
-          <div className="group rounded-[2rem] border border-border bg-card p-8 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl">
+          <div className="group rounded-[2rem] border border-border bg-card p-6 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl sm:p-8">
             <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary transition duration-500 group-hover:bg-primary group-hover:text-white">
               <Users size={28} />
             </div>
@@ -258,7 +258,7 @@ const About = () => (
             <p className="mt-3 text-sm text-muted-foreground">Professional team dedicated to customer satisfaction with personalized support and expert guidance.</p>
           </div>
 
-          <div className="group rounded-[2rem] border border-border bg-card p-8 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl">
+          <div className="group rounded-[2rem] border border-border bg-card p-6 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl sm:p-8">
             <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary transition duration-500 group-hover:bg-primary group-hover:text-white">
               <Clock size={28} />
             </div>
@@ -266,7 +266,7 @@ const About = () => (
             <p className="mt-3 text-sm text-muted-foreground">Round-the-clock assistance for all travel needs, with fast responses to keep your journey worry-free.</p>
           </div>
 
-          <div className="group rounded-[2rem] border border-border bg-card p-8 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl">
+          <div className="group rounded-[2rem] border border-border bg-card p-6 text-left shadow-sm transition duration-500 ease-out hover:-translate-y-2 hover:shadow-xl sm:p-8">
             <div className="flex h-14 w-14 items-center justify-center rounded-3xl bg-primary/10 text-primary transition duration-500 group-hover:bg-primary group-hover:text-white">
               <ShieldCheck size={28} />
             </div>

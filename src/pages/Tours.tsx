@@ -213,9 +213,9 @@ const Tours = () => {
         </DialogContent>
       </Dialog>
 
-      <section className="py-16 px-4">
+      <section className="px-4 py-12 sm:py-16">
         <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold text-foreground">
+          <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
             Holiday Packages
           </h1>
           <p className="mt-2 text-muted-foreground">
@@ -224,16 +224,16 @@ const Tours = () => {
         </div>
       </section>
 
-      <section className="py-20 px-4">
+      <section className="px-4 py-14 sm:py-20">
         <div className="container mx-auto">
-          <div className="flex justify-center gap-3 mb-10">
+          <div className="mb-10 flex flex-wrap justify-center gap-2 sm:gap-3">
             {(["group", "maharashtra", "india", "international"] as const).map(
               (currentFilter) => (
                 <Button
                   key={currentFilter}
                   variant={filter === currentFilter ? "default" : "outline"}
                   onClick={() => setFilter(currentFilter)}
-                  className="capitalize"
+                  className="capitalize text-xs sm:text-sm"
                 >
                   {currentFilter === "group"
                     ? "Group Tour"

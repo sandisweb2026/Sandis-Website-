@@ -71,6 +71,14 @@
     background-attachment: fixed, fixed, fixed;
   }
 
+  html,
+  body,
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
   }
@@ -300,5 +308,12 @@
   100% {
     opacity: 0.34;
     transform: translate3d(-6%, 5%, 0) scale(0.96);
+  }
+}
+
+@media (max-width: 1023px) {
+  body,
+  .site-page-background {
+    background-attachment: scroll, scroll, scroll;
   }
 }
