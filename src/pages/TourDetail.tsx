@@ -17,7 +17,6 @@ import { Button } from "@/components/ui/button";
 import {
   createEmptyTourExtras,
   extractTourExtras,
-  type TourFaqItem,
 } from "@/lib/content-types";
 import { fallbackTourImages, fallbackTours } from "@/lib/fallback-content";
 import {
@@ -98,11 +97,7 @@ const TourDetail = () => {
     );
   }
 
-  const { itinerary, highlights, exclusions, terms, gallery, faqs } = extras;
-
-  const faqCards = faqs.filter(
-    (item): item is TourFaqItem => Boolean(item.q || item.a),
-  );
+  const { itinerary, highlights, exclusions, terms, gallery } = extras;
 
   return (
     <div className="pt-16">
@@ -381,26 +376,6 @@ const TourDetail = () => {
               </>
             )}
 
-            {faqCards.length > 0 && (
-              <>
-                <h3 className="text-xl font-bold mt-8 text-foreground">FAQs</h3>
-                <div className="mt-4 space-y-3">
-                  {faqCards.map((faq, index) => (
-                    <div
-                      key={`${faq.q}-${index}`}
-                      className="rounded-2xl border bg-card p-5 shadow-card"
-                    >
-                      <p className="font-semibold text-foreground">{faq.q}</p>
-                      {faq.a && (
-                        <p className="mt-2 text-sm text-muted-foreground">
-                          {faq.a}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
           </div>
 
           <div>

@@ -1,14 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { createEnquiry } from "@/lib/travel-cms";
+import { fallbackServices } from "@/lib/fallback-content";
+import { createEnquiry, fetchServices } from "@/lib/travel-cms";
+
+const normalizeServiceTitles = (titles: string[]) =>
+  Array.from(
+    new Set(
+      titles
+        .map((title) => title.trim())
+        .filter(Boolean),
+    ),
+  );
+
+const fallbackServiceTitles = normalizeServiceTitles(
+  fallbackServices.map((service) => service.title),
+);
 
 const Contact = () => {
   const [loading, setLoading] = useState(false);
+  const [serviceOptions, setServiceOptions] = useState<string[]>(
+    fallbackServiceTitles,
+  );
+
+  useEffect(() => {
+    let active = true;
+
+    fetchServices()
+      .then((services) => {
+        if (!active) return;
+
+        const titles = normalizeServiceTitles(
+          services.map((service) => service.title),
+        );
+
+        if (titles.length > 0) {
+          setServiceOptions(titles);
+        }
+      })
+      .catch(() => {
+        // Keep fallback service options if API request fails.
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -36,17 +77,6 @@ const Contact = () => {
 
   return (
     <div className="pt-16">
-      <section className="bg-primary py-16 px-4">
-        <div className="container mx-auto text-center">
-          <h1 className="text-4xl font-bold text-primary-foreground">
-            Contact Us
-          </h1>
-          <p className="text-primary-foreground/80 mt-2">
-            We&apos;d love to hear from you
-          </p>
-        </div>
-      </section>
-
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -68,7 +98,21 @@ const Contact = () => {
                   type="tel"
                   required
                 />
-                <Input name="subject" placeholder="Subject" required />
+                <select
+                  name="subject"
+                  defaultValue=""
+                  required
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
+                >
+                  <option value="" disabled>
+                    Select Service
+                  </option>
+                  {serviceOptions.map((service) => (
+                    <option key={service} value={service}>
+                      {service}
+                    </option>
+                  ))}
+                </select>
                 <Textarea
                   name="message"
                   placeholder="Your Message"

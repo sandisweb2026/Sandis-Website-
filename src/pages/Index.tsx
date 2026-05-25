@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileText, Car, Bus, IndianRupee, Instagram, Facebook, Phone, MapPin, House, Info, Contact } from "lucide-react";
+import { Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileCheck, BookOpen, Car, Bus, IndianRupee, Instagram, Facebook, Phone, MapPin, House, Info, Contact } from "lucide-react";
 import banner1 from "@/assets/banners/banner 1.jpeg";
 import banner2 from "@/assets/banners/banner 2.jpeg";
 import banner3 from "@/assets/banners/banner 3.jpeg";
@@ -37,16 +37,15 @@ const whyUs = [
 ];
 
 const serviceIcons = [
-  { icon: Plane, label: "Mumbai / Pune Airport Transport", bg: "bg-white", iconClass: "text-primary" },
-  { icon: Car, label: "Car/ Bus Rental", bg: "bg-red-500", iconClass: "text-white" },
-  { icon: Plane, label: "Flight Booking", bg: "bg-yellow-400", iconClass: "text-white" },
-  { icon: Bus, label: "Bus / Train Booking", bg: "bg-green-500", iconClass: "text-white" },
-  { icon: MapPin, label: "Holidays", bg: "bg-blue-500", iconClass: "text-white" },
-  { icon: Hotel, label: "Hotel Booking", bg: "bg-indigo-500", iconClass: "text-white" },
-  { icon: FileText, label: "Visa Assistance", bg: "bg-violet-500", iconClass: "text-white" },
-  { icon: FileText, label: "Passport Assistance", bg: "bg-purple-500", iconClass: "text-white" },
-  { icon: IndianRupee, label: "Forex Assistance", bg: "bg-pink-500", iconClass: "text-white" },
-  { icon: Shield, label: "Travel Insurance", bg: "bg-orange-500", iconClass: "text-white" },
+  { icon: Car, label: "Car/ Bus Rental", bg: "bg-orange-500", iconClass: "text-white", popup: "rental" },
+  { icon: Plane, label: "Flight Booking", bg: "bg-blue-500", iconClass: "text-white", popup: "air" },
+  { icon: Bus, label: "Bus / Train Booking", bg: "bg-red-500", iconClass: "text-white", popup: "railway" },
+  { icon: MapPin, label: "Holidays", bg: "bg-green-500", iconClass: "text-white", popup: "memories" },
+  { icon: Hotel, label: "Hotel Booking", bg: "bg-purple-500", iconClass: "text-white", popup: "hotel" },
+  { icon: FileCheck, label: "Visa Assistance", bg: "bg-yellow-400", iconClass: "text-slate-900", popup: "visa" },
+  { icon: BookOpen, label: "Passport Assistance", bg: "bg-pink-500", iconClass: "text-white", popup: "passport" },
+  { icon: IndianRupee, label: "Forex Assistance", bg: "bg-cyan-500", iconClass: "text-white", popup: "forex" },
+  { icon: Shield, label: "Travel Insurance", bg: "bg-orange-500", iconClass: "text-white", popup: "insurance" },
 ];
 
 const testimonials = [
@@ -131,8 +130,8 @@ const Index = () => {
     <div>
       {/* Hero Carousel */}
       <section className="relative h-[75vh] min-h-[460px] lg:h-[88vh] lg:min-h-[640px] overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 z-20">
-          <div className="pt-16 sm:pt-20 md:pt-24 lg:pt-28">
+        <div className="absolute inset-x-0 top-0 z-20">
+          <div className="pt-1">
             <div className={`${whiteSlidePanelClass} p-4 md:p-6`}>
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center justify-between md:justify-start">
@@ -173,16 +172,21 @@ const Index = () => {
                     </a>
                   </div>
                 </div>
-                <a
-                  href={getWhatsAppUrl()}
-                  target="_blank"
-                  rel="noreferrer"
+                <div className="flex w-full flex-col items-center gap-2 md:w-auto">
+                  <p className="text-center text-sm font-black italic tracking-[0.12em] text-transparent bg-gradient-to-r from-primary via-orange-500 to-amber-500 bg-clip-text drop-shadow-[0_2px_7px_rgba(240,126,20,0.34)] sm:text-base">
+                    30+ Years Of Travel Care
+                  </p>
+                  <a
+                    href={getWhatsAppUrl()}
+                    target="_blank"
+                    rel="noreferrer"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-orange-400 to-amber-400 px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_10px_26px_hsla(27,91%,48%,0.35)] transition-all hover:scale-[1.01] hover:shadow-[0_16px_32px_hsla(27,91%,48%,0.5)] md:w-auto md:px-5"
-                  aria-label="Mumbai Airport booking on WhatsApp"
-                >
-                  <Plane size={16} />
-                  <span>Mumbai Airport Booking</span>
-                </a>
+                    aria-label="Mumbai Airport booking on WhatsApp"
+                  >
+                    <Plane size={16} />
+                    <span>Mumbai Airport Booking</span>
+                  </a>
+                </div>
                 <div className="hidden items-center gap-2 md:flex lg:gap-3">
                   <a
                     href="https://instagram.com"
@@ -222,23 +226,10 @@ const Index = () => {
               <div className="container mx-auto px-4">
                 <div className="relative flex items-center justify-center min-h-[320px] lg:min-h-[360px]">
                   <div className="max-w-2xl mx-auto animate-fade-up text-center px-10 sm:px-12 md:px-6">
-                    <div className="inline-flex items-center gap-3 border-l-4 border-primary bg-black/28 px-4 py-3 text-left text-white shadow-[0_18px_38px_rgba(0,0,0,0.34)] ring-1 ring-white/20 backdrop-blur-md">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-[0_10px_24px_rgba(255,255,255,0.22)]">
-                        <Plane size={18} />
-                      </span>
-                      <span className="flex flex-col leading-none">
-                        <span className="text-[0.68rem] font-bold uppercase tracking-[0.28em] text-amber-200">
-                          Established 1995
-                        </span>
-                        <span className="mt-1 text-sm font-extrabold tracking-[0.08em] text-white sm:text-base">
-                          30+ Years Of Travel Care
-                        </span>
-                      </span>
-                    </div>
-                    <h1 className="mt-5 text-3xl font-extrabold leading-tight text-white drop-shadow-[0_5px_22px_rgba(0,0,0,0.92)] sm:text-4xl lg:text-6xl">
+                    <h1 className="mt-2 text-3xl font-extrabold leading-tight text-white drop-shadow-[0_5px_22px_rgba(0,0,0,0.92)] sm:text-4xl lg:text-6xl">
                       {slide.headline}
                     </h1>
-                    <p className="mx-auto mt-4 max-w-xl text-base font-semibold leading-7 text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)] sm:text-lg lg:text-xl">{slide.sub}</p>
+                    <p className="mx-auto mt-4 max-w-full overflow-hidden text-ellipsis whitespace-nowrap px-2 text-sm font-semibold text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)] sm:text-base lg:text-xl">{slide.sub}</p>
                   </div>
                 </div>
               </div>
@@ -283,9 +274,13 @@ const Index = () => {
 
       {/* Quick Services Strip */}
       <section className={`${whiteSlidePanelClass} relative -mt-12 p-6 z-10`}>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-10">
-          {serviceIcons.map(({ icon: Icon, label, bg, iconClass, labelClass }) => (
-            <Link to="/services" key={label} className="flex flex-col items-center gap-2 text-foreground hover:text-primary transition-colors text-center">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 justify-items-center gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-9">
+          {serviceIcons.map(({ icon: Icon, label, bg, iconClass, labelClass, popup }) => (
+            <Link
+              to={`/services?popup=${popup}`}
+              key={label}
+              className="flex w-full max-w-[112px] flex-col items-center gap-2 text-center text-foreground transition-colors hover:text-primary"
+            >
               <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center shadow-sm`}>
                 <Icon size={22} className={iconClass} />
               </div>

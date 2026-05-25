@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { Award, Users, Globe, Calendar, Sparkles, Compass, Globe2, MapPin, Clock, ShieldCheck, Home, ChevronRight, Plane } from "lucide-react";
-import breadcrumbImage from "@/assets/hero-flight.jpg";
+import { Award, Users, Globe, Calendar, Sparkles, Compass, Globe2, MapPin, Clock, ShieldCheck } from "lucide-react";
 import aboutImage from "@/assets/hero-beach.jpg";
 import mountainImage from "@/assets/tour-manali.jpg";
 
@@ -30,35 +29,8 @@ const trustHighlights = [
 
 const About = () => (
   <div className="pt-16">
-    <section className="relative overflow-hidden px-4 py-20 sm:py-24">
-      <img
-        src={breadcrumbImage}
-        alt="Travel flight journey"
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,42,0.78),rgba(236,117,0,0.72)),linear-gradient(180deg,rgba(15,23,42,0.22),rgba(15,23,42,0.5))]" />
-      <div className="container relative z-10 mx-auto flex min-h-[230px] flex-col items-center justify-center text-center text-white">
-        <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-950/10 backdrop-blur-md">
-          <Home size={15} />
-          <Link to="/" className="transition hover:text-white/80">Home</Link>
-          <ChevronRight size={15} className="text-white/70" />
-          <span>About Us</span>
-        </div>
-
-        <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-foreground shadow-[0_16px_30px_rgba(236,117,0,0.28)]">
-          <Plane size={15} />
-          Tours & Travels Since 1995
-        </div>
-
-        <h1 className="mt-5 text-4xl font-extrabold leading-tight sm:text-5xl">About Sandis Tours</h1>
-        <p className="mt-3 max-w-2xl text-base leading-7 text-white/90 sm:text-lg">
-          Your trusted travel partner for comfortable, caring, and convenient journeys.
-        </p>
-      </div>
-    </section>
-
     {/* Story */}
-    <section className="overflow-hidden bg-background px-4 py-16 sm:py-20 lg:py-24">
+    <section className="overflow-hidden px-4 py-16 sm:py-20 lg:py-24">
       <div className="container mx-auto">
         <div className="grid items-center gap-12 xl:grid-cols-2 xl:gap-16">
           <div className="relative mx-auto min-h-[560px] w-full max-w-[620px] sm:min-h-[650px] xl:min-h-[756px]">
@@ -143,20 +115,44 @@ const About = () => (
     </section>
 
     {/* Stats */}
-    <section className="bg-primary px-4 py-14">
-      <div className="container mx-auto grid grid-cols-2 gap-6 md:grid-cols-4">
-        {stats.map(({ icon: Icon, value, label }) => (
-          <div key={label} className="text-center">
-            <Icon size={32} className="mx-auto text-primary-foreground/80" />
-            <p className="mt-2 text-3xl font-bold text-primary-foreground">{value}</p>
-            <p className="text-sm text-primary-foreground/70">{label}</p>
+    <section className="px-4 py-10 sm:py-12">
+      <div className="container mx-auto">
+        <div className="relative overflow-hidden rounded-[2rem] border border-primary/20 bg-[linear-gradient(120deg,hsl(26_96%_54%)_0%,hsl(30_96%_50%)_45%,hsl(18_92%_47%)_100%)] px-5 py-6 shadow-[0_20px_48px_rgba(236,117,0,0.24)] sm:px-7 sm:py-7 lg:px-8 lg:py-8">
+          <div className="pointer-events-none absolute -right-14 -top-16 h-52 w-52 rounded-full bg-white/16 blur-2xl" />
+          <div className="pointer-events-none absolute -bottom-16 left-[-4%] h-48 w-48 rounded-full bg-amber-100/20 blur-2xl" />
+
+          <div className="relative z-10">
+            <div className="grid items-center gap-5 lg:grid-cols-[0.95fr_3.05fr] lg:gap-6">
+              <div className="text-white">
+                <p className="text-[0.68rem] font-extrabold uppercase tracking-[0.28em] text-white/80">Sandi&apos;s Milestones</p>
+                <h3 className="mt-2 text-xl font-extrabold leading-tight sm:text-2xl">
+                  Travel Confidence
+                  <span className="block text-white/90">Built Over Decades</span>
+                </h3>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                {stats.map(({ icon: Icon, value, label }) => (
+                  <div
+                    key={label}
+                    className="group rounded-xl border border-white/28 bg-white/12 px-3 py-3.5 text-white backdrop-blur-sm transition duration-300 hover:-translate-y-0.5 hover:bg-white/18 sm:px-4"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-white text-primary shadow-[0_10px_20px_rgba(255,255,255,0.28)]">
+                      <Icon size={19} />
+                    </div>
+                    <p className="mt-3 text-[2rem] font-extrabold leading-none tracking-tight">{value}</p>
+                    <p className="mt-1.5 text-xs font-semibold text-white/88 sm:text-sm">{label}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-        ))}
+        </div>
       </div>
     </section>
 
     {/* Mission & Vision */}
-    <section className="bg-slate-50 px-4 py-20">
+    <section className="px-4 py-20">
       <div className="container mx-auto">
         <div className="grid gap-8 lg:grid-cols-2">
           <div className="rounded-[2rem] border border-border bg-card p-10 shadow-xl shadow-slate-200/50 transition-transform duration-500 hover:-translate-y-2">

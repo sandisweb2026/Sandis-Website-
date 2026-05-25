@@ -15,6 +15,7 @@ import Tours from "./pages/Tours";
 import TourDetail from "./pages/TourDetail";
 import About from "./pages/About";
 import Contact from "./pages/Contact";
+import Gallery from "./pages/Gallery";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminTours from "./pages/admin/AdminTours";
@@ -41,7 +42,7 @@ const AppLayout = () => {
   return (
     <>
       {!isHome && <Header />}
-      <main className="min-h-screen">
+      <main className="min-h-screen site-page-background">
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/services" element={<Services />} />
@@ -49,6 +50,7 @@ const AppLayout = () => {
           <Route path="/holidays/:id" element={<TourDetail />} />
           <Route path="/tours" element={<Navigate to="/holidays" replace />} />
           <Route path="/tours/:id" element={<Navigate to="/holidays" replace />} />
+          <Route path="/gallery" element={<Gallery />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/admin/login" element={<AdminLogin />} />

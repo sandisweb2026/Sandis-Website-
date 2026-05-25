@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   Ambulance,
   ArrowRight,
@@ -10,7 +10,6 @@ import {
   Briefcase,
   Bus,
   CalendarCheck,
-  ChevronRight,
   Car,
   Clock3,
   CreditCard,
@@ -20,7 +19,6 @@ import {
   GraduationCap,
   HandCoins,
   Hotel,
-  Home,
   IdCard,
   Landmark,
   MailCheck,
@@ -54,7 +52,6 @@ import {
 import { fallbackServices } from "@/lib/fallback-content";
 import { fetchServices, type ServiceRecord } from "@/lib/travel-cms";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
-import servicesHeroImage from "@/assets/hero-hotel.jpg";
 
 const iconMap: Record<string, React.ElementType> = {
   Plane,
@@ -776,41 +773,47 @@ const isAirTicketingService = (service: ServiceRecord) => {
   );
 };
 
-const PopupContactActions = ({
-  className = "",
-}: {
-  className?: string;
-}) => (
+const PopupContactActions = () => (
   <div
-    className={`relative z-20 mx-auto flex w-full max-w-2xl flex-wrap items-center justify-center gap-2 px-6 pt-6 sm:px-8 sm:pt-8 lg:px-10 lg:pt-10 ${className}`}
+    className="relative z-20 mx-auto flex w-full justify-center px-6 pt-6 sm:px-8 sm:pt-8 lg:px-10 lg:pt-10"
   >
-    <span className="hidden rounded-full bg-primary px-3.5 py-1.5 text-sm font-semibold text-primary-foreground sm:inline-block">
-      Enquire Now
-    </span>
-    <a
-      href={getWhatsAppUrl()}
-      target="_blank"
-      rel="noreferrer"
-      className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3.5 py-2 text-sm font-semibold text-green-700 transition-colors hover:bg-green-100"
-    >
-      <MessageCircle size={15} />
-      WhatsApp Us
-    </a>
-    <a
-      href="mailto:info@sandistours.com?subject=Service%20Enquiry"
-      className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
-    >
-      <Mail size={15} />
-      Mail Us
-    </a>
+    <div className="flex w-full max-w-fit flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/80 bg-white/85 p-2 shadow-[0_14px_34px_rgba(15,23,42,0.14)] ring-1 ring-primary/10 backdrop-blur-md">
+      <Link
+        to="/contact"
+        className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+      >
+        Enquire Now
+      </Link>
+      <a
+        href={getWhatsAppUrl()}
+        target="_blank"
+        rel="noreferrer"
+        className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3.5 py-2 text-sm font-semibold text-green-700 transition-colors hover:bg-green-100"
+      >
+        <MessageCircle size={15} />
+        WhatsApp Us
+      </a>
+      <a
+        href="mailto:info@sandistours.com?subject=Service%20Enquiry"
+        className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
+      >
+        <Mail size={15} />
+        Mail Us
+      </a>
+    </div>
   </div>
 );
 
+const servicePopupShellClass =
+  "relative isolate overflow-hidden rounded-[24px] border border-white/75 bg-white/90 text-foreground shadow-[0_32px_80px_rgba(15,23,42,0.25)] ring-1 ring-primary/10 backdrop-blur-sm";
+const servicePopupBackdropClass =
+  "absolute inset-0 -z-10 [background-image:radial-gradient(circle_at_14%_10%,hsl(35_100%_96%),transparent_34%),radial-gradient(circle_at_88%_14%,hsl(198_92%_95%),transparent_32%),linear-gradient(140deg,hsl(0_0%_100%),hsl(210_38%_98%))]";
+const servicePopupHeadingClass =
+  "popup-display-title mt-6 max-w-2xl bg-[linear-gradient(120deg,#111827_0%,#1f2937_46%,#c76905_100%)] bg-clip-text text-[2.05rem] font-semibold leading-[1.04] text-transparent sm:text-5xl";
+
 const RailwayReservationDetails = () => (
-  <div className="relative isolate overflow-hidden rounded-[8px] border border-primary/15 bg-white text-foreground shadow-elevated">
-    <div className="absolute inset-0 -z-10 opacity-75 [background-image:linear-gradient(hsl(27_91%_48%_/_0.06)_1px,transparent_1px),linear-gradient(90deg,hsl(199_89%_48%_/_0.05)_1px,transparent_1px)] [background-size:34px_34px]" />
-    <div className="rail-track-motion absolute inset-x-0 bottom-0 -z-10 h-24 opacity-45" />
-    <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-primary via-amber-300 to-sky-400" />
+  <div className={servicePopupShellClass}>
+    <div className={servicePopupBackdropClass} />
     <PopupContactActions />
     <div className="grid gap-0 lg:grid-cols-[0.94fr_1.06fr]">
       <div className="p-6 sm:p-8 lg:p-10">
@@ -819,7 +822,7 @@ const RailwayReservationDetails = () => (
           Railway Reservation
         </div>
 
-        <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+        <h2 className={servicePopupHeadingClass}>
           Rail bookings made effortless before your journey begins
         </h2>
 
@@ -1054,10 +1057,9 @@ const RailwayReservationDetails = () => (
 );
 
 const VisaAssistanceDetails = () => (
-  <div className="relative isolate overflow-hidden rounded-[8px] border border-sky-200 bg-white text-foreground shadow-elevated">
-    <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_16%_14%,hsl(199_89%_96%),transparent_30%),radial-gradient(circle_at_84%_12%,hsl(43_96%_94%),transparent_28%),linear-gradient(135deg,hsl(0_0%_100%),hsl(210_40%_98%))]" />
-    <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-sky-500 via-primary to-emerald-500" />
-    <PopupContactActions className="px-6 pt-6 pr-6 sm:px-8 sm:pt-8 sm:pr-8 lg:px-10 lg:pt-10 lg:pr-10" />
+  <div className={servicePopupShellClass}>
+    <div className={servicePopupBackdropClass} />
+    <PopupContactActions />
 
     <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1066,7 +1068,7 @@ const VisaAssistanceDetails = () => (
           Visa Assistance
         </div>
 
-        <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+        <h2 className={servicePopupHeadingClass}>
           Visa requirements vary by country. We make the process simple.
         </h2>
 
@@ -1263,10 +1265,9 @@ const VisaAssistanceDetails = () => (
 );
 
 const PassportAssistanceDetails = () => (
-  <div className="relative isolate overflow-hidden rounded-[8px] border border-indigo-200 bg-white text-foreground shadow-elevated">
-    <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_14%_12%,hsl(221_83%_96%),transparent_30%),radial-gradient(circle_at_84%_14%,hsl(151_81%_95%),transparent_30%),linear-gradient(135deg,hsl(0_0%_100%),hsl(220_40%_98%))]" />
-    <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500" />
-    <PopupContactActions className="px-6 pt-6 pr-6 sm:px-8 sm:pt-8 sm:pr-8 lg:px-10 lg:pt-10 lg:pr-10" />
+  <div className={servicePopupShellClass}>
+    <div className={servicePopupBackdropClass} />
+    <PopupContactActions />
 
     <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1275,7 +1276,7 @@ const PassportAssistanceDetails = () => (
           Passport Assistance
         </div>
 
-        <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+        <h2 className={servicePopupHeadingClass}>
           Complete passport support with minimum hassle and maximum convenience
         </h2>
 
@@ -1491,10 +1492,9 @@ const PassportAssistanceDetails = () => (
 );
 
 const TravelInsuranceDetails = () => (
-  <div className="relative isolate overflow-hidden rounded-[8px] border border-emerald-200 bg-white text-foreground shadow-elevated">
-    <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_14%_12%,hsl(151_81%_96%),transparent_30%),radial-gradient(circle_at_84%_14%,hsl(199_89%_96%),transparent_30%),linear-gradient(135deg,hsl(0_0%_100%),hsl(205_45%_98%))]" />
-    <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-emerald-500 via-sky-500 to-indigo-500" />
-    <PopupContactActions className="px-6 pt-6 pr-6 sm:px-8 sm:pt-8 sm:pr-8 lg:px-10 lg:pt-10 lg:pr-10" />
+  <div className={servicePopupShellClass}>
+    <div className={servicePopupBackdropClass} />
+    <PopupContactActions />
 
     <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1503,7 +1503,7 @@ const TravelInsuranceDetails = () => (
           Travel Insurance
         </div>
 
-        <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+        <h2 className={servicePopupHeadingClass}>
           Travel insurance is an investment in peace of mind
         </h2>
 
@@ -1673,10 +1673,9 @@ const TravelInsuranceDetails = () => (
 );
 
 const HotelBookingDetails = () => (
-  <div className="relative isolate overflow-hidden rounded-[8px] border border-amber-200 bg-white text-foreground shadow-elevated">
-    <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_14%_12%,hsl(43_96%_95%),transparent_32%),radial-gradient(circle_at_84%_14%,hsl(199_89%_96%),transparent_30%),linear-gradient(135deg,hsl(0_0%_100%),hsl(45_40%_98%))]" />
-    <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-amber-500 via-primary to-sky-500" />
-    <PopupContactActions className="px-6 pt-6 pr-6 sm:px-8 sm:pt-8 sm:pr-8 lg:px-10 lg:pt-10 lg:pr-10" />
+  <div className={servicePopupShellClass}>
+    <div className={servicePopupBackdropClass} />
+    <PopupContactActions />
 
     <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1685,7 +1684,7 @@ const HotelBookingDetails = () => (
           Hotel Booking
         </div>
 
-        <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+        <h2 className={servicePopupHeadingClass}>
           Comfortable stays in India and across the world
         </h2>
 
@@ -1873,10 +1872,9 @@ const HotelBookingDetails = () => (
 );
 
 const RentCarBusDetails = () => (
-  <div className="relative isolate overflow-hidden rounded-[8px] border border-slate-200 bg-white text-foreground shadow-elevated">
-    <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_14%_12%,hsl(217_91%_96%),transparent_32%),radial-gradient(circle_at_84%_14%,hsl(151_81%_95%),transparent_30%),linear-gradient(135deg,hsl(0_0%_100%),hsl(210_35%_98%))]" />
-    <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-sky-500 via-primary to-emerald-500" />
-    <PopupContactActions className="px-6 pt-6 pr-6 sm:px-8 sm:pt-8 sm:pr-8 lg:px-10 lg:pt-10 lg:pr-10" />
+  <div className={servicePopupShellClass}>
+    <div className={servicePopupBackdropClass} />
+    <PopupContactActions />
 
     <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1885,7 +1883,7 @@ const RentCarBusDetails = () => (
           Rent A Car / Bus
         </div>
 
-        <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+        <h2 className={servicePopupHeadingClass}>
           Safe and comfortable rides for every travel plan
         </h2>
 
@@ -2057,10 +2055,9 @@ const RentCarBusDetails = () => (
 );
 
 const MemoriesTourDetails = () => (
-  <div className="relative isolate overflow-hidden rounded-[8px] border border-rose-200 bg-white text-foreground shadow-elevated">
-    <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_14%_12%,hsl(27_95%_95%),transparent_32%),radial-gradient(circle_at_84%_14%,hsl(199_89%_96%),transparent_30%),linear-gradient(135deg,hsl(0_0%_100%),hsl(20_35%_98%))]" />
-    <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-primary via-amber-400 to-sky-500" />
-    <PopupContactActions className="px-6 pt-6 pr-6 sm:px-8 sm:pt-8 sm:pr-8 lg:px-10 lg:pt-10 lg:pr-10" />
+  <div className={servicePopupShellClass}>
+    <div className={servicePopupBackdropClass} />
+    <PopupContactActions />
 
     <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
       <div className="p-6 sm:p-8 lg:p-10">
@@ -2069,7 +2066,7 @@ const MemoriesTourDetails = () => (
           Sandi&apos;s - We Create Memories, Not Just Tours
         </div>
 
-        <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+        <h2 className={servicePopupHeadingClass}>
           Travel is not just reaching destinations. It is creating lifelong
           memories.
         </h2>
@@ -2224,10 +2221,9 @@ const MemoriesTourDetails = () => (
 );
 
 const AirTicketingDetails = () => (
-  <div className="relative isolate overflow-hidden rounded-[8px] border border-sky-200 bg-white text-foreground shadow-elevated">
-    <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_14%_12%,hsl(199_89%_96%),transparent_32%),radial-gradient(circle_at_84%_14%,hsl(43_96%_94%),transparent_30%),linear-gradient(135deg,hsl(0_0%_100%),hsl(210_38%_98%))]" />
-    <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-sky-500 via-primary to-emerald-500" />
-    <PopupContactActions className="px-6 pt-6 pr-6 sm:px-8 sm:pt-8 sm:pr-8 lg:px-10 lg:pt-10 lg:pr-10" />
+  <div className={servicePopupShellClass}>
+    <div className={servicePopupBackdropClass} />
+    <PopupContactActions />
 
     <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
       <div className="p-6 sm:p-8 lg:p-10">
@@ -2236,7 +2232,7 @@ const AirTicketingDetails = () => (
           Air Ticketing Services
         </div>
 
-        <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+        <h2 className={servicePopupHeadingClass}>
           Travel better with smart air ticketing support
         </h2>
 
@@ -2416,10 +2412,9 @@ const AirTicketingDetails = () => (
 );
 
 const AirportTransferDetails = () => (
-  <div className="relative isolate overflow-hidden rounded-[8px] border border-cyan-200 bg-white text-foreground shadow-elevated">
-    <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_14%_12%,hsl(199_89%_96%),transparent_32%),radial-gradient(circle_at_84%_14%,hsl(151_81%_95%),transparent_30%),linear-gradient(135deg,hsl(0_0%_100%),hsl(205_35%_98%))]" />
-    <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-cyan-500 via-sky-500 to-emerald-500" />
-    <PopupContactActions className="px-6 pt-6 pr-6 sm:px-8 sm:pt-8 sm:pr-8 lg:px-10 lg:pt-10 lg:pr-10" />
+  <div className={servicePopupShellClass}>
+    <div className={servicePopupBackdropClass} />
+    <PopupContactActions />
 
     <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
       <div className="p-6 sm:p-8 lg:p-10">
@@ -2428,7 +2423,7 @@ const AirportTransferDetails = () => (
           Airport Transfers
         </div>
 
-        <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+        <h2 className={servicePopupHeadingClass}>
           Safe, reliable airport pickups and drops you can trust
         </h2>
 
@@ -2641,6 +2636,58 @@ const Services = () => {
   const [isMemoriesDialogOpen, setIsMemoriesDialogOpen] = useState(false);
   const [isAirDialogOpen, setIsAirDialogOpen] = useState(false);
   const [isAirportDialogOpen, setIsAirportDialogOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const popupKey = (searchParams.get("popup") ?? "").toLowerCase();
+
+  useEffect(() => {
+    if (!popupKey) return;
+
+    switch (popupKey) {
+      case "memories":
+      case "holiday":
+      case "holidays":
+        setIsMemoriesDialogOpen(true);
+        return;
+      case "airport":
+      case "airport-transfer":
+        setIsAirportDialogOpen(true);
+        return;
+      case "air":
+      case "flight":
+      case "flights":
+        setIsAirDialogOpen(true);
+        return;
+      case "railway":
+      case "train":
+      case "bus-train":
+        setIsRailwayDialogOpen(true);
+        return;
+      case "visa":
+        setIsVisaDialogOpen(true);
+        return;
+      case "passport":
+        setIsPassportDialogOpen(true);
+        return;
+      case "insurance":
+        setIsInsuranceDialogOpen(true);
+        return;
+      case "hotel":
+      case "hotels":
+        setIsHotelDialogOpen(true);
+        return;
+      case "rental":
+      case "car":
+      case "car-bus":
+        setIsRentalDialogOpen(true);
+        return;
+      case "forex":
+      case "currency":
+        setIsForexDialogOpen(true);
+        return;
+      default:
+        return;
+    }
+  }, [popupKey]);
 
   useEffect(() => {
     fetchServices()
@@ -2686,48 +2733,10 @@ const Services = () => {
 
   return (
     <div className="pt-16">
-      <section className="relative overflow-hidden px-4 py-20 sm:py-24">
-        <img
-          src={servicesHeroImage}
-          alt="Luxury travel planning services"
-          className="services-hero-image absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="services-hero-light absolute -left-24 top-0 h-[340px] w-[340px] rounded-full" />
-        <div className="services-hero-light-delayed absolute -right-20 bottom-0 h-[320px] w-[320px] rounded-full" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,23,42,0.8),rgba(236,117,0,0.64)),linear-gradient(180deg,rgba(15,23,42,0.2),rgba(15,23,42,0.54))]" />
-        <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_18%_30%,rgba(255,255,255,0.35),transparent_32%),radial-gradient(circle_at_80%_70%,rgba(255,255,255,0.22),transparent_28%)]" />
-
-        <div className="container relative z-10 mx-auto flex min-h-[230px] flex-col items-center justify-center text-center text-white">
-          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-slate-950/10 backdrop-blur-md">
-            <Home size={15} />
-            <Link to="/" className="transition hover:text-white/80">
-              Home
-            </Link>
-            <ChevronRight size={15} className="text-white/70" />
-            <span>Services</span>
-          </div>
-
-          <div className="animate-fade-up mt-5 inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-foreground shadow-[0_16px_30px_rgba(236,117,0,0.28)] [animation-delay:120ms]">
-            <Plane size={15} />
-            Curated Travel Services
-          </div>
-
-          <h1 className="animate-fade-up mt-5 text-4xl font-extrabold leading-tight sm:text-5xl [animation-delay:180ms]">
-            Our Services
-          </h1>
-          <p className="animate-fade-up mt-3 max-w-2xl text-base leading-7 text-white/90 sm:text-lg [animation-delay:240ms]">
-            Complete travel solutions under one roof for smooth, secure, and
-            memorable journeys.
-          </p>
-        </div>
-      </section>
-
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="hidden">
-            <div className="absolute inset-0 -z-10 opacity-75 [background-image:linear-gradient(hsl(27_91%_48%_/_0.06)_1px,transparent_1px),linear-gradient(90deg,hsl(199_89%_48%_/_0.05)_1px,transparent_1px)] [background-size:34px_34px]" />
-            <div className="rail-track-motion absolute inset-x-0 bottom-0 -z-10 h-24 opacity-45" />
-            <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-primary via-amber-300 to-sky-400" />
+            <div className={servicePopupBackdropClass} />
             <div className="grid gap-0 lg:grid-cols-[0.94fr_1.06fr]">
               <div className="p-6 sm:p-8 lg:p-10">
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground shadow-card">
@@ -2735,7 +2744,7 @@ const Services = () => {
                   Railway Reservation
                 </div>
 
-                <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+                <h2 className={servicePopupHeadingClass}>
                   Rail bookings made effortless before your journey begins
                 </h2>
 
@@ -2994,10 +3003,9 @@ const Services = () => {
                 transparent currency exchange, travel card support, traveler&apos;s
                 cheques, and international travel money planning.
               </DialogDescription>
-              <div className="relative isolate overflow-hidden rounded-[8px] border border-emerald-200 bg-white text-foreground shadow-elevated">
-            <div className="absolute inset-0 -z-10 opacity-80 [background-image:radial-gradient(circle_at_18%_18%,hsl(151_81%_96%),transparent_30%),radial-gradient(circle_at_82%_12%,hsl(199_89%_96%),transparent_28%),linear-gradient(135deg,hsl(0_0%_100%),hsl(40_33%_98%))]" />
-            <div className="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-emerald-500 via-primary to-sky-500" />
-            <PopupContactActions className="px-6 pt-6 pr-6 sm:px-8 sm:pt-8 sm:pr-8 lg:px-10 lg:pt-10 lg:pr-10" />
+              <div className={servicePopupShellClass}>
+            <div className={servicePopupBackdropClass} />
+            <PopupContactActions />
 
             <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
               <div className="p-6 sm:p-8 lg:p-10">
@@ -3006,7 +3014,7 @@ const Services = () => {
                   Foreign Exchange Services
                 </div>
 
-                <h2 className="mt-6 max-w-2xl text-4xl font-bold leading-tight text-foreground sm:text-5xl">
+                <h2 className={servicePopupHeadingClass}>
                   Smart exchange, smooth travel, complete peace of mind
                 </h2>
 
@@ -3427,6 +3435,25 @@ const Services = () => {
                                 : "Travel";
               const cardTheme =
                 serviceCardThemes[cardIndex % serviceCardThemes.length];
+              const WatermarkIcon = showMemoriesDetails
+                ? Globe
+                : showAirportDetails
+                  ? Car
+                  : showAirDetails
+                    ? PlaneTakeoff
+                    : showRailwayDetails
+                      ? Train
+                      : showVisaDetails
+                        ? FileText
+                        : showPassportDetails
+                          ? IdCard
+                          : showInsuranceDetails
+                            ? ShieldCheck
+                            : showHotelDetails
+                              ? Hotel
+                              : showRentalDetails
+                                ? Car
+                                : DollarSign;
 
               return (
                 <div
@@ -3435,7 +3462,11 @@ const Services = () => {
                 >
                   <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${cardTheme.bar}`} />
                   <div className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full blur-2xl ${cardTheme.glow}`} />
-                  <div className="pointer-events-none absolute inset-0 opacity-[0.05] [background-image:linear-gradient(to_right,hsl(0_0%_0%)_1px,transparent_1px),linear-gradient(to_bottom,hsl(0_0%_0%)_1px,transparent_1px)] [background-size:22px_22px]" />
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+                    <div className="text-slate-900/[0.06]">
+                      <WatermarkIcon size={168} strokeWidth={1.4} />
+                    </div>
+                  </div>
 
                   <div className="relative flex h-full flex-col">
                     <div className="flex items-start justify-between gap-4">
@@ -3521,4 +3552,10 @@ const Services = () => {
 };
 
 export default Services;
+
+
+
+
+
+
 
