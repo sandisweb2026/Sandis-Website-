@@ -16,7 +16,7 @@ const Footer = () => (
     <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
         <div>
-          <div className="mb-4 flex items-center gap-3">
+          <div className="mb-4 flex flex-col items-center">
             <img
               src={sandisLogo}
               alt="Sandis Tours logo"
@@ -24,6 +24,10 @@ const Footer = () => (
               loading="lazy"
               decoding="async"
             />
+            <p className="brand-marathi-tagline mt-1 text-center text-xs font-extrabold">
+              <span className="text-black">सुखद</span>{" "}
+              <span className="text-primary">क्षणाचे सोबती</span>
+            </p>
           </div>
           <p className="text-sm leading-relaxed opacity-70">
             Creating unforgettable journeys since 1995. Your trusted travel

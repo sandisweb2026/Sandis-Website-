@@ -135,7 +135,7 @@ const Index = () => {
             <div className={`${whiteSlidePanelClass} p-4 md:p-6`}>
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center justify-between md:justify-start">
-                  <Link to="/" className="flex items-center">
+                  <Link to="/" className="flex flex-col items-center">
                     <img
                       src={sandisLogo}
                       alt="Sandis Tours logo"
@@ -143,6 +143,10 @@ const Index = () => {
                       loading="eager"
                       decoding="async"
                     />
+                    <p className="brand-marathi-tagline mt-1 text-center text-xs font-extrabold sm:text-sm">
+                      <span className="text-black">सुखद</span>{" "}
+                      <span className="text-primary">क्षणाचे सोबती</span>
+                    </p>
                   </Link>
                   <div className="flex items-center gap-2 md:hidden">
                     <a

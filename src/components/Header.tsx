@@ -20,7 +20,7 @@ const Header = () => {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass shadow-card">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
-        <Link to="/" className="flex items-center gap-2">
+        <Link to="/" className="flex flex-col items-center">
           <img
             src={sandisLogo}
             alt="Sandis Tours logo"
@@ -28,6 +28,10 @@ const Header = () => {
             loading="eager"
             decoding="async"
           />
+          <p className="brand-marathi-tagline mt-0.5 text-center text-[0.62rem] font-extrabold sm:text-[0.68rem]">
+            <span className="text-black">सुखद</span>{" "}
+            <span className="text-primary">क्षणाचे सोबती</span>
+          </p>
         </Link>
 
         {/* Desktop Nav */}
