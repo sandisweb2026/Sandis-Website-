@@ -1,178 +1,115 @@
-import { useEffect, useState } from "react";
-import { Mail, MapPin, Phone } from "lucide-react";
-import { toast } from "sonner";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { fallbackServices } from "@/lib/fallback-content";
-import { createEnquiry, fetchServices } from "@/lib/travel-cms";
-
-const normalizeServiceTitles = (titles: string[]) =>
-  Array.from(
-    new Set(
-      titles
-        .map((title) => title.trim())
-        .filter(Boolean),
-    ),
-  );
-
-const fallbackServiceTitles = normalizeServiceTitles(
-  fallbackServices.map((service) => service.title),
-);
+import { Globe, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
 const Contact = () => {
-  const [loading, setLoading] = useState(false);
-  const [serviceOptions, setServiceOptions] = useState<string[]>(
-    fallbackServiceTitles,
-  );
-
-  useEffect(() => {
-    let active = true;
-
-    fetchServices()
-      .then((services) => {
-        if (!active) return;
-
-        const titles = normalizeServiceTitles(
-          services.map((service) => service.title),
-        );
-
-        if (titles.length > 0) {
-          setServiceOptions(titles);
-        }
-      })
-      .catch(() => {
-        // Keep fallback service options if API request fails.
-      });
-
-    return () => {
-      active = false;
-    };
-  }, []);
-
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    setLoading(true);
-
-    try {
-      await createEnquiry({
-        name: formData.get("name") as string,
-        email: formData.get("email") as string,
-        phone: formData.get("phone") as string,
-        destination: formData.get("subject") as string,
-        message: formData.get("message") as string,
-      });
-
-      toast.success("Message sent! We'll get back to you soon.");
-      form.reset();
-    } catch {
-      toast.error("Something went wrong.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="pt-16">
       <section className="px-4 py-14 sm:py-20">
         <div className="container mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <div className="rounded-2xl bg-card p-5 shadow-card sm:p-8">
-              <h2 className="text-2xl font-bold text-foreground">
-                Send us a Message
-              </h2>
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-6">
-                <Input name="name" placeholder="Your Name" required />
-                <Input
-                  name="email"
-                  placeholder="Email Address"
-                  type="email"
-                  required
-                />
-                <Input
-                  name="phone"
-                  placeholder="Phone Number"
-                  type="tel"
-                  required
-                />
-                <select
-                  name="subject"
-                  defaultValue=""
-                  required
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base text-foreground ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                >
-                  <option value="" disabled>
-                    Select Service
-                  </option>
-                  {serviceOptions.map((service) => (
-                    <option key={service} value={service}>
-                      {service}
-                    </option>
-                  ))}
-                </select>
-                <Textarea
-                  name="message"
-                  placeholder="Your Message"
-                  rows={5}
-                  required
-                />
-                <Button type="submit" size="lg" className="w-full" disabled={loading}>
-                  {loading ? "Sending..." : "Send Message"}
-                </Button>
-              </form>
-            </div>
+          <div className="mx-auto mb-10 max-w-3xl text-center">
+            <h1 className="text-3xl font-extrabold text-foreground sm:text-4xl">
+              We&apos;re Here To Help You Travel Better
+            </h1>
+            <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">
+              Call, mail, or visit us for travel planning, airport transfers,
+              hotel bookings, tours, and complete travel support.
+            </p>
+          </div>
 
-            <div>
-              <h2 className="text-2xl font-bold text-foreground">
+          <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-[0.82fr_1.18fr]">
+            <div className="relative overflow-hidden rounded-2xl border border-primary/15 bg-white/95 p-5 shadow-[0_24px_60px_rgba(15,23,42,0.10)] sm:p-8">
+              <div className="pointer-events-none absolute -right-16 -top-16 h-44 w-44 rounded-full bg-primary/15 blur-3xl" />
+              <div className="pointer-events-none absolute -bottom-16 -left-16 h-44 w-44 rounded-full bg-amber-200/25 blur-3xl" />
+
+              <h2 className="relative text-2xl font-bold text-foreground">
                 Get in Touch
               </h2>
-              <p className="text-muted-foreground mt-2">
+              <p className="relative mt-2 text-muted-foreground">
                 Reach out to us for any travel enquiries or assistance.
               </p>
-              <div className="flex flex-col gap-6 mt-8">
-                <a href="tel:+919876543210" className="flex items-start gap-4 group">
-                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center shrink-0">
-                    <Phone size={20} className="text-primary" />
+              <div className="relative mt-8 flex flex-col gap-4">
+                <a
+                  href="tel:+912024431155"
+                  className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                    <Phone size={20} />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-foreground">Phone</h4>
+                    <h4 className="font-semibold text-foreground">Call</h4>
+                    <div className="mt-1 text-sm text-muted-foreground transition-colors group-hover:text-primary">
+                      <span>+91 20 2443 1155</span>
+                    </div>
+                  </div>
+                </a>
+                <a
+                  href="https://wa.me/919890711155"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                    <MessageCircle size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground">
+                      Mobile & WhatsApp
+                    </h4>
                     <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                      +91 98765 43210
+                      9890711155 | 9960000450
                     </p>
                   </div>
                 </a>
                 <a
-                  href="mailto:info@sandistours.com"
-                  className="flex items-start gap-4 group"
+                  href="mailto:sandis@sandis.com"
+                  className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center shrink-0">
-                    <Mail size={20} className="text-primary" />
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                    <Mail size={20} />
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground">Email</h4>
                     <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                      info@sandistours.com
+                      sandis@sandis.com | sandistravels@gmail.com
                     </p>
                   </div>
                 </a>
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center shrink-0">
-                    <MapPin size={20} className="text-primary" />
+                <a
+                  href="https://www.sandis.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]"
+                >
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                    <Globe size={20} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-foreground">Website</h4>
+                    <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
+                      www.sandis.com
+                    </p>
+                  </div>
+                </a>
+                <div className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
+                    <MapPin size={20} />
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground">Address</h4>
-                    <p className="text-sm text-muted-foreground">
-                      123 Travel Street, Mumbai, Maharashtra 400001
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      5 Amit Complex, 474 Sadashiv Peth, Tilak Road, Pune - 30.
+                      <br />
+                      Other Office: Dahanukar Colony, Kothrud
                     </p>
                   </div>
                 </div>
               </div>
-              <div className="mt-8 rounded-2xl overflow-hidden shadow-card h-64">
+            </div>
+
+            <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-[linear-gradient(135deg,hsl(27_96%_53%),hsl(35_98%_56%))] p-2 shadow-[0_24px_60px_rgba(236,117,0,0.18)]">
+              <div className="pointer-events-none absolute -right-12 -top-12 z-10 h-36 w-36 rounded-full bg-white/30 blur-3xl" />
+              <div className="relative h-full min-h-[420px] overflow-hidden rounded-xl bg-white">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d241317.11609823277!2d72.74109995!3d19.08219865!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c6306644edc1%3A0x5da4ed8f8d648c69!2sMumbai%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                  src="https://www.google.com/maps?q=5%20Amit%20Complex%2C%20474%20Sadashiv%20Peth%2C%20Tilak%20Road%2C%20Pune&output=embed"
                   className="w-full h-full border-0"
                   allowFullScreen
                   loading="lazy"

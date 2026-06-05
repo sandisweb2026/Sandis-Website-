@@ -4,7 +4,7 @@ import { Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileCheck, BookOpen,
 import banner1 from "@/assets/banners/banner 1.jpeg";
 import banner2 from "@/assets/banners/banner 2.jpeg";
 import banner3 from "@/assets/banners/banner 3.jpeg";
-import sandisLogo from "@/assets/sandis logo.png";
+import sandisLogo from "@/assets/sandis logo .png";
 
 // Static images for fallback
 import tourGoa from "@/assets/tour-goa.jpg";
@@ -40,8 +40,8 @@ const serviceIcons = [
   { icon: Car, label: "Car/ Bus Rental", bg: "bg-orange-500", iconClass: "text-white", popup: "rental" },
   { icon: Plane, label: "Flight Booking", bg: "bg-blue-500", iconClass: "text-white", popup: "air" },
   { icon: Bus, label: "Bus / Train Booking", bg: "bg-red-500", iconClass: "text-white", popup: "railway" },
-  { icon: MapPin, label: "Holidays", bg: "bg-green-500", iconClass: "text-white", popup: "memories" },
   { icon: Hotel, label: "Hotel Booking", bg: "bg-purple-500", iconClass: "text-white", popup: "hotel" },
+  { icon: MapPin, label: "Holidays", bg: "bg-green-500", iconClass: "text-white", popup: "memories" },
   { icon: FileCheck, label: "Visa Assistance", bg: "bg-yellow-400", iconClass: "text-slate-900", popup: "visa" },
   { icon: BookOpen, label: "Passport Assistance", bg: "bg-pink-500", iconClass: "text-white", popup: "passport" },
   { icon: IndianRupee, label: "Forex Assistance", bg: "bg-cyan-500", iconClass: "text-white", popup: "forex" },
@@ -71,6 +71,7 @@ const whiteSlidePanelClass = "mx-4 md:mx-auto max-w-5xl rounded-2xl bg-white sha
 
 const Index = () => {
   const [current, setCurrent] = useState(0);
+  const [activeService, setActiveService] = useState<string | null>(null);
   const [visibleStats, setVisibleStats] = useState(() =>
     tourStats.map(() => 0),
   );
@@ -135,18 +136,14 @@ const Index = () => {
             <div className={`${whiteSlidePanelClass} p-4 md:p-6`}>
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div className="flex items-center justify-between md:justify-start">
-                  <Link to="/" className="flex flex-col items-center">
+                  <Link to="/" className="flex items-center">
                     <img
                       src={sandisLogo}
                       alt="Sandis Tours logo"
-                      className="h-12 w-auto md:h-14 lg:h-16"
+                      className="block max-h-10 w-auto shrink-0 object-contain sm:max-h-12 md:max-h-16 lg:max-h-20"
                       loading="eager"
                       decoding="async"
                     />
-                    <p className="brand-marathi-tagline mt-1 text-center text-xs font-extrabold sm:text-sm">
-                      <span className="text-black">सुखद</span>{" "}
-                      <span className="text-primary">क्षणाचे सोबती</span>
-                    </p>
                   </Link>
                   <div className="flex items-center gap-2 md:hidden">
                     <a
@@ -293,18 +290,27 @@ const Index = () => {
       {/* Quick Services Strip */}
       <section className={`${whiteSlidePanelClass} relative z-10 -mt-10 p-4 sm:-mt-12 sm:p-6`}>
         <div className="mx-auto grid max-w-6xl grid-cols-2 justify-items-center gap-x-4 gap-y-5 sm:grid-cols-3 lg:grid-cols-9">
-          {serviceIcons.map(({ icon: Icon, label, bg, iconClass, labelClass, popup }) => (
-              <Link
-                to={`/services?popup=${popup}`}
-                key={label}
-                className="flex w-full max-w-[112px] flex-col items-center gap-2 text-center text-foreground transition-colors hover:text-primary last:col-span-2 sm:last:col-span-1"
-              >
-              <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center shadow-sm`}>
+          {serviceIcons.map(({ icon: Icon, label, bg, iconClass, labelClass, popup }) => {
+            const isActive = activeService === label;
+
+            return (
+            <Link
+              to={`/services?popup=${popup}`}
+              key={label}
+              onPointerDown={() => setActiveService(label)}
+              onPointerUp={() => setActiveService(null)}
+              onPointerLeave={() => setActiveService(null)}
+              onPointerCancel={() => setActiveService(null)}
+              onBlur={() => setActiveService(null)}
+              className={`group flex w-full max-w-[112px] touch-manipulation flex-col items-center gap-2 rounded-2xl px-3 py-2 text-center text-foreground transition-all duration-300 hover:-translate-y-1 hover:bg-primary/5 hover:text-primary hover:shadow-[0_14px_28px_rgba(236,117,0,0.16)] active:-translate-y-1 active:bg-primary/5 active:text-primary active:shadow-[0_14px_28px_rgba(236,117,0,0.16)] focus-visible:-translate-y-1 focus-visible:bg-primary/5 focus-visible:text-primary focus-visible:shadow-[0_14px_28px_rgba(236,117,0,0.16)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/35 last:col-span-2 sm:last:col-span-1 ${isActive ? "bg-primary/5 text-primary shadow-[0_14px_28px_rgba(236,117,0,0.16)] -translate-y-1" : ""}`}
+            >
+              <div className={`w-12 h-12 rounded-xl ${bg} flex items-center justify-center shadow-sm transition-all duration-300 group-hover:scale-110 group-hover:shadow-md group-active:scale-110 group-active:shadow-md group-focus-visible:scale-110 group-focus-visible:shadow-md ${isActive ? "scale-110 shadow-md" : ""}`}>
                 <Icon size={22} className={iconClass} />
               </div>
-              <span className={`text-[11px] leading-snug font-medium text-foreground ${labelClass ?? ""}`}>{label}</span>
+              <span className={`text-[11px] leading-snug font-medium text-foreground transition-colors duration-300 group-hover:text-primary group-active:text-primary group-focus-visible:text-primary ${isActive ? "text-primary" : ""} ${labelClass ?? ""}`}>{label}</span>
             </Link>
-          ))}
+            );
+          })}
         </div>
         <div className="mt-5 flex justify-center">
           <Link

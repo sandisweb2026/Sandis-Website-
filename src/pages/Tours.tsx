@@ -1,24 +1,29 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   BadgeCheck,
   Clock,
   Globe2,
   IndianRupee,
   Landmark,
+  Mail,
+  MessageCircle,
   PlaneTakeoff,
+  Sparkles,
   Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { fallbackTourImages, fallbackTours } from "@/lib/fallback-content";
 import { fetchTours, getTourImage, type TourRecord } from "@/lib/travel-cms";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const isMaharashtraTour = (tour: TourRecord) => {
   const haystack = `${tour.name} ${tour.description ?? ""}`.toLowerCase();
@@ -62,6 +67,11 @@ const memoriesIndiaThemes = [
   "Heritage & Monuments",
   "Wildlife Experiences",
   "Culinary Journeys",
+  "Honeymoons & Romantic Escapes",
+  "Luxury & Royal Heritage Tours",
+  "Memory Lane Journeys",
+  "Hiking and Biking",
+  "Medical Tourism",
 ];
 
 const memoriesExpertise = [
@@ -71,9 +81,208 @@ const memoriesExpertise = [
   "Ladies Special Groups",
   "Temple Darshan & Spiritual Tours",
   "Heritage & Cultural Trails",
+  "Wellness & Medical Tourism",
+  "Customized International & Domestic Packages",
+  "Hikers and Bikers",
 ];
 
+const memoriesJourneyFlow = [
+  "Share your interests, pace, and destination wishlist",
+  "Get a personalized journey instead of a generic package",
+  "Travel with comfort, safety, and thoughtful planning",
+  "Return with stories, emotions, and lifelong memories",
+];
+
+const holidayPopupShellClass =
+  "relative isolate flex flex-col overflow-visible rounded-[24px] border border-white/75 bg-white/90 text-foreground shadow-[0_32px_80px_rgba(15,23,42,0.25)] ring-1 ring-primary/10 backdrop-blur-sm";
+const holidayPopupBackdropClass =
+  "absolute inset-0 -z-10 [background-image:radial-gradient(circle_at_14%_10%,hsl(35_100%_96%),transparent_34%),radial-gradient(circle_at_88%_14%,hsl(198_92%_95%),transparent_32%),linear-gradient(140deg,hsl(0_0%_100%),hsl(210_38%_98%))]";
+const holidayPopupHeadingClass =
+  "popup-display-title mt-6 max-w-2xl bg-[linear-gradient(120deg,#111827_0%,#1f2937_46%,#c76905_100%)] bg-clip-text text-[2.05rem] font-semibold leading-[1.04] text-transparent sm:text-5xl";
+
+const PopupContactActions = () => (
+  <div className="sticky top-0 z-40 w-full border-b border-border/60 bg-white/95 px-6 py-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-md sm:px-8 lg:px-10">
+    <div className="relative flex w-full items-center justify-center">
+      <div className="mx-auto flex w-full max-w-fit flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/80 bg-white/95 p-2 shadow-[0_14px_34px_rgba(15,23,42,0.14)] ring-1 ring-primary/10 backdrop-blur-md">
+        <Link
+          to="/contact"
+          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+        >
+          Enquire Now
+        </Link>
+        <a
+          href={getWhatsAppUrl()}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3.5 py-2 text-sm font-semibold text-green-700 transition-colors hover:bg-green-100"
+        >
+          <MessageCircle size={15} />
+          WhatsApp Us
+        </a>
+        <a
+          href="mailto:info@sandistours.com?subject=Holiday%20Enquiry"
+          className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
+        >
+          <Mail size={15} />
+          Mail Us
+        </a>
+      </div>
+      <DialogClose className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-3 border-primary bg-white text-primary shadow-[0_10px_24px_rgba(236,117,0,0.22)] transition-all hover:bg-primary hover:text-white sm:h-11 sm:w-11">
+        <span className="sr-only">Close</span>
+        <span className="text-xl leading-none">X</span>
+      </DialogClose>
+    </div>
+  </div>
+);
+
+const MemoriesHolidayPopup = () => (
+  <div className={holidayPopupShellClass}>
+    <div className={holidayPopupBackdropClass} />
+    <PopupContactActions />
+
+    <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+      <div className="p-6 sm:p-8 lg:p-10">
+        <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground shadow-card">
+          <Globe2 size={18} className="text-primary" />
+          Sandi&apos;s - We Create Memories, Not Just Tours
+        </div>
+
+        <h2 className={holidayPopupHeadingClass}>
+          Travel is not just reaching destinations. It is creating lifelong
+          memories.
+        </h2>
+
+        <p className="mt-5 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+          At Sandi&apos;s International Tours & Travels, every journey is
+          designed around emotions, discovery, and personal meaning. We build
+          experiences that stay with you long after the trip ends.
+        </p>
+
+        <div className="mt-8 rounded-[8px] border border-border bg-white p-4 shadow-card">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-amber-100 text-primary">
+              <Landmark size={20} />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">
+                Vande Bharat - Discover India
+              </h3>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                From Himalayas, rivers, oceans, deserts, and backwaters to
+                India&apos;s culture, traditions, and spirituality, every corner
+                inspires deeper exploration.
+              </p>
+            </div>
+          </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {memoriesIndiaThemes.map((item) => (
+              <span
+                key={item}
+                className="rounded-full border border-border bg-secondary/70 px-3 py-1 text-xs font-semibold text-foreground"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div className="mt-8 rounded-[8px] border border-border bg-white p-4 shadow-card">
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-sky-100 text-sky-700">
+              <PlaneTakeoff size={20} />
+            </div>
+            <div>
+              <h3 className="text-sm font-semibold text-foreground">
+                World Voyage - Explore Beyond Boundaries
+              </h3>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                The world opens doors to growth and transformation. As Mark
+                Twain reminds us, real regret comes from journeys we never took.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative flex min-h-[420px] items-center justify-center p-6 sm:min-h-[520px] sm:p-8 lg:p-10">
+        <div className="w-full max-w-2xl rounded-[8px] border border-primary/20 bg-white/95 p-4 shadow-elevated md:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
+            <div>
+              <p className="text-xs font-semibold uppercase text-primary">
+                Experience Design Desk
+              </p>
+              <h3 className="mt-1 text-2xl font-bold text-foreground">
+                Traveler, Not Just a Tourist
+              </h3>
+            </div>
+            <div className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+              1000+ travelers every year
+            </div>
+          </div>
+
+          <div className="mt-5 rounded-[8px] border border-border bg-white p-4 shadow-card">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
+              Our Travel Expertise
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              {memoriesExpertise.map((item) => (
+                <div
+                  key={item}
+                  className="flex items-center gap-3 rounded-[8px] bg-secondary/60 p-3"
+                >
+                  <div className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-white text-primary shadow-card">
+                    <Sparkles size={16} />
+                  </div>
+                  <p className="text-sm font-semibold text-foreground">
+                    {item}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-4 rounded-[8px] border border-border bg-secondary/70 p-4">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
+              Personalized Journey Flow
+            </p>
+            <div className="mt-4 space-y-3">
+              {memoriesJourneyFlow.map((item, index) => (
+                <div
+                  key={item}
+                  className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
+                >
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm font-medium text-foreground">{item}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div className="mx-4 mb-4 rounded-[18px] border border-white/15 bg-[linear-gradient(135deg,hsl(27_96%_53%),hsl(35_98%_56%))] px-6 py-5 text-white shadow-[0_12px_30px_rgba(236,117,0,0.18)] sm:mx-6 sm:mb-6 sm:px-8 lg:mx-8 lg:px-10">
+      <div className="flex items-start gap-3">
+        <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-white/20 text-white">
+          <BadgeCheck size={19} />
+        </div>
+        <div className="max-w-4xl">
+          <h4 className="text-sm font-semibold text-white">Our Promise</h4>
+          <p className="mt-1 text-sm leading-relaxed text-white/90 sm:text-base">
+            We don&apos;t just plan trips. We create experiences, emotions, and
+            lifelong memories. With Sandi&apos;s, you don&apos;t just travel, you
+            experience the world.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const Tours = () => {
+  const location = useLocation();
   const [filter, setFilter] = useState<
     "group" | "maharashtra" | "india" | "international"
   >("india");
@@ -85,6 +294,12 @@ const Tours = () => {
       .then(setTours)
       .catch(() => setTours(fallbackTours));
   }, []);
+
+  useEffect(() => {
+    if (location.pathname === "/holidays") {
+      setShowMemoriesIntro(true);
+    }
+  }, [location.key, location.pathname]);
 
   const filtered = tours.filter((tour) => {
     if (filter === "group") return isGroupTour(tour);
@@ -103,130 +318,34 @@ const Tours = () => {
     <div className="pt-16">
       <Dialog open={showMemoriesIntro} onOpenChange={setShowMemoriesIntro}>
         <DialogContent
-          className="max-h-[90vh] max-w-4xl overflow-y-auto border-0 bg-transparent p-0 shadow-none [&>button]:hidden"
-          onEscapeKeyDown={(event) => event.preventDefault()}
-          onPointerDownOutside={(event) => event.preventDefault()}
-          onInteractOutside={(event) => event.preventDefault()}
+          className="max-h-[92vh] max-w-[1180px] overflow-y-auto border-0 bg-transparent p-0 shadow-none sm:rounded-[8px] [&>button]:hidden"
         >
-          <div className="relative rounded-[24px] border border-white/75 bg-white/90 shadow-[0_32px_80px_rgba(15,23,42,0.25)] ring-1 ring-primary/10 backdrop-blur-sm">
-            <div className="absolute inset-0 -z-10 rounded-[24px] bg-[radial-gradient(circle_at_14%_10%,hsl(35_100%_96%),transparent_34%),radial-gradient(circle_at_88%_14%,hsl(198_92%_95%),transparent_32%),linear-gradient(140deg,hsl(0_0%_100%),hsl(210_38%_98%))]" />
-            <div className="px-6 py-6 sm:px-8 sm:py-8">
-              <div className="popup-support-copy inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground shadow-card">
-                <Globe2 size={16} className="text-primary" />
-                Sandi&apos;s - We Create Memories, Not Just Tours
-              </div>
-              <DialogTitle className="popup-display-title mt-4 bg-[linear-gradient(120deg,#111827_0%,#1f2937_46%,#c76905_100%)] bg-clip-text text-4xl font-semibold leading-[1.03] tracking-[-0.02em] text-transparent sm:text-6xl">
-                Travel is not just reaching destinations. It is creating
-                lifelong memories.
-              </DialogTitle>
-              <DialogDescription className="popup-support-copy mt-3 text-base leading-7 text-muted-foreground">
-                At Sandi&apos;s International Tours & Travels, every journey is
-                designed around emotions, discovery, and personal meaning. We
-                build experiences that stay with you long after the trip ends.
-              </DialogDescription>
-
-              <div className="mt-6 grid gap-4 lg:grid-cols-2">
-                <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100 text-primary">
-                      <Landmark size={20} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-foreground">
-                        Vande Bharat - Discover India
-                      </h3>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        From Himalayas, rivers, oceans, deserts, and
-                        backwaters to India&apos;s culture, traditions, and
-                        spirituality, every corner inspires deeper exploration.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {memoriesIndiaThemes.map((item) => (
-                      <span
-                        key={item}
-                        className="rounded-full border border-border bg-secondary/70 px-2.5 py-1 text-[11px] font-semibold text-foreground"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="rounded-xl border border-border bg-white p-4 shadow-sm">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 text-sky-700">
-                      <PlaneTakeoff size={20} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-foreground">
-                        World Voyage - Explore Beyond Boundaries
-                      </h3>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        The world opens doors to growth and transformation. Real
-                        regret comes from journeys we never took.
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                    {memoriesExpertise.map((item) => (
-                      <div
-                        key={item}
-                        className="flex items-center gap-2 rounded-lg bg-secondary/60 p-2.5"
-                      >
-                        <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white text-primary shadow-sm">
-                          <Users size={14} />
-                        </div>
-                        <p className="text-xs font-semibold text-foreground">
-                          {item}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-5 rounded-xl border border-primary/15 bg-primary/5 p-4">
-                <div className="flex items-start gap-2.5">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-                    <BadgeCheck size={16} />
-                  </div>
-                  <p className="text-sm font-medium leading-6 text-foreground">
-                    Our Promise: We don&apos;t just plan trips. We create
-                    experiences, emotions, and lifelong memories.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-7 flex justify-center">
-                <Button
-                  size="lg"
-                  className="rounded-full bg-gradient-to-r from-primary via-orange-500 to-amber-400 px-6 text-primary-foreground"
-                  onClick={() => setShowMemoriesIntro(false)}
-                >
-                  OK
-                </Button>
-              </div>
-            </div>
-          </div>
+          <DialogTitle className="sr-only">
+            Sandi&apos;s - We Create Memories, Not Just Tours
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            Details about Sandi&apos;s customized domestic and international
+            tour experiences, including Vande Bharat journeys, World Voyage
+            exploration, and personalized travel planning.
+          </DialogDescription>
+          <MemoriesHolidayPopup />
         </DialogContent>
       </Dialog>
 
-      <section className="px-4 py-12 sm:py-16">
-        <div className="container mx-auto text-center">
+      <section className="px-4 py-8 sm:py-10">
+        <div className="container mx-auto flex flex-col items-center text-center">
           <h1 className="text-3xl font-bold text-foreground sm:text-4xl">
             Holiday Packages
           </h1>
-          <p className="mt-2 text-muted-foreground">
+          <p className="mt-2 max-w-2xl text-muted-foreground">
             Discover your next adventure with our curated holiday packages
           </p>
         </div>
       </section>
 
-      <section className="px-4 py-14 sm:py-20">
+      <section className="px-4 py-6 sm:py-8">
         <div className="container mx-auto">
-          <div className="mb-10 flex flex-wrap justify-center gap-2 sm:gap-3">
+          <div className="mb-6 flex flex-wrap justify-center gap-2 sm:mb-8 sm:gap-3">
             {(["group", "maharashtra", "india", "international"] as const).map(
               (currentFilter) => (
                 <Button

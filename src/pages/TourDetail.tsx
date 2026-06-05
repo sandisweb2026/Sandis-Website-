@@ -181,8 +181,8 @@ const TourDetail = () => {
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start xl:grid-cols-[minmax(0,1fr)_420px]">
+          <div className="min-w-0 lg:pr-2 xl:pr-4">
             <h2 className="text-2xl font-bold text-foreground">About Tour</h2>
             <p className="text-muted-foreground mt-3 leading-relaxed">
               {tour.description}
@@ -378,8 +378,8 @@ const TourDetail = () => {
 
           </div>
 
-          <div>
-            <div className="sticky top-24 rounded-2xl bg-card p-5 shadow-card sm:p-6">
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
               <h3 className="text-center text-2xl font-bold text-primary">
                 Enquire Now
               </h3>

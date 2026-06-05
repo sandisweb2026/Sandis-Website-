@@ -82,6 +82,15 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading;
   }
+
+  main p,
+  main li,
+  main dd,
+  main blockquote {
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+  }
 }
 
 @layer utilities {

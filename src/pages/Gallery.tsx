@@ -25,16 +25,16 @@ const galleryItems = [
 
 const Gallery = () => (
   <div className="pt-16">
-    <section className="py-16 px-4">
-      <div className="container mx-auto text-center">
+    <section className="px-4 py-8 sm:py-10">
+      <div className="container mx-auto flex flex-col items-center text-center">
         <h1 className="text-4xl font-bold text-foreground">Gallery</h1>
-        <p className="mt-2 text-muted-foreground">
+        <p className="mt-2 max-w-2xl text-muted-foreground">
           A glimpse of destinations and experiences curated by Sandi&apos;s Tours
         </p>
       </div>
     </section>
 
-    <section className="px-4 py-16 sm:py-20">
+    <section className="px-4 py-10 sm:py-14">
       <div className="container mx-auto">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {galleryItems.map((item) => (
