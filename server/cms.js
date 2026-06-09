@@ -666,12 +666,13 @@ export const registerCmsRoutes = (app, imageUpload) => {
         `
           SELECT id, page_key, title, subtitle, image_url, mobile_image_url, cta_label, cta_link, display_order, is_active, created_at, updated_at
           FROM banners
-          WHERE (:page_key = '' OR page_key = :page_key)
+          WHERE (:has_page_key = 0 OR page_key = :page_key)
             AND (:only_active = 0 OR is_active = 1)
           ORDER BY page_key ASC, display_order ASC, created_at DESC
         `,
         {
           page_key: pageKey,
+          has_page_key: pageKey ? 1 : 0,
           only_active: onlyActive ? 1 : 0,
         },
       );
@@ -1055,12 +1056,13 @@ export const registerCmsRoutes = (app, imageUpload) => {
       const rows = await query(
         `
           ${packageBaseSelect}
-          WHERE (:category_slug = '' OR c.slug = :category_slug)
+          WHERE (:has_category_slug = 0 OR c.slug = :category_slug)
             AND (:include_inactive = 1 OR p.is_active = 1)
           ORDER BY c.display_order ASC, p.created_at DESC
         `,
         {
           category_slug: categorySlug,
+          has_category_slug: categorySlug ? 1 : 0,
           include_inactive: includeInactive ? 1 : 0,
         },
       );
@@ -1329,12 +1331,13 @@ export const registerCmsRoutes = (app, imageUpload) => {
         `
           SELECT id, image_url, title, category, alt_text, display_order, is_active, created_at, updated_at
           FROM gallery_images
-          WHERE (:category = '' OR category = :category)
+          WHERE (:has_category = 0 OR category = :category)
             AND (:include_inactive = 1 OR is_active = 1)
           ORDER BY display_order ASC, created_at DESC
         `,
         {
           category,
+          has_category: category ? 1 : 0,
           include_inactive: includeInactive ? 1 : 0,
         },
       );
