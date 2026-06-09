@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CallButton from "@/components/CallButton";
 import EnquiryPopup from "@/components/EnquiryPopup";
+import ComingSoon from "./pages/ComingSoon";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import Tours from "./pages/Tours";
@@ -42,7 +43,8 @@ const AdminRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AppLayout = () => {
   const location = useLocation();
-  const isHome = location.pathname === "/";
+  const isComingSoon = location.pathname === "/";
+  const isFullScreenHome = location.pathname === "/home";
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -50,10 +52,11 @@ const AppLayout = () => {
 
   return (
     <>
-      {!isHome && <Header />}
+      {!isComingSoon && !isFullScreenHome && <Header />}
       <main className="min-h-screen site-page-background">
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<ComingSoon />} />
+          <Route path="/home" element={<Index />} />
           <Route path="/services" element={<Services />} />
           <Route path="/holidays" element={<Tours />} />
           <Route path="/holidays/:id" element={<TourDetail />} />
@@ -75,10 +78,14 @@ const AppLayout = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {!isHome && <Footer />}
-      <CallButton />
-      <WhatsAppButton />
-      <EnquiryPopup />
+      {!isComingSoon && !isFullScreenHome && <Footer />}
+      {!isComingSoon && (
+        <>
+          <CallButton />
+          <WhatsAppButton />
+          <EnquiryPopup />
+        </>
+      )}
     </>
   );
 };
