@@ -2,7 +2,7 @@ INSERT INTO admins (id, email, password_hash, name)
 VALUES (
   UUID(),
   'admin@sandis.com',
-  '$2b$12$a68nKds1hkKzlVLWOvKL9eJTD1XShThM3xyx9f7EfwjOMuA.2ixuK',
+  '$2b$12$P.DKT0V9W2HtqlGPDLXAzOMaPsv7SxzG22esyIUS48JQjgM0WEp2K',
   'Sandis Admin'
 )
 ON DUPLICATE KEY UPDATE
