@@ -96,15 +96,22 @@ const ComingSoon = () => {
                     9890711155 / 9960000450
                   </a>
                   <a
-                    href="mailto:info@sandistours.com"
+                    href="mailto:sandis@sandis.com"
                     className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 transition hover:border-orange-300 hover:text-orange-700"
                   >
                     <Mail size={18} className="text-orange-600" />
-                    info@sandistours.com
+                    <span>
+                      sandis@sandis.com
+                      <br />
+                      sandistravels@gmail.com
+                    </span>
                   </a>
                   <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3">
                     <MapPin size={18} className="text-orange-600" />
-                    Mumbai, Maharashtra
+                    <span>
+                      5 Amit Complex, 474 Sadashiv Peth, Tilak Road, Pune - 30.
+                      Other Office: Dahanukar Colony, Kothrud
+                    </span>
                   </div>
                 </div>
               </div>
