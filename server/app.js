@@ -4,7 +4,12 @@ import express from "express";
 import multer from "multer";
 import { randomUUID } from "node:crypto";
 
-import { requireAdmin, signAdminToken } from "./auth.js";
+import { getCmsDashboardStats, registerCmsRoutes } from "./cms.js";
+import {
+  createAdminSession,
+  invalidateAdminSession,
+  requireAdmin,
+} from "./auth.js";
 import { query } from "./db.js";
 
 const app = express();
@@ -185,6 +190,14 @@ app.get("/api/health", async (_req, res, next) => {
   }
 });
 
+app.get("/api", (_req, res) => {
+  res.json({
+    ok: true,
+    message: "Sandis API is running.",
+    health: "/api/health",
+  });
+});
+
 app.post("/api/admin/login", async (req, res, next) => {
   try {
     const email = String(req.body?.email ?? "").trim().toLowerCase();
@@ -212,7 +225,7 @@ app.post("/api/admin/login", async (req, res, next) => {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
-    const token = signAdminToken(admin);
+    const token = await createAdminSession(admin);
 
     return res.json({
       token,
@@ -231,18 +244,31 @@ app.get("/api/admin/me", requireAdmin, async (req, res) => {
   res.json({ admin: req.admin });
 });
 
+app.post("/api/admin/logout", requireAdmin, async (req, res, next) => {
+  try {
+    await invalidateAdminSession(req.adminToken ?? "");
+    return res.status(204).end();
+  } catch (error) {
+    return next(error);
+  }
+});
+
 app.get("/api/admin/dashboard", requireAdmin, async (_req, res, next) => {
   try {
-    const [tourCountRows, serviceCountRows, enquiryCountRows, newCountRows] =
+    const [cmsStats, serviceCountRows, enquiryCountRows, newCountRows] =
       await Promise.all([
-        query("SELECT COUNT(*) AS count FROM tours"),
+        getCmsDashboardStats(),
         query("SELECT COUNT(*) AS count FROM services"),
         query("SELECT COUNT(*) AS count FROM enquiries"),
         query("SELECT COUNT(*) AS count FROM enquiries WHERE status = 'new'"),
       ]);
 
     res.json({
-      tours: Number(tourCountRows[0]?.count ?? 0),
+      packages: cmsStats.packages,
+      categories: cmsStats.categories,
+      banners: cmsStats.banners,
+      galleryImages: cmsStats.galleryImages,
+      tours: cmsStats.packages,
       services: Number(serviceCountRows[0]?.count ?? 0),
       enquiries: Number(enquiryCountRows[0]?.count ?? 0),
       newEnquiries: Number(newCountRows[0]?.count ?? 0),
@@ -252,73 +278,7 @@ app.get("/api/admin/dashboard", requireAdmin, async (_req, res, next) => {
   }
 });
 
-app.post(
-  "/api/admin/uploads/tour-image",
-  requireAdmin,
-  imageUpload.single("image"),
-  async (req, res, next) => {
-    try {
-      if (!req.file) {
-        return res
-          .status(400)
-          .json({ message: "Please choose an image file." });
-      }
-
-      const uploadId = randomUUID();
-
-      await query(
-        `
-          INSERT INTO media_uploads (id, file_name, mime_type, byte_size, content)
-          VALUES (:id, :file_name, :mime_type, :byte_size, :content)
-        `,
-        {
-          id: uploadId,
-          file_name: req.file.originalname,
-          mime_type: req.file.mimetype,
-          byte_size: req.file.size,
-          content: req.file.buffer,
-        },
-      );
-
-      return res.status(201).json({
-        url: `/api/uploads/${uploadId}`,
-        uploadId,
-      });
-    } catch (error) {
-      return next(error);
-    }
-  },
-);
-
-app.get("/api/uploads/:id", async (req, res, next) => {
-  try {
-    const rows = await query(
-      `
-        SELECT id, file_name, mime_type, byte_size, content
-        FROM media_uploads
-        WHERE id = :id
-        LIMIT 1
-      `,
-      { id: req.params.id },
-    );
-
-    if (!Array.isArray(rows) || rows.length === 0) {
-      return res.status(404).json({ message: "Image not found." });
-    }
-
-    const upload = rows[0];
-    res.setHeader("Content-Type", upload.mime_type);
-    res.setHeader("Content-Length", String(upload.byte_size));
-    res.setHeader(
-      "Content-Disposition",
-      `inline; filename="${encodeURIComponent(upload.file_name)}"`,
-    );
-    res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
-    return res.send(upload.content);
-  } catch (error) {
-    return next(error);
-  }
-});
+registerCmsRoutes(app, imageUpload);
 
 app.get("/api/tours", async (_req, res, next) => {
   try {

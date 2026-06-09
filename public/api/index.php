@@ -79,59 +79,27 @@ function uuid_v4(): string
   return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
 }
 
-function base64url_encode(string $value): string
+function purge_expired_admin_sessions(): void
 {
-  return rtrim(strtr(base64_encode($value), '+/', '-_'), '=');
+  execute_sql('DELETE FROM admin_sessions WHERE expires_at <= NOW()');
 }
 
-function base64url_decode(string $value)
-{
-  return base64_decode(strtr($value, '-_', '+/'));
-}
-
-function sign_token(array $admin): string
+function create_admin_session(string $adminId): string
 {
   global $config;
 
-  $payload = [
-    'adminId' => $admin['id'],
-    'email' => $admin['email'],
-    'exp' => time() + (7 * 24 * 60 * 60),
-  ];
+  purge_expired_admin_sessions();
 
-  $body = base64url_encode(json_encode($payload, JSON_UNESCAPED_SLASHES));
-  $signature = base64url_encode(hash_hmac('sha256', $body, $config['jwt_secret'], true));
+  $token = bin2hex(random_bytes(48));
+  $hours = max(1, (int) ($config['admin_session_hours'] ?? 168));
+  $expiresAt = date('Y-m-d H:i:s', time() + ($hours * 60 * 60));
 
-  return $body . '.' . $signature;
-}
+  execute_sql(
+    'INSERT INTO admin_sessions (id, admin_id, token, expires_at) VALUES (?, ?, ?, ?)',
+    [uuid_v4(), $adminId, $token, $expiresAt],
+  );
 
-function verify_token(string $token): ?array
-{
-  global $config;
-
-  $parts = explode('.', $token);
-  if (count($parts) !== 2) {
-    return null;
-  }
-
-  [$body, $signature] = $parts;
-  $expected = base64url_encode(hash_hmac('sha256', $body, $config['jwt_secret'], true));
-
-  if (!hash_equals($expected, $signature)) {
-    return null;
-  }
-
-  $payloadJson = base64url_decode($body);
-  if ($payloadJson === false) {
-    return null;
-  }
-
-  $payload = json_decode($payloadJson, true);
-  if (!is_array($payload) || (int) ($payload['exp'] ?? 0) < time()) {
-    return null;
-  }
-
-  return $payload;
+  return $token;
 }
 
 function bearer_token(): string
@@ -148,13 +116,20 @@ function bearer_token(): string
 
 function require_admin(): array
 {
-  $payload = verify_token(bearer_token());
-  if (!$payload || empty($payload['adminId'])) {
+  $token = bearer_token();
+  if ($token === '') {
     json_response(['message' => 'Unauthorized.'], 401);
   }
 
-  $stmt = db()->prepare('SELECT id, email, name FROM admins WHERE id = ? LIMIT 1');
-  $stmt->execute([$payload['adminId']]);
+  purge_expired_admin_sessions();
+  $stmt = db()->prepare(
+    'SELECT a.id, a.email, a.name
+     FROM admin_sessions s
+     INNER JOIN admins a ON a.id = s.admin_id
+     WHERE s.token = ? AND s.expires_at > NOW()
+     LIMIT 1',
+  );
+  $stmt->execute([$token]);
   $admin = $stmt->fetch();
 
   if (!$admin) {
@@ -261,7 +236,7 @@ try {
     }
 
     json_response([
-      'token' => sign_token($admin),
+      'token' => create_admin_session($admin['id']),
       'admin' => [
         'id' => $admin['id'],
         'email' => $admin['email'],
@@ -272,6 +247,13 @@ try {
 
   if ($method === 'GET' && $path === 'admin/me') {
     json_response(['admin' => require_admin()]);
+  }
+
+  if ($method === 'POST' && $path === 'admin/logout') {
+    $token = bearer_token();
+    require_admin();
+    execute_sql('DELETE FROM admin_sessions WHERE token = ?', [$token]);
+    json_response(null, 204);
   }
 
   if ($method === 'GET' && $path === 'admin/dashboard') {
