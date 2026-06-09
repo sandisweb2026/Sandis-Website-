@@ -21,12 +21,42 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { fallbackTourImages, fallbackTours } from "@/lib/fallback-content";
-import { fetchTours, getTourImage, type TourRecord } from "@/lib/travel-cms";
+import { fallbackTourImages } from "@/lib/fallback-content";
+import {
+  fetchHolidayPackages,
+  type HolidayPackageRecord,
+} from "@/lib/travel-cms";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
-const isMaharashtraTour = (tour: TourRecord) => {
-  const haystack = `${tour.name} ${tour.description ?? ""}`.toLowerCase();
+const defaultPackageImage = fallbackTourImages["Goa Beach Paradise"];
+
+const getPackageCategorySlug = (packageItem: HolidayPackageRecord) =>
+  packageItem.category?.slug?.toLowerCase() ?? "";
+
+const getPackageHaystack = (packageItem: HolidayPackageRecord) =>
+  [
+    packageItem.title,
+    packageItem.location,
+    packageItem.trip_type,
+    packageItem.short_description,
+    packageItem.about_tour,
+    packageItem.category?.name,
+    packageItem.category?.slug,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
+const getPackageImage = (packageItem: HolidayPackageRecord) =>
+  packageItem.banner_image_url ||
+  fallbackTourImages[packageItem.title] ||
+  defaultPackageImage;
+
+const isMaharashtraPackage = (packageItem: HolidayPackageRecord) => {
+  const categorySlug = getPackageCategorySlug(packageItem);
+  if (categorySlug === "maharashtra") return true;
+
+  const haystack = getPackageHaystack(packageItem);
   const keywords = [
     "maharashtra",
     "mumbai",
@@ -41,11 +71,11 @@ const isMaharashtraTour = (tour: TourRecord) => {
   return keywords.some((keyword) => haystack.includes(keyword));
 };
 
-const isGroupTour = (tour: TourRecord) => {
-  const category = (tour.category ?? "").toLowerCase();
-  if (category.includes("group")) return true;
+const isGroupPackage = (packageItem: HolidayPackageRecord) => {
+  const categorySlug = getPackageCategorySlug(packageItem);
+  if (categorySlug.includes("group")) return true;
 
-  const haystack = `${tour.name} ${tour.description ?? ""}`.toLowerCase();
+  const haystack = getPackageHaystack(packageItem);
   const keywords = [
     "group tour",
     "group departure",
@@ -286,13 +316,13 @@ const Tours = () => {
   const [filter, setFilter] = useState<
     "group" | "maharashtra" | "india" | "international"
   >("india");
-  const [tours, setTours] = useState<TourRecord[]>([]);
+  const [packages, setPackages] = useState<HolidayPackageRecord[]>([]);
   const [showMemoriesIntro, setShowMemoriesIntro] = useState(true);
 
   useEffect(() => {
-    fetchTours()
-      .then(setTours)
-      .catch(() => setTours(fallbackTours));
+    fetchHolidayPackages()
+      .then(setPackages)
+      .catch(() => setPackages([]));
   }, []);
 
   useEffect(() => {
@@ -301,17 +331,15 @@ const Tours = () => {
     }
   }, [location.key, location.pathname]);
 
-  const filtered = tours.filter((tour) => {
-    if (filter === "group") return isGroupTour(tour);
+  const filtered = packages.filter((packageItem) => {
+    const categorySlug = getPackageCategorySlug(packageItem);
+
+    if (filter === "group") return isGroupPackage(packageItem);
     if (filter === "india") {
-      return tour.category === "india" || tour.category === "domestic";
+      return categorySlug === "india" || categorySlug === "domestic";
     }
-    if (filter === "international") return tour.category === "international";
-    return (
-      tour.category === "maharashtra" ||
-      ((tour.category === "india" || tour.category === "domestic") &&
-        isMaharashtraTour(tour))
-    );
+    if (filter === "international") return categorySlug === "international";
+    return isMaharashtraPackage(packageItem);
   });
 
   return (
@@ -384,43 +412,39 @@ const Tours = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((tour) => (
+              {filtered.map((packageItem) => (
                 <div
-                  key={tour.id}
+                  key={packageItem.id}
                   className="group bg-card rounded-2xl overflow-hidden shadow-card hover:shadow-elevated transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="relative w-full aspect-[4/3] overflow-hidden bg-muted">
                     <img
-                      src={getTourImage(
-                        tour,
-                        fallbackTourImages,
-                        fallbackTourImages["Goa Beach Paradise"],
-                      )}
-                      alt={tour.name}
+                      src={getPackageImage(packageItem)}
+                      alt={packageItem.title}
                       loading="lazy"
                       className="w-full h-full object-contain"
                     />
                     <span className="absolute top-3 left-3 bg-primary text-primary-foreground text-xs font-medium px-3 py-1 rounded-full">
-                      {tour.category === "maharashtra"
-                        ? "Maharashtra"
-                        : tour.category === "international"
-                          ? "International"
-                          : "India"}
+                      {packageItem.category?.name || "Holiday"}
                     </span>
                   </div>
                   <div className="p-5">
                     <h3 className="font-semibold text-lg text-foreground">
-                      {tour.name}
+                      {packageItem.title}
                     </h3>
                     <div className="flex items-center gap-4 mt-2 text-sm text-muted-foreground">
                       <span className="flex items-center gap-1">
-                        <Clock size={14} /> {tour.duration}
+                        <Clock size={14} />{" "}
+                        {packageItem.duration ||
+                          packageItem.trip_type ||
+                          "On Request"}
                       </span>
                       <span className="flex items-center gap-0.5 font-semibold text-primary">
-                        <IndianRupee size={14} /> {tour.price}
+                        <IndianRupee size={14} />{" "}
+                        {packageItem.price_label || "On Request"}
                       </span>
                     </div>
-                    <Link to={`/holidays/${tour.id}`}>
+                    <Link to={`/holidays/${packageItem.slug}`}>
                       <Button className="w-full mt-4" size="sm">
                         View Details
                       </Button>
