@@ -63,20 +63,22 @@ const ComingSoon = () => {
   ];
 
   return (
-    <div className="relative h-screen overflow-hidden bg-[#080b16] text-left text-white">
+    <div className="relative h-screen overflow-hidden bg-[#070b14] text-left text-white">
       <img
         src={heroBeach}
         alt=""
-        className="absolute inset-0 h-full w-full object-cover opacity-35"
+        className="absolute inset-0 h-full w-full object-cover opacity-30"
       />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_16%,rgba(249,115,22,0.34),transparent_30%),radial-gradient(circle_at_86%_10%,rgba(250,204,21,0.18),transparent_26%),linear-gradient(135deg,rgba(2,6,23,0.96),rgba(15,23,42,0.86),rgba(67,20,7,0.78))]" />
-      <div className="absolute left-8 top-8 h-56 w-56 rounded-full bg-orange-400/20 blur-3xl" />
-      <div className="absolute -bottom-24 right-10 h-72 w-72 rounded-full bg-amber-300/20 blur-3xl" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(249,115,22,0.30),transparent_28%),radial-gradient(circle_at_84%_14%,rgba(250,204,21,0.16),transparent_24%),linear-gradient(135deg,rgba(2,6,23,0.97),rgba(15,23,42,0.88),rgba(67,20,7,0.82))]" />
+      <div className="absolute left-8 top-8 h-64 w-64 rounded-full bg-orange-400/20 blur-3xl" />
+      <div className="absolute -bottom-28 right-10 h-80 w-80 rounded-full bg-amber-300/20 blur-3xl" />
 
-      <section className="relative z-10 flex h-screen items-center justify-center p-3 sm:p-5 lg:p-6">
-        <div className="grid h-[calc(100vh-1.5rem)] max-h-[760px] min-h-0 w-full max-w-6xl overflow-hidden rounded-[1.75rem] border border-white/15 bg-white/10 shadow-[0_30px_120px_rgba(0,0,0,0.52)] backdrop-blur-xl sm:h-[calc(100vh-2.5rem)] sm:rounded-[2rem] lg:grid-cols-[0.9fr_1.1fr]">
-          <aside className="relative flex min-h-0 flex-col justify-between bg-white px-5 py-5 text-slate-950 sm:px-7 sm:py-6 lg:px-8">
-            <div className="absolute -right-12 -top-12 h-36 w-36 rounded-full bg-orange-100" />
+      <section className="relative z-10 flex h-screen items-center justify-center p-4 sm:p-6">
+        <div className="grid h-[calc(100vh-2rem)] max-h-[760px] min-h-0 w-full max-w-6xl overflow-hidden rounded-[2rem] border border-white/15 bg-white/10 shadow-[0_32px_120px_rgba(0,0,0,0.55)] backdrop-blur-2xl sm:h-[calc(100vh-3rem)] lg:grid-cols-[1.02fr_0.98fr]">
+          <div className="relative flex min-h-0 flex-col justify-between overflow-hidden bg-[#fbf7f0] p-5 text-slate-950 sm:p-7 lg:p-8">
+            <div className="absolute -right-20 -top-20 h-48 w-48 rounded-full bg-orange-100" />
+            <div className="absolute bottom-0 left-0 h-32 w-full bg-gradient-to-t from-orange-50/80 to-transparent" />
+
             <div className="relative">
               <div className="flex items-start justify-between gap-4">
                 <img
@@ -84,30 +86,30 @@ const ComingSoon = () => {
                   alt="Sandi's International Tours & Travels"
                   className="h-14 w-auto object-contain sm:h-16 lg:h-20"
                 />
-                <span className="rounded-full bg-orange-50 px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.22em] text-orange-700">
-                  Launch
+                <span className="rounded-full bg-white px-3 py-1.5 text-[0.66rem] font-black uppercase tracking-[0.22em] text-orange-700 shadow-sm">
+                  30+ Years
                 </span>
               </div>
 
-              <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-orange-50 px-3 py-1.5 text-left text-xs font-bold text-orange-700 sm:text-sm">
+              <div className="mt-5 inline-flex items-center gap-2 rounded-full bg-orange-100 px-3 py-1.5 text-left text-xs font-black uppercase tracking-[0.12em] text-orange-700">
                 <CalendarDays size={15} />
-                18 June 2026
+                Launching 18 June 2026
               </div>
 
-              <h1 className="mt-4 text-[clamp(2.4rem,5vw,4.5rem)] font-black leading-[0.9] tracking-tight text-slate-950">
-                Coming Soon
+              <h1 className="mt-5 max-w-xl text-[clamp(2.25rem,4.4vw,4rem)] font-black leading-[0.98] tracking-tight text-slate-950">
+                New Sandis Tours website coming soon.
               </h1>
-              <p className="mt-4 max-w-md text-left text-sm leading-6 text-slate-600 hyphens-none sm:text-base">
-                Sandi&apos;s Tours is preparing a refreshed digital travel
-                experience with curated holidays, gallery moments, and quick
-                enquiry support.
+              <p className="mt-4 max-w-lg text-left text-sm leading-6 text-slate-600 hyphens-none sm:text-base">
+                We&apos;re refreshing your online travel experience with curated
+                holiday packages, gallery highlights, and faster enquiry
+                support.
               </p>
 
-              <div className="mt-5 grid grid-cols-3 gap-2">
-                {["Tours", "Visa", "Hotels"].map((item) => (
+              <div className="mt-5 grid grid-cols-4 gap-2">
+                {["Tours", "Visa", "Flights", "Hotels"].map((item) => (
                   <div
                     key={item}
-                    className="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-center text-xs font-bold text-slate-700"
+                    className="rounded-2xl border border-orange-100 bg-white px-2 py-2 text-center text-[0.68rem] font-black uppercase tracking-[0.08em] text-slate-700 shadow-sm sm:text-xs"
                   >
                     {item}
                   </div>
@@ -118,55 +120,64 @@ const ComingSoon = () => {
             <div className="relative mt-4 grid gap-2 text-xs text-slate-600 sm:text-sm">
               <a
                 href="tel:+919890711155"
-                className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-orange-300 hover:text-orange-700"
+                className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-orange-300 hover:text-orange-700"
               >
                 <Phone size={16} className="shrink-0 text-orange-600" />
-                <span className="font-semibold">9890711155 | 9960000450</span>
+                <span className="font-bold">9890711155 | 9960000450</span>
               </a>
               <a
                 href="mailto:sandis@sandis.com"
-                className="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-orange-300 hover:text-orange-700"
+                className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm transition hover:border-orange-300 hover:text-orange-700"
               >
                 <Mail size={16} className="shrink-0 text-orange-600" />
                 <span className="truncate">
                   sandis@sandis.com | sandistravels@gmail.com
                 </span>
               </a>
-              <div className="flex items-start gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm">
+              <div className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 shadow-sm">
                 <MapPin size={16} className="mt-0.5 shrink-0 text-orange-600" />
-                <span className="text-left hyphens-none">
+                <span className="text-left leading-5 hyphens-none">
                   5 Amit Complex, 474 Sadashiv Peth, Tilak Road, Pune - 30.
                   Other Office: Dahanukar Colony, Kothrud.
                 </span>
               </div>
             </div>
-          </aside>
+          </div>
 
-          <div className="relative flex min-h-0 flex-col justify-center overflow-hidden bg-slate-950/48 px-5 py-5 sm:px-7 sm:py-6 lg:px-8">
-            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,0.10),transparent_45%),radial-gradient(circle_at_82%_22%,rgba(249,115,22,0.22),transparent_32%)]" />
+          <div className="relative flex min-h-0 flex-col justify-center overflow-hidden bg-slate-950 px-5 py-5 sm:px-7 lg:px-8">
+            <img
+              src={heroBeach}
+              alt=""
+              className="absolute inset-0 h-full w-full object-cover opacity-25"
+            />
+            <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(15,23,42,0.98),rgba(15,23,42,0.76),rgba(154,52,18,0.50))]" />
+            <div className="absolute right-8 top-8 h-28 w-28 rounded-full border border-white/10 bg-white/10 blur-sm" />
+
             <div className="relative">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-left text-[0.68rem] font-bold uppercase tracking-[0.24em] text-orange-100">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-left text-[0.66rem] font-bold uppercase tracking-[0.22em] text-orange-100 backdrop-blur">
                 <Clock3 size={14} />
                 Countdown to launch
               </div>
-              <h2 className="mt-4 max-w-3xl text-[clamp(2.1rem,5vw,4.7rem)] font-black leading-[0.94] tracking-tight text-white">
-                Your trusted travel partner is getting a fresh new home.
+
+              <h2 className="mt-5 max-w-xl text-[clamp(2rem,4vw,3.55rem)] font-black leading-[1.02] tracking-tight text-white">
+                Travel plans, made easier from day one.
               </h2>
-              <p className="mt-3 max-w-2xl text-left text-sm leading-6 text-white/74 hyphens-none sm:text-base">
-                The new Sandi&apos;s Tours website is almost ready. Direct team
-                links remain active, including admin access.
+              <p className="mt-4 max-w-xl text-left text-sm leading-6 text-white/74 hyphens-none sm:text-base">
+                The new site is almost ready. Until launch, you can contact our
+                team directly for holidays, visas, flights, hotels, and travel
+                assistance.
               </p>
 
-              <div className="mt-5 grid grid-cols-4 gap-2 sm:gap-3">
+              <div className="mt-6 grid grid-cols-4 gap-2 sm:gap-3">
                 {counters.map((counter) => (
                   <div
                     key={counter.label}
-                    className="rounded-2xl border border-white/15 bg-white/10 p-3 text-center shadow-xl ring-1 ring-white/5 backdrop-blur"
+                    className="rounded-2xl border border-white/15 bg-white/12 p-3 text-center shadow-xl ring-1 ring-white/5 backdrop-blur"
                   >
-                    <div className="text-[clamp(1.7rem,4vw,3.7rem)] font-black leading-none text-white">
+                    <div className="text-[clamp(1.45rem,3.5vw,3rem)] font-black leading-none text-white">
                       {formatNumber(counter.value)}
                     </div>
-                    <div className="mt-1 text-[0.6rem] font-bold uppercase tracking-[0.18em] text-orange-100/80 sm:text-xs">
+                    <div className="mt-1 text-[0.58rem] font-bold uppercase tracking-[0.16em] text-orange-100/80 sm:text-[0.68rem]">
                       {counter.label}
                     </div>
                   </div>
@@ -181,13 +192,13 @@ const ComingSoon = () => {
                   </span>
                   <span>{Math.round(launchProgress)}%</span>
                 </div>
-                <div className="mt-3 h-3 overflow-hidden rounded-full bg-white/15">
+                <div className="mt-3 h-2.5 overflow-hidden rounded-full bg-white/15">
                   <div
                     className="h-full rounded-full bg-[linear-gradient(90deg,#f97316,#facc15)] shadow-[0_0_24px_rgba(250,204,21,0.65)] transition-all duration-700"
                     style={{ width: `${launchProgress}%` }}
                   />
                 </div>
-                <div className="mt-2 flex items-center justify-between text-[0.65rem] font-bold uppercase tracking-[0.18em] text-white/55">
+                <div className="mt-2 flex items-center justify-between text-[0.62rem] font-bold uppercase tracking-[0.18em] text-white/55">
                   <span>09 June</span>
                   <span>18 June</span>
                 </div>
