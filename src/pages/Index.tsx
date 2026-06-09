@@ -13,6 +13,7 @@ import tourKerala from "@/assets/tour-kerala.jpg";
 import tourDubai from "@/assets/tour-dubai.jpg";
 import tourBali from "@/assets/tour-bali.jpg";
 import tourThailand from "@/assets/tour-thailand.jpg";
+import { fetchBanners, type BannerRecord } from "@/lib/travel-cms";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const fallbackImages: Record<string, string> = {
@@ -24,11 +25,29 @@ const fallbackImages: Record<string, string> = {
   "Thailand Discovery": tourThailand,
 };
 
-const slides = [
+type HomeSlide = {
+  image: string;
+  headline: string;
+  sub: string;
+  cta: string;
+  link: string;
+};
+
+const fallbackSlides: HomeSlide[] = [
   { image: banner1, headline: "Luxury Holidays, Thoughtfully Planned", sub: "Handpicked stays, scenic escapes, and seamless travel support", cta: "Explore Tours", link: "/holidays" },
   { image: banner2, headline: "International Tours Made Effortless", sub: "Trusted itineraries for families, couples, and group travelers", cta: "Why Choose Us", link: "/about" },
   { image: banner3, headline: "Explore Iconic Destinations With Confidence", sub: "Domestic and international journeys backed by 30+ years of care", cta: "View Services", link: "/services" },
 ];
+
+const mapBannerToSlide = (banner: BannerRecord): HomeSlide => ({
+  image: banner.mobile_image_url || banner.image_url,
+  headline: banner.title || "Luxury Holidays, Thoughtfully Planned",
+  sub:
+    banner.subtitle ||
+    "Handpicked stays, scenic escapes, and seamless travel support",
+  cta: banner.cta_label || "Explore Tours",
+  link: banner.cta_link || "/holidays",
+});
 
 const whyUs = [
   { icon: Shield, title: "Trusted Service", desc: "30+ years of reliable travel expertise" },
@@ -70,6 +89,7 @@ const bannerNavItems = [
 const whiteSlidePanelClass = "mx-4 md:mx-auto max-w-5xl rounded-2xl bg-white shadow-card";
 
 const Index = () => {
+  const [heroSlides, setHeroSlides] = useState<HomeSlide[]>(fallbackSlides);
   const [current, setCurrent] = useState(0);
   const [activeService, setActiveService] = useState<string | null>(null);
   const [visibleStats, setVisibleStats] = useState(() =>
@@ -79,9 +99,27 @@ const Index = () => {
   const statsSectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const timer = setInterval(() => setCurrent((c) => (c + 1) % slides.length), 5000);
-    return () => clearInterval(timer);
+    fetchBanners("home")
+      .then((banners) => {
+        const mappedSlides = banners
+          .filter((banner) => banner.image_url)
+          .map(mapBannerToSlide);
+
+        if (mappedSlides.length > 0) {
+          setHeroSlides(mappedSlides);
+          setCurrent(0);
+        }
+      })
+      .catch(() => setHeroSlides(fallbackSlides));
   }, []);
+
+  useEffect(() => {
+    const timer = setInterval(
+      () => setCurrent((c) => (c + 1) % heroSlides.length),
+      5000,
+    );
+    return () => clearInterval(timer);
+  }, [heroSlides.length]);
 
   useEffect(() => {
     const statsNode = statsSectionRef.current;
@@ -219,7 +257,7 @@ const Index = () => {
             </div>
           </div>
         </div>
-        {slides.map((slide, i) => (
+        {heroSlides.map((slide, i) => (
           <div key={i} className={`absolute inset-0 transition-opacity duration-700 ${i === current ? "opacity-100" : "opacity-0 pointer-events-none"}`}>
             <img src={slide.image} alt="" className="h-full w-full object-cover object-[center_56%]" width={1920} height={1080} />
             <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(3,7,18,0.62),rgba(15,23,42,0.34),rgba(3,7,18,0.58)),linear-gradient(180deg,rgba(3,7,18,0.24),rgba(3,7,18,0.5))]" />
@@ -233,6 +271,12 @@ const Index = () => {
                     <p className="mx-auto mt-4 w-full whitespace-nowrap text-center text-[clamp(0.5rem,1.9vw,1.25rem)] font-semibold leading-snug text-white drop-shadow-[0_3px_14px_rgba(0,0,0,0.86)]">
                       {slide.sub}
                     </p>
+                    <Link
+                      to={slide.link}
+                      className="mt-6 inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-[0_12px_26px_rgba(236,117,0,0.32)] transition-all hover:-translate-y-0.5 hover:bg-primary/90"
+                    >
+                      {slide.cta}
+                    </Link>
                     <div className="mt-4 flex flex-wrap items-center justify-center gap-2 md:hidden">
                       {bannerNavItems.map(({ icon: Icon, label, path }) => (
                         <Link
@@ -281,7 +325,7 @@ const Index = () => {
           </div>
         </div>
         <div className="absolute bottom-4 left-1/2 flex -translate-x-1/2 gap-2 sm:bottom-6">
-          {slides.map((_, i) => (
+          {heroSlides.map((_, i) => (
             <button key={i} onClick={() => setCurrent(i)} className={`w-3 h-3 rounded-full transition-all ${i === current ? "bg-primary w-8" : "bg-background/50"}`} />
           ))}
         </div>
