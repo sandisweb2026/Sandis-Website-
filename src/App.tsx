@@ -30,15 +30,40 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+const ADMIN_ENTRY_PATH = "/sandis_tours_26";
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isAdmin, loading } = useAuth();
   if (loading) return <div className="min-h-screen flex items-center justify-center pt-16">Loading...</div>;
-  if (!user) return <Navigate to="/admin/login" replace />;
+  if (!user) return <Navigate to={ADMIN_ENTRY_PATH} replace />;
   if (!isAdmin) {
     return <div className="min-h-screen flex items-center justify-center pt-16 text-destructive">Access Denied</div>;
   }
   return <>{children}</>;
+};
+
+const AdminEntry = () => {
+  const { user, isAdmin, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center pt-16">
+        Loading...
+      </div>
+    );
+  }
+
+  if (!user) return <AdminLogin />;
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center pt-16 text-destructive">
+        Access Denied
+      </div>
+    );
+  }
+
+  return <AdminDashboard />;
 };
 
 const AppLayout = () => {
@@ -65,7 +90,8 @@ const AppLayout = () => {
           <Route path="/gallery" element={<Gallery />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path={ADMIN_ENTRY_PATH} element={<AdminEntry />} />
+          <Route path="/admin/login" element={<Navigate to={ADMIN_ENTRY_PATH} replace />} />
           <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
           <Route path="/admin/tours" element={<AdminRoute><Navigate to="/admin/packages" replace /></AdminRoute>} />
           <Route path="/admin/packages" element={<AdminRoute><AdminPackages /></AdminRoute>} />

@@ -22,7 +22,7 @@ const AdminLogin = () => {
         toast.error(error.message);
         return;
       }
-      navigate("/admin");
+      navigate("/sandis_tours_26");
     } catch (err) {
       const message = err instanceof Error ? err.message : "Login failed. Please try again.";
       toast.error(message);
