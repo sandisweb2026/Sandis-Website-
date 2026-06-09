@@ -1,28 +1,16 @@
-import { useEffect, useState } from "react";
-import { Mail, MessageCircle, X } from "lucide-react";
+import { useState } from "react";
+import { X } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import heroBeach from "@/assets/hero-beach.jpg";
 import { createEnquiry } from "@/lib/travel-cms";
-import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const EnquiryPopup = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const shown = sessionStorage.getItem("enquiry-shown");
-    if (!shown) {
-      const timer = window.setTimeout(() => {
-        setOpen(true);
-        sessionStorage.setItem("enquiry-shown", "true");
-      }, 3000);
-      return () => window.clearTimeout(timer);
-    }
-
-    return undefined;
-  }, []);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -33,9 +21,11 @@ const EnquiryPopup = () => {
     try {
       await createEnquiry({
         name: formData.get("name") as string,
+        email: formData.get("email") as string,
         phone: formData.get("phone") as string,
-        destination: formData.get("destination") as string,
-        travel_date: (formData.get("travel_date") as string) || null,
+        destination: null,
+        message: (formData.get("message") as string) || null,
+        travel_date: null,
       });
 
       toast.success("Thank you! We'll contact you soon.");
@@ -51,59 +41,86 @@ const EnquiryPopup = () => {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-foreground/40 animate-fade-in">
-      <div className="relative w-full max-w-md rounded-2xl bg-card p-5 shadow-elevated animate-fade-up sm:p-6">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-foreground/55 p-3 animate-fade-in sm:p-4">
+      <div className="relative grid max-h-[88vh] w-full max-w-5xl overflow-y-auto rounded-lg bg-card shadow-elevated animate-fade-up md:grid-cols-[0.95fr_1fr]">
         <button
           onClick={() => setOpen(false)}
-          className="absolute top-3 right-3 text-muted-foreground hover:text-foreground"
+          className="absolute right-4 top-4 z-10 text-muted-foreground transition-colors hover:text-foreground"
+          aria-label="Close enquiry popup"
         >
-          <X size={20} />
+          <X size={24} />
         </button>
-        <div className="mb-5 mt-2">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-primary px-3.5 py-1.5 text-xs font-semibold text-primary-foreground sm:text-sm">
-              Enquire Now
-            </span>
-            <a
-              href={getWhatsAppUrl()}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3.5 py-1.5 text-xs font-semibold text-green-700 transition-colors hover:bg-green-100 sm:text-sm"
-            >
-              <MessageCircle size={15} />
-              WhatsApp Us
-            </a>
-            <a
-              href="mailto:info@sandistours.com?subject=Tour%20Enquiry"
-              className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-1.5 text-xs font-semibold text-sky-700 transition-colors hover:bg-sky-100 sm:text-sm"
-            >
-              <Mail size={15} />
-              Mail Us
-            </a>
+
+        <div className="relative min-h-[210px] overflow-hidden bg-slate-100 md:min-h-[530px]">
+          <img
+            src={heroBeach}
+            alt="Beach vacation"
+            className="h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-white/85 via-white/25 to-black/10" />
+          <div className="absolute left-5 top-4 text-slate-950 sm:left-8 sm:top-6">
+            <p className="font-serif text-5xl leading-none text-slate-950 sm:text-[3.45rem]">
+              Sandis
+            </p>
+            <p className="-mt-1 font-serif text-4xl leading-none text-slate-950 sm:text-[2.75rem]">
+              Tours
+            </p>
+          </div>
+          <div className="absolute left-5 top-24 rotate-[-2deg] bg-emerald-600 px-5 py-2.5 text-white shadow-lg sm:left-8 sm:top-32">
+            <p className="text-xl font-extrabold leading-none text-amber-300">
+              Time For
+            </p>
+            <p className="text-3xl font-black leading-none sm:text-4xl">
+              Vacation
+            </p>
+          </div>
+          <div className="absolute bottom-8 left-5 rotate-[-1deg] bg-stone-950 px-6 py-3 text-2xl font-bold italic text-amber-300 shadow-lg sm:left-8">
+            Book Now
           </div>
         </div>
-        <div className="text-center mb-5">
-          <h3 className="text-xl font-bold text-foreground">
-            Plan Your Dream Trip
+
+        <div className="px-6 py-6 sm:px-10 md:px-12 md:py-6">
+          <h3 className="pr-8 text-3xl font-extrabold leading-tight text-foreground sm:text-[2.2rem]">
+            Plan Your Trip With Us
           </h3>
-          <p className="text-sm text-muted-foreground mt-1">
-            Tell us your preferences and we&apos;ll plan it for you.
+          <p className="mt-2 text-base text-muted-foreground sm:text-lg">
+            Fill the form below and we&apos;ll get back to you soon.
           </p>
+          <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3">
+            <Input
+              name="name"
+              placeholder="Full Name*"
+              required
+              className="h-12 rounded border-slate-300 bg-white text-base"
+            />
+            <Input
+              name="email"
+              placeholder="Email Address*"
+              type="email"
+              required
+              className="h-12 rounded border-slate-300 bg-white text-base"
+            />
+            <Input
+              name="phone"
+              placeholder="Phone Number*"
+              type="tel"
+              required
+              className="h-12 rounded border-slate-300 bg-white text-base"
+            />
+            <Textarea
+              name="message"
+              placeholder="Your message / requirements"
+              className="min-h-[130px] rounded border-slate-300 bg-white text-base"
+            />
+            <Button
+              type="submit"
+              className="mt-2 h-12 w-fit rounded bg-orange-500 px-8 text-base font-bold text-white hover:bg-orange-600"
+              disabled={loading}
+            >
+              {loading ? "Submitting..." : "Send Enquiry"}
+            </Button>
+          </form>
         </div>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <Input name="name" placeholder="Your Name" required />
-          <Input name="phone" placeholder="Phone Number" type="tel" required />
-          <Input name="destination" placeholder="Destination" required />
-          <Input
-            name="travel_date"
-            placeholder="Travel Date"
-            type="date"
-            required
-          />
-          <Button type="submit" className="w-full mt-1" disabled={loading}>
-            {loading ? "Submitting..." : "Plan My Trip"}
-          </Button>
-        </form>
       </div>
     </div>
   );
