@@ -70,6 +70,7 @@ const AppLayout = () => {
   const location = useLocation();
   const isComingSoon = location.pathname === "/";
   const isFullScreenHome = location.pathname === "/home";
+  const shouldShowEnquiryPopup = isFullScreenHome;
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -109,7 +110,7 @@ const AppLayout = () => {
         <>
           <CallButton />
           <WhatsAppButton />
-          <EnquiryPopup />
+          {shouldShowEnquiryPopup && <EnquiryPopup />}
         </>
       )}
     </>
