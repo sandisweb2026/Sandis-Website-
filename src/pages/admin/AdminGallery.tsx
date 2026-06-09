@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Pencil, Plus, Trash2, Upload } from "lucide-react";
 import { toast } from "sonner";
@@ -8,10 +8,12 @@ import { Input } from "@/components/ui/input";
 import {
   createGalleryImage,
   fetchAdminGalleryImages,
+  fetchAdminHolidayCategories,
   removeGalleryImage,
   updateGalleryImage,
   uploadTourImage,
   type GalleryImageRecord,
+  type HolidayCategoryRecord,
 } from "@/lib/travel-cms";
 
 type GalleryFormState = {
@@ -45,22 +47,60 @@ const createImageForm = (image?: GalleryImageRecord): GalleryFormState => ({
 
 const AdminGallery = () => {
   const [images, setImages] = useState<GalleryImageRecord[]>([]);
+  const [categories, setCategories] = useState<HolidayCategoryRecord[]>([]);
   const [editing, setEditing] = useState<GalleryFormState | null>(null);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
 
-  const loadImages = async () => {
+  const categoryOptions = useMemo(() => {
+    const options = [
+      ...categories
+        .filter((category) => category.is_active !== false)
+        .map((category) => category.name),
+      ...images.map((image) => image.category ?? ""),
+      editing?.category ?? "",
+    ]
+      .map((category) => category.trim())
+      .filter(Boolean);
+
+    return Array.from(
+      new Map(options.map((option) => [option.toLowerCase(), option])).values(),
+    );
+  }, [categories, editing?.category, images]);
+
+  const loadData = async () => {
     try {
-      setImages(await fetchAdminGalleryImages());
+      const [nextImages, nextCategories] = await Promise.allSettled([
+        fetchAdminGalleryImages(),
+        fetchAdminHolidayCategories(),
+      ]);
+
+      if (nextImages.status === "fulfilled") {
+        setImages(nextImages.value);
+      }
+
+      if (nextCategories.status === "fulfilled") {
+        setCategories(nextCategories.value);
+      }
+
+      if (nextImages.status === "rejected" || nextCategories.status === "rejected") {
+        const error =
+          nextImages.status === "rejected"
+            ? nextImages.reason
+            : nextCategories.status === "rejected"
+              ? nextCategories.reason
+              : null;
+        throw error;
+      }
     } catch (error) {
       const message =
-        error instanceof Error ? error.message : "Unable to load gallery images.";
+        error instanceof Error ? error.message : "Unable to load gallery data.";
       toast.error(message);
     }
   };
 
   useEffect(() => {
-    loadImages();
+    loadData();
   }, []);
 
   const handleSave = async () => {
@@ -92,7 +132,7 @@ const AdminGallery = () => {
       }
 
       setEditing(null);
-      await loadImages();
+      await loadData();
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unable to save gallery image.";
@@ -108,7 +148,7 @@ const AdminGallery = () => {
     try {
       await removeGalleryImage(id);
       toast.success("Gallery image deleted.");
-      await loadImages();
+      await loadData();
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unable to delete gallery image.";
@@ -181,13 +221,30 @@ const AdminGallery = () => {
                 setEditing({ ...editing, title: event.target.value })
               }
             />
-            <Input
-              placeholder="Category"
-              value={editing.category}
-              onChange={(event) =>
-                setEditing({ ...editing, category: event.target.value })
-              }
-            />
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground">
+                Category
+              </label>
+              <select
+                value={editing.category}
+                onChange={(event) =>
+                  setEditing({ ...editing, category: event.target.value })
+                }
+                className="h-12 w-full rounded-md border border-input bg-background px-3 text-sm text-foreground outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
+              >
+                <option value="">Select category</option>
+                {categoryOptions.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+              {categoryOptions.length === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Add categories from Admin Dashboard → Categories first.
+                </p>
+              )}
+            </div>
             <Input
               placeholder="Alt text"
               value={editing.alt_text}
