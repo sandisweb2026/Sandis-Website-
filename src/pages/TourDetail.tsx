@@ -1,10 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Bus,
   CheckCircle,
-  ChevronLeft,
-  ChevronRight,
   Clock,
   Heart,
   IndianRupee,
@@ -24,23 +22,17 @@ import { getWhatsAppUrl, WHATSAPP_PREFILLED_MESSAGE } from "@/lib/whatsapp";
 
 const defaultImage = fallbackTourImages["Goa Beach Paradise"];
 
-const getUniqueImages = (holidayPackage: HolidayPackageRecord) => {
-  const images = [
-    holidayPackage.banner_image_url,
-    ...(holidayPackage.gallery_images ?? [])
-      .filter((image) => image.is_active !== false)
-      .map((image) => image.image_url),
-  ].filter((image): image is string => Boolean(image));
-
-  return Array.from(new Set(images.length > 0 ? images : [defaultImage]));
-};
+const getHeroImage = (holidayPackage: HolidayPackageRecord) =>
+  holidayPackage.hero_image_url ||
+  holidayPackage.banner_image_url ||
+  fallbackTourImages[holidayPackage.title] ||
+  defaultImage;
 
 const TourDetail = () => {
   const { id: packageSlug } = useParams();
   const [holidayPackage, setHolidayPackage] =
     useState<HolidayPackageRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [heroIndex, setHeroIndex] = useState(0);
   const [enquiryChoice, setEnquiryChoice] = useState<
     "whatsapp" | "email" | null
   >(null);
@@ -54,25 +46,6 @@ const TourDetail = () => {
       .catch(() => setHolidayPackage(null))
       .finally(() => setLoading(false));
   }, [packageSlug]);
-
-  const heroImages = useMemo(
-    () => (holidayPackage ? getUniqueImages(holidayPackage) : [defaultImage]),
-    [holidayPackage],
-  );
-
-  useEffect(() => {
-    setHeroIndex(0);
-  }, [packageSlug]);
-
-  useEffect(() => {
-    if (heroImages.length <= 1) return;
-
-    const timer = window.setInterval(() => {
-      setHeroIndex((current) => (current + 1) % heroImages.length);
-    }, 4000);
-
-    return () => window.clearInterval(timer);
-  }, [heroImages]);
 
   if (loading) {
     return (
@@ -113,6 +86,7 @@ const TourDetail = () => {
   const emailMessage =
     holidayPackage.email_enquiry_message ||
     `Hello, I want to enquire about ${holidayPackage.title}.`;
+  const heroImage = getHeroImage(holidayPackage);
   const featureCards = [
     {
       title: holidayPackage.good_for_title,
@@ -139,56 +113,22 @@ const TourDetail = () => {
   return (
     <div className="pt-16">
       <div
-        className={`relative w-full ${
-          isShirdi ? "aspect-[16/9]" : "h-[50vh] min-h-[320px] sm:min-h-[350px]"
-        } bg-foreground/5`}
+        className="relative w-full overflow-hidden bg-foreground/5 h-[52vh] min-h-[340px] sm:h-[60vh] lg:h-[calc(100vh-4rem)]"
       >
-        {heroImages.map((imageUrl, index) => (
-          <img
-            key={`${imageUrl}-${index}`}
-            src={imageUrl}
-            alt={holidayPackage.title}
-            className={`absolute inset-0 w-full h-full ${
-              isShirdi ? "object-cover object-center" : "object-cover"
-            } transition-opacity duration-700 ${
-              index === heroIndex ? "opacity-100" : "opacity-0"
-            }`}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
-        {heroImages.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={() =>
-                setHeroIndex(
-                  (current) =>
-                    (current - 1 + heroImages.length) % heroImages.length,
-                )
-              }
-              className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/35 p-2 text-white transition hover:bg-black/55"
-              aria-label="Previous hero image"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                setHeroIndex((current) => (current + 1) % heroImages.length)
-              }
-              className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/35 p-2 text-white transition hover:bg-black/55"
-              aria-label="Next hero image"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </>
-        )}
-        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
+        <img
+          src={heroImage}
+          alt={holidayPackage.title}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+          loading="eager"
+          decoding="async"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:p-8">
           <div className="container mx-auto">
             <span className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full font-medium">
               {holidayPackage.category?.name || "Holiday"}
             </span>
-            <h1 className="mt-3 text-2xl font-bold text-background sm:text-3xl md:text-4xl">
+            <h1 className="mt-3 text-2xl font-bold text-background sm:text-3xl md:text-4xl lg:text-5xl">
               {holidayPackage.title}
             </h1>
             <div className="mt-2 flex flex-wrap items-center gap-4 text-background/80 sm:gap-6">
@@ -206,21 +146,6 @@ const TourDetail = () => {
             </div>
           </div>
         </div>
-        {heroImages.length > 1 && (
-          <div className="absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-            {heroImages.map((imageUrl, index) => (
-              <button
-                key={`${imageUrl}-${index}`}
-                type="button"
-                onClick={() => setHeroIndex(index)}
-                className={`h-2.5 rounded-full transition-all ${
-                  index === heroIndex ? "w-8 bg-white" : "w-2.5 bg-white/55"
-                }`}
-                aria-label={`Show hero image ${index + 1}`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       <div className="container mx-auto px-4 py-12">
@@ -396,7 +321,7 @@ const TourDetail = () => {
             )}
           </div>
 
-          <div className="lg:sticky lg:top-24 lg:self-start">
+          <div className="sticky top-20 self-start h-fit sm:top-24 lg:top-28">
             <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
               <h3 className="text-center text-2xl font-bold text-primary">
                 Enquire Now

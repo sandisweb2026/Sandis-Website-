@@ -122,7 +122,7 @@ const createPackageForm = (packageItem: HolidayPackageRecord): PackageFormState 
   slug: packageItem.slug ?? "",
   category_id: packageItem.category?.id ?? "",
   location: packageItem.location ?? "",
-  banner_image_url: packageItem.banner_image_url ?? "",
+  banner_image_url: packageItem.banner_image_url ?? packageItem.hero_image_url ?? "",
   short_description: packageItem.short_description ?? "",
   duration: packageItem.duration ?? "",
   trip_type: packageItem.trip_type ?? "",
@@ -333,7 +333,7 @@ const AdminPackages = () => {
     try {
       const url = await uploadTourImage(file);
       setEditing({ ...editing, banner_image_url: url });
-      toast.success("Banner image uploaded.");
+      toast.success("Hero image uploaded.");
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unable to upload image.";
@@ -510,22 +510,27 @@ const AdminPackages = () => {
             </div>
 
             <div className="space-y-1.5">
-              <FieldHeading text="Banner Image URL" />
+              <FieldHeading text="Hero Image URL" />
+              <p className="text-xs text-muted-foreground">
+                This is the single large image shown at the top of the holiday
+                detail page. Use a wide landscape image for the best desktop
+                display.
+              </p>
               <Input
-                placeholder="Banner Image URL"
+                placeholder="Hero Image URL"
                 value={editing.banner_image_url}
                 onChange={(event) =>
                   setEditing({ ...editing, banner_image_url: event.target.value })
                 }
               />
             </div>
-            <FieldHeading text="Upload Banner Image" />
+            <FieldHeading text="Upload Hero Image" />
             <label
               htmlFor="package-banner-upload"
               className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg border border-dashed border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/50"
             >
               <Upload size={16} />
-              {uploadingBanner ? "Uploading..." : "Upload Banner Image"}
+              {uploadingBanner ? "Uploading..." : "Upload Hero Image"}
             </label>
             <input
               id="package-banner-upload"
@@ -540,7 +545,7 @@ const AdminPackages = () => {
               <div className="overflow-hidden rounded-xl border bg-muted max-w-xl">
                 <img
                   src={editing.banner_image_url}
-                  alt="Banner preview"
+                  alt="Hero preview"
                   className="h-56 w-full object-cover"
                 />
               </div>
@@ -934,9 +939,9 @@ const AdminPackages = () => {
               className="bg-card rounded-xl shadow-card p-4 flex items-center justify-between gap-4"
             >
               <div className="flex items-center gap-3">
-                {packageItem.banner_image_url && (
+                {(packageItem.banner_image_url || packageItem.hero_image_url) && (
                   <img
-                    src={packageItem.banner_image_url}
+                    src={packageItem.banner_image_url || packageItem.hero_image_url || ""}
                     alt={packageItem.title}
                     className="h-14 w-24 rounded-lg object-cover"
                   />

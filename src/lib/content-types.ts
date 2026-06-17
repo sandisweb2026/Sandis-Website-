@@ -308,6 +308,7 @@ export type HolidayPackageRecord = {
   slug: string;
   location: string | null;
   banner_image_url: string | null;
+  hero_image_url?: string | null;
   short_description: string | null;
   duration: string | null;
   trip_type: string | null;

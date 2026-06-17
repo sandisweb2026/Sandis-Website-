@@ -136,6 +136,18 @@ const normalizeGalleryItems = (value) => {
     .filter(Boolean);
 };
 
+const pickHeroImageUrl = (row, collections) => {
+  if (row.banner_image_url) {
+    return row.banner_image_url;
+  }
+
+  const activeGalleryImage = collections.gallery_images.find(
+    (item) => item.is_active !== false,
+  );
+
+  return activeGalleryImage?.image_url ?? null;
+};
+
 const mapBanner = (row) => ({
   id: row.id,
   page_key: row.page_key,
@@ -168,6 +180,7 @@ const mapPackageBase = (row) => ({
   slug: row.slug,
   location: row.location,
   banner_image_url: row.banner_image_url,
+  hero_image_url: row.hero_image_url ?? null,
   short_description: row.short_description,
   duration: row.duration,
   trip_type: row.trip_type,
@@ -216,6 +229,14 @@ const packageBaseSelect = `
     p.slug,
     p.location,
     p.banner_image_url,
+    (
+      SELECT pgi.image_url
+      FROM package_gallery_images pgi
+      WHERE pgi.package_id = p.id
+        AND pgi.is_active = 1
+      ORDER BY pgi.display_order ASC, pgi.created_at ASC
+      LIMIT 1
+    ) AS hero_image_url,
     p.short_description,
     p.duration,
     p.trip_type,
@@ -331,6 +352,7 @@ const buildPackageResponse = async (row) => {
 
   return {
     ...mapPackageBase(row),
+    hero_image_url: pickHeroImageUrl(row, collections),
     ...collections,
   };
 };

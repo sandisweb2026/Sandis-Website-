@@ -43,6 +43,7 @@ const getPackageCategorySlug = (packageItem: HolidayPackageRecord) =>
 
 const getPackageImage = (packageItem: HolidayPackageRecord) =>
   packageItem.banner_image_url ||
+  packageItem.hero_image_url ||
   fallbackTourImages[packageItem.title] ||
   defaultPackageImage;
 

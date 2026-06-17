@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -31,6 +31,8 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 const ADMIN_ENTRY_PATH = "/sandis_tours_26";
+const GA4_MEASUREMENT_ID =
+  import.meta.env.VITE_GA4_MEASUREMENT_ID?.trim() || "G-8TF1T8DHN4";
 
 const AdminRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isAdmin, loading } = useAuth();
@@ -68,13 +70,36 @@ const AdminEntry = () => {
 
 const AppLayout = () => {
   const location = useLocation();
+  const isFirstLocationRender = useRef(true);
   const isComingSoon = location.pathname === "/";
   const isFullScreenHome = location.pathname === "/home";
   const shouldShowEnquiryPopup = isFullScreenHome;
+  const pagePath = `${location.pathname}${location.search}`;
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (!GA4_MEASUREMENT_ID) return;
+
+    if (isFirstLocationRender.current) {
+      isFirstLocationRender.current = false;
+      return;
+    }
+
+    if (
+      location.pathname.startsWith("/admin") ||
+      location.pathname === ADMIN_ENTRY_PATH
+    ) {
+      return;
+    }
+
+    // Track SPA route changes in GA4 without double-counting the initial load.
+    window.gtag?.("config", GA4_MEASUREMENT_ID, {
+      page_path: pagePath,
+    });
+  }, [location.pathname, location.search, pagePath]);
 
   return (
     <>
