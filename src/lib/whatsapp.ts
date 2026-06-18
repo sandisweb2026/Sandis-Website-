@@ -1,4 +1,5 @@
-export const WHATSAPP_PHONE_NUMBER = "919876543210";
+export const WHATSAPP_PHONE_NUMBER = "919890711155";
+export const WHATSAPP_CHAT_URL = `https://wa.me/${WHATSAPP_PHONE_NUMBER}`;
 
 export const WHATSAPP_PREFILLED_MESSAGE = `🌍✈️ Welcome To Sandi's International Tours & Travels
 Your Trusted Travel Partner With 30+ Years Of Experience In Creating Unforgettable Journeys!

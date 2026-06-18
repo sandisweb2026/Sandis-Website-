@@ -1,4 +1,5 @@
 import { Globe, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { WHATSAPP_CHAT_URL } from "@/lib/whatsapp";
 
 const Contact = () => {
   return (
@@ -42,7 +43,7 @@ const Contact = () => {
                   </div>
                 </a>
                 <a
-                  href="https://wa.me/919890711155"
+                  href={WHATSAPP_CHAT_URL}
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]"

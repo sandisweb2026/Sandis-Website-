@@ -95,6 +95,7 @@ export type EnquiryPayload = {
   message?: string | null;
   travel_date?: string | null;
   status?: EnquiryStatus;
+  submission_key?: string;
 };
 
 export type AdminUser = {

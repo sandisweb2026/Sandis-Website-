@@ -9,8 +9,6 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import CallButton from "@/components/CallButton";
-import EnquiryPopup from "@/components/EnquiryPopup";
-import ComingSoon from "./pages/ComingSoon";
 import Index from "./pages/Index";
 import Services from "./pages/Services";
 import Tours from "./pages/Tours";
@@ -71,9 +69,7 @@ const AdminEntry = () => {
 const AppLayout = () => {
   const location = useLocation();
   const isFirstLocationRender = useRef(true);
-  const isComingSoon = location.pathname === "/";
-  const isFullScreenHome = location.pathname === "/home";
-  const shouldShowEnquiryPopup = isFullScreenHome;
+  const isHomePage = location.pathname === "/" || location.pathname === "/home";
   const pagePath = `${location.pathname}${location.search}`;
 
   useEffect(() => {
@@ -103,11 +99,11 @@ const AppLayout = () => {
 
   return (
     <>
-      {!isComingSoon && !isFullScreenHome && <Header />}
+      {!isHomePage && <Header />}
       <main className="min-h-screen site-page-background">
         <Routes>
-          <Route path="/" element={<ComingSoon />} />
-          <Route path="/home" element={<Index />} />
+          <Route path="/" element={<Index />} />
+          <Route path="/home" element={<Navigate to="/" replace />} />
           <Route path="/services" element={<Services />} />
           <Route path="/holidays" element={<Tours />} />
           <Route path="/holidays/:id" element={<TourDetail />} />
@@ -130,12 +126,11 @@ const AppLayout = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
-      {!isComingSoon && !isFullScreenHome && <Footer />}
-      {!isComingSoon && (
+      {!isHomePage && <Footer />}
+      {isHomePage && (
         <>
           <CallButton />
           <WhatsAppButton />
-          {shouldShowEnquiryPopup && <EnquiryPopup />}
         </>
       )}
     </>

@@ -109,6 +109,7 @@ const validateServicePayload = (payload) => {
 };
 
 const validEnquiryStatuses = new Set(["new", "contacted", "closed"]);
+const ENQUIRY_SUBMISSION_KEY = "d0800d02-8089-408a-8028-d05c953746a6";
 
 app.get("/", (_req, res) => {
   res.type("html").send(`
@@ -498,8 +499,13 @@ app.delete("/api/admin/services/:id", requireAdmin, async (req, res, next) => {
 
 app.post("/api/enquiries", async (req, res, next) => {
   try {
+    const submissionKey = String(req.body?.submission_key ?? "").trim();
     const name = String(req.body?.name ?? "").trim();
     const phone = String(req.body?.phone ?? "").trim();
+
+    if (submissionKey !== ENQUIRY_SUBMISSION_KEY) {
+      return res.status(403).json({ message: "Invalid enquiry submission." });
+    }
 
     if (!name || !phone) {
       return res.status(400).json({ message: "Name and phone are required." });

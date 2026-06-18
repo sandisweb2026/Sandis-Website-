@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Mail, MapPin, Instagram, Facebook, MessageCircle } from "lucide-react";
 import sandisLogo from "@/assets/sandis logo .png";
+import { WHATSAPP_CHAT_URL } from "@/lib/whatsapp";
 
 const quickLinks = [
   { label: "Home", path: "/" },
@@ -63,7 +64,7 @@ const Footer = () => (
           <h4 className="mb-4 font-semibold">Contact Info</h4>
           <div className="flex flex-col gap-3 text-sm opacity-70">
             <a
-              href="https://wa.me/919890711155"
+              href={WHATSAPP_CHAT_URL}
               target="_blank"
               rel="noreferrer"
               className="flex items-start gap-2 hover:opacity-100"
@@ -76,7 +77,6 @@ const Footer = () => (
               className="flex items-start gap-2 hover:opacity-100"
             >
               <Mail size={14} className="mt-0.5 shrink-0" /> sandis@sandis.com
-              | sandistravels@gmail.com
             </a>
             <span className="flex items-start gap-2">
               <MapPin size={14} className="mt-0.5 shrink-0" /> 5 Amit Complex,

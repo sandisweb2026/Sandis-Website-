@@ -18,6 +18,8 @@ import type {
   TourRecord,
 } from "@/lib/content-types";
 
+const ENQUIRY_SUBMISSION_KEY = "d0800d02-8089-408a-8028-d05c953746a6";
+
 export const fetchTours = async () => {
   const response = await apiRequest<{ tours: TourRecord[] }>("/tours");
   return response.tours;
@@ -120,7 +122,10 @@ export const removeService = async (id: string) => {
 export const createEnquiry = async (payload: EnquiryPayload) => {
   const response = await apiRequest<{ enquiry: EnquiryRecord }>("/enquiries", {
     method: "POST",
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      ...payload,
+      submission_key: ENQUIRY_SUBMISSION_KEY,
+    }),
   });
   return response.enquiry;
 };

@@ -11,6 +11,7 @@ import {
 
 import sandisLogo from "@/assets/sandis logo .png";
 import heroBeach from "@/assets/hero-beach.jpg";
+import { WHATSAPP_CHAT_URL } from "@/lib/whatsapp";
 
 const launchDate = new Date("2026-06-18T00:00:00+05:30");
 const countdownStartDate = new Date("2026-06-09T00:00:00+05:30");
@@ -213,7 +214,7 @@ const ComingSoon = () => {
                   <ArrowRight size={16} />
                 </a>
                 <a
-                  href="https://wa.me/919890711155"
+                  href={WHATSAPP_CHAT_URL}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/10 px-5 py-2.5 text-sm font-black text-white backdrop-blur transition hover:-translate-y-0.5 hover:bg-white/20"

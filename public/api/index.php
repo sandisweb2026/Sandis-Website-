@@ -211,6 +211,8 @@ function validate_tour(array $payload): ?string
   return null;
 }
 
+const ENQUIRY_SUBMISSION_KEY = 'd0800d02-8089-408a-8028-d05c953746a6';
+
 try {
   $method = $_SERVER['REQUEST_METHOD'];
   $parts = path_parts();
@@ -419,8 +421,11 @@ try {
 
   if ($method === 'POST' && $path === 'enquiries') {
     $body = read_json_body();
+    $submissionKey = trim((string) ($body['submission_key'] ?? ''));
     $name = trim((string) ($body['name'] ?? ''));
     $phone = trim((string) ($body['phone'] ?? ''));
+
+    if ($submissionKey !== ENQUIRY_SUBMISSION_KEY) json_response(['message' => 'Invalid enquiry submission.'], 403);
     if ($name === '' || $phone === '') json_response(['message' => 'Name and phone are required.'], 400);
 
     $id = uuid_v4();
