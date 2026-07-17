@@ -39,7 +39,6 @@ import {
   TrendingUp,
   Users,
   UserRound,
-  WalletCards,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -47,6 +46,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogClose,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { fallbackServices } from "@/lib/fallback-content";
@@ -775,9 +775,10 @@ const isAirTicketingService = (service: ServiceRecord) => {
 
 const PopupContactActions = () => (
   <div
-    className="relative z-20 mx-auto flex w-full justify-center px-6 pt-6 sm:px-8 sm:pt-8 lg:px-10 lg:pt-10"
+    className="sticky top-0 z-40 w-full border-b border-border/60 bg-white/95 px-6 py-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-md sm:px-8 lg:px-10"
   >
-    <div className="flex w-full max-w-fit flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/80 bg-white/85 p-2 shadow-[0_14px_34px_rgba(15,23,42,0.14)] ring-1 ring-primary/10 backdrop-blur-md">
+    <div className="relative flex w-full items-center justify-center">
+      <div className="mx-auto flex w-full max-w-fit flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/80 bg-white/95 p-2 shadow-[0_14px_34px_rgba(15,23,42,0.14)] ring-1 ring-primary/10 backdrop-blur-md">
       <Link
         to="/contact"
         className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
@@ -800,22 +801,63 @@ const PopupContactActions = () => (
         <Mail size={15} />
         Mail Us
       </a>
+      </div>
+      <DialogClose className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-3 border-primary bg-white text-primary shadow-[0_10px_24px_rgba(236,117,0,0.22)] transition-all hover:bg-primary hover:text-white sm:h-11 sm:w-11">
+        <span className="sr-only">Close</span>
+        <span className="text-xl leading-none">X</span>
+      </DialogClose>
     </div>
   </div>
 );
 
 const servicePopupShellClass =
-  "relative isolate overflow-hidden rounded-[24px] border border-white/75 bg-white/90 text-foreground shadow-[0_32px_80px_rgba(15,23,42,0.25)] ring-1 ring-primary/10 backdrop-blur-sm";
+  "relative isolate flex flex-col overflow-visible rounded-[24px] border border-white/75 bg-white/90 text-foreground shadow-[0_32px_80px_rgba(15,23,42,0.25)] ring-1 ring-primary/10 backdrop-blur-sm";
 const servicePopupBackdropClass =
   "absolute inset-0 -z-10 [background-image:radial-gradient(circle_at_14%_10%,hsl(35_100%_96%),transparent_34%),radial-gradient(circle_at_88%_14%,hsl(198_92%_95%),transparent_32%),linear-gradient(140deg,hsl(0_0%_100%),hsl(210_38%_98%))]";
 const servicePopupHeadingClass =
   "popup-display-title mt-6 max-w-2xl bg-[linear-gradient(120deg,#111827_0%,#1f2937_46%,#c76905_100%)] bg-clip-text text-[2.05rem] font-semibold leading-[1.04] text-transparent sm:text-5xl";
+const servicePopupGridClass = "grid gap-0 lg:grid-cols-[1.02fr_0.98fr]";
+const servicePromiseBarClass =
+  "mx-4 mb-4 rounded-[18px] border border-white/15 bg-[linear-gradient(135deg,hsl(27_96%_53%),hsl(35_98%_56%))] px-6 py-5 text-white shadow-[0_12px_30px_rgba(236,117,0,0.18)] sm:mx-6 sm:mb-6 sm:px-8 lg:mx-8 lg:px-10";
+const servicePromiseIconClass =
+  "flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-white/20 text-white";
+const servicePromiseTitleClass = "text-sm font-semibold text-white";
+const servicePromiseTextClass =
+  "mt-1 text-sm leading-relaxed text-white/90 sm:text-base";
+const servicePromiseEmphasisClass = "mt-3 text-sm font-semibold text-white";
+
+const ServicePromiseBar = ({
+  children,
+  emphasis,
+  icon: Icon = BadgeCheck,
+  title = "Our Promise",
+}: {
+  children: React.ReactNode;
+  emphasis?: React.ReactNode;
+  icon?: React.ElementType;
+  title?: string;
+}) => (
+  <div className={servicePromiseBarClass}>
+    <div className="flex items-start gap-3">
+      <div className={servicePromiseIconClass}>
+        <Icon size={19} />
+      </div>
+      <div className="max-w-4xl">
+        <h4 className={servicePromiseTitleClass}>{title}</h4>
+        <p className={servicePromiseTextClass}>{children}</p>
+        {emphasis ? (
+          <p className={servicePromiseEmphasisClass}>{emphasis}</p>
+        ) : null}
+      </div>
+    </div>
+  </div>
+);
 
 const RailwayReservationDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
     <PopupContactActions />
-    <div className="grid gap-0 lg:grid-cols-[0.94fr_1.06fr]">
+    <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground shadow-card">
           <Train size={18} className="text-primary" />
@@ -884,7 +926,7 @@ const RailwayReservationDetails = () => (
           })}
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
               Enquire for Rail Booking
@@ -902,7 +944,7 @@ const RailwayReservationDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[500px] items-start justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[400px] sm:min-h-[500px] items-start justify-center p-6 sm:p-8 lg:p-10">
         <div className="absolute -right-4 bottom-10 hidden h-24 w-24 border-b border-r border-sky-300 lg:block" />
 
         <div className="relative w-full max-w-2xl rounded-[8px] border border-primary/15 bg-white/95 p-4 shadow-elevated md:p-5">
@@ -920,139 +962,70 @@ const RailwayReservationDetails = () => (
             </div>
           </div>
 
-          <div className="mt-5 grid gap-4 xl:grid-cols-[1fr_0.86fr]">
-            <div className="rail-ticket-sheen overflow-hidden rounded-[8px] bg-white text-foreground shadow-card">
-              <div className="bg-gradient-to-r from-amber-100 via-orange-50 to-sky-100 px-4 py-3 text-foreground">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase">
-                      Authorized Rail Traveller Service Agent
-                    </p>
-                    <p className="mt-1 text-lg font-bold">
-                      Western Railway Approved
-                    </p>
-                  </div>
-                  <TicketCheck size={30} />
-                </div>
-              </div>
+          <div className="mt-5 rounded-[8px] border border-border bg-white p-4 shadow-card">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
+              Rail Support Includes
+            </p>
+            <div className="mt-4 grid gap-3">
+              {railwayServices.map((item, index) => {
+                const Icon = item.icon;
 
-              <div className="p-4">
-                <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-                  <div>
-                    <p className="text-xs text-muted-foreground">From</p>
-                    <p className="text-xl font-bold">Your City</p>
-                  </div>
-                  <div className="relative flex h-14 w-24 items-center justify-center">
-                    <span className="absolute h-0.5 w-full bg-primary/25" />
-                    <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                      <Train size={19} />
+                return (
+                  <div
+                    key={item.title}
+                    className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
+                  >
+                    <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
+                      {index + 1}
                     </span>
+                    <div className="flex items-start gap-2">
+                      <Icon size={17} className="mt-0.5 text-primary" />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs text-muted-foreground">To</p>
-                    <p className="text-xl font-bold">India</p>
-                  </div>
-                </div>
-
-                <div className="mt-5 grid grid-cols-2 gap-3 text-sm">
-                  <div className="rounded-[8px] bg-accent p-3">
-                    <CalendarCheck size={18} className="text-primary" />
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      Booking
-                    </p>
-                    <p className="font-semibold">Confirmed / Tatkaal</p>
-                  </div>
-                  <div className="rounded-[8px] bg-sky-50 p-3">
-                    <MapPinned size={18} className="text-sky-600" />
-                    <p className="mt-2 text-xs text-muted-foreground">Route</p>
-                    <p className="font-semibold">Schedule Check</p>
-                  </div>
-                </div>
-              </div>
+                );
+              })}
             </div>
+          </div>
 
-            <div className="rounded-[8px] border border-border bg-secondary/70 p-4">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-xs font-semibold uppercase text-muted-foreground">
-                  Service Board
-                </p>
-                <Sparkles size={18} className="text-primary" />
-              </div>
-
-              <div className="mt-4 space-y-3">
-                <div className="rounded-[8px] border border-border bg-white p-3 shadow-card">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-9 w-9 flex-none items-center justify-center rounded-[8px] bg-emerald-100 text-emerald-700">
-                      <MessageSquareText size={18} />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground">
-                        Details Your Way
-                      </h4>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        Booking details by SMS, email, and printed copy.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-[8px] border border-border bg-white p-3 shadow-card">
-                  <div className="flex items-start gap-3">
-                    <div className="flex h-9 w-9 flex-none items-center justify-center rounded-[8px] bg-amber-100 text-primary">
-                      <Sparkles size={18} />
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground">
-                        Smooth Travel Promise
-                      </h4>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        We go beyond booking tickets to make rail travel feel
-                        calm and convenient.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-[8px] bg-accent p-3 text-foreground">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                      <BadgeCheck size={19} />
-                    </div>
-                    <p className="text-sm font-semibold">
-                      Because at Sandi&apos;s, it&apos;s always about how you
-                      want to travel.
+          <div className="mt-4 rounded-[8px] border border-border bg-secondary/70 p-4">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
+              Smooth Rail Flow
+            </p>
+            <div className="mt-4 space-y-3">
+              {railwayJourney.map((item, index) => (
+                <div
+                  key={item.step}
+                  className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
+                >
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
+                    {index + 1}
+                  </span>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">
+                      {item.title}
+                    </p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                      {item.description}
                     </p>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div className="grid gap-3 px-6 pb-6 sm:px-8 sm:pb-8 md:grid-cols-4 lg:px-10 lg:pb-10">
-      {railwayJourney.map((item, index) => (
-        <div
-          key={item.step}
-          className="relative rounded-[8px] border border-border bg-white p-4 shadow-card"
-        >
-          {index < railwayJourney.length - 1 && (
-            <span className="absolute right-4 top-6 hidden h-0.5 w-10 translate-x-full bg-primary/20 md:block" />
-          )}
-          <div className="flex items-center justify-between gap-3">
-            <span className="text-sm font-bold text-primary">{item.step}</span>
-            <ArrowRight size={16} className="text-muted-foreground" />
-          </div>
-          <h3 className="mt-4 text-base font-semibold text-foreground">
-            {item.title}
-          </h3>
-          <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-            {item.description}
-          </p>
-        </div>
-      ))}
-    </div>
+    <ServicePromiseBar>
+      Because at Sandi&apos;s, it&apos;s always about how you want to travel.
+    </ServicePromiseBar>
   </div>
 );
 
@@ -1061,7 +1034,7 @@ const VisaAssistanceDetails = () => (
     <div className={servicePopupBackdropClass} />
     <PopupContactActions />
 
-    <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+    <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700 shadow-card">
           <FileText size={18} />
@@ -1140,7 +1113,7 @@ const VisaAssistanceDetails = () => (
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
               Enquire for Visa
@@ -1158,7 +1131,7 @@ const VisaAssistanceDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-sky-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -1175,92 +1148,67 @@ const VisaAssistanceDetails = () => (
             </div>
           </div>
 
-          <div className="mt-5 grid gap-4 xl:grid-cols-[0.92fr_1.08fr]">
-            <div className="overflow-hidden rounded-[8px] border border-border bg-white shadow-card">
-              <div className="bg-gradient-to-r from-sky-600 via-primary to-emerald-500 px-4 py-4 text-white">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase">
-                      Application Readiness
-                    </p>
-                    <p className="mt-2 text-2xl font-bold">Visa Assistance</p>
-                  </div>
-                  <FileText size={30} />
-                </div>
-              </div>
+          <div className="mt-5 rounded-[8px] border border-border bg-white p-4 shadow-card">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
+              Visa Support Includes
+            </p>
+            <div className="mt-4 grid gap-3">
+              {visaServiceSupport.map((item, index) => {
+                const Icon = item.icon;
 
-              <div className="p-4 space-y-3">
-                {visaHighlights.map((item) => {
-                  const Icon = item.icon;
-
-                  return (
-                    <div
-                      key={item.label}
-                      className="rounded-[8px] border border-border bg-secondary/60 p-3"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="flex h-9 w-9 flex-none items-center justify-center rounded-[8px] bg-white text-primary shadow-card">
-                          <Icon size={18} />
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">
-                            {item.label}
-                          </p>
-                          <p className="mt-1 text-sm font-semibold text-foreground">
-                            {item.value}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div className="rounded-[8px] border border-border bg-secondary/70 p-4">
-              <p className="text-xs font-semibold uppercase text-muted-foreground">
-                Smooth Visa Flow
-              </p>
-              <div className="mt-4 space-y-3">
-                {visaJourney.map((item, index) => (
+                return (
                   <div
-                    key={item}
-                    className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
+                    key={item.title}
+                    className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                   >
-                    <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-sky-600 text-xs font-bold text-white">
+                    <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
                       {index + 1}
                     </span>
-                    <p className="text-sm font-medium text-foreground">{item}</p>
+                    <div className="flex items-start gap-2">
+                      <Icon size={17} className="mt-0.5 text-sky-700" />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="mt-4 rounded-[8px] bg-accent p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                <Sparkles size={19} />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  Our Promise
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  With Sandi&apos;s, you can relax while we handle the
-                  complexities, ensuring a stress-free and smooth visa
-                  experience from start to finish.
-                </p>
-                <p className="mt-3 text-sm font-semibold text-foreground">
-                  Your journey begins with the right visa and the right
-                  partner.
-                </p>
-              </div>
+          <div className="mt-4 rounded-[8px] border border-border bg-secondary/70 p-4">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
+              Smooth Visa Flow
+            </p>
+            <div className="mt-4 space-y-3">
+              {visaJourney.map((item, index) => (
+                <div
+                  key={item}
+                  className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
+                >
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm font-medium text-foreground">{item}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
     </div>
+    <ServicePromiseBar
+      icon={Sparkles}
+      emphasis="Your journey begins with the right visa and the right partner."
+    >
+      With Sandi&apos;s, you can relax while we handle the complexities,
+      ensuring a stress-free and smooth visa experience from start to finish.
+    </ServicePromiseBar>
   </div>
 );
 
@@ -1269,7 +1217,7 @@ const PassportAssistanceDetails = () => (
     <div className={servicePopupBackdropClass} />
     <PopupContactActions />
 
-    <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+    <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 shadow-card">
           <IdCard size={18} />
@@ -1347,7 +1295,7 @@ const PassportAssistanceDetails = () => (
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
               Enquire for Passport
@@ -1365,7 +1313,7 @@ const PassportAssistanceDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-indigo-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -1382,112 +1330,64 @@ const PassportAssistanceDetails = () => (
             </div>
           </div>
 
-          <div className="mt-5 grid gap-4 xl:grid-cols-[0.92fr_1.08fr]">
-            <div className="overflow-hidden rounded-[8px] border border-border bg-white shadow-card">
-              <div className="bg-gradient-to-r from-indigo-600 via-sky-600 to-emerald-500 px-4 py-4 text-white">
-                <div className="flex items-center justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-semibold uppercase">
-                      Document Readiness
-                    </p>
-                    <p className="mt-2 text-2xl font-bold">
-                      Passport Assistance
-                    </p>
-                  </div>
-                  <IdCard size={30} />
-                </div>
-              </div>
+          <div className="mt-5 rounded-[8px] border border-border bg-white p-4 shadow-card">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
+              Passport Support Includes
+            </p>
+            <div className="mt-4 grid gap-3">
+              {passportServiceSupport.map((item, index) => {
+                const Icon = item.icon;
 
-              <div className="p-4 space-y-3">
-                {passportHighlights.map((item) => {
-                  const Icon = item.icon;
-
-                  return (
-                    <div
-                      key={item.label}
-                      className="rounded-[8px] border border-border bg-secondary/60 p-3"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="flex h-9 w-9 flex-none items-center justify-center rounded-[8px] bg-white text-primary shadow-card">
-                          <Icon size={18} />
-                        </div>
-                        <div>
-                          <p className="text-xs text-muted-foreground">
-                            {item.label}
-                          </p>
-                          <p className="mt-1 text-sm font-semibold text-foreground">
-                            {item.value}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div className="m-4 rounded-[8px] bg-amber-50 p-3">
-                <div className="flex items-start gap-3">
-                  <Clock3 size={18} className="mt-0.5 text-amber-700" />
-                  <p className="text-sm font-semibold text-amber-900">
-                    For urgent requirements, we also assist with the Tatkaal
-                    scheme for quick and efficient passport processing.
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-[8px] border border-border bg-secondary/70 p-4">
-              <p className="text-xs font-semibold uppercase text-muted-foreground">
-                Smooth Passport Flow
-              </p>
-              <div className="mt-4 space-y-3">
-                {passportJourney.map((item, index) => (
+                return (
                   <div
-                    key={item}
-                    className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
+                    key={item.title}
+                    className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                   >
                     <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-indigo-600 text-xs font-bold text-white">
                       {index + 1}
                     </span>
-                    <p className="text-sm font-medium text-foreground">{item}</p>
+                    <div className="flex items-start gap-2">
+                      <Icon size={17} className="mt-0.5 text-indigo-700" />
+                      <div>
+                        <p className="text-sm font-semibold text-foreground">
+                          {item.title}
+                        </p>
+                        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                          {item.description}
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                ))}
-              </div>
-
-              <div className="mt-4 rounded-[8px] bg-accent p-3 text-foreground">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-9 w-9 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                    <Sparkles size={17} />
-                  </div>
-                  <p className="text-sm font-semibold">
-                    Your journey begins with the right documents and the right
-                    guidance.
-                  </p>
-                </div>
-              </div>
+                );
+              })}
             </div>
           </div>
 
-          <div className="mt-4 rounded-[8px] bg-accent p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                <BadgeCheck size={19} />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  Our Promise
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  With Sandi&apos;s, you don&apos;t have to worry about the
-                  process. We make your passport application simple, fast, and
-                  stress-free.
-                </p>
-              </div>
+          <div className="mt-4 rounded-[8px] border border-border bg-secondary/70 p-4">
+            <p className="text-xs font-semibold uppercase text-muted-foreground">
+              Smooth Passport Flow
+            </p>
+            <div className="mt-4 space-y-3">
+              {passportJourney.map((item, index) => (
+                <div
+                  key={item}
+                  className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
+                >
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-indigo-600 text-xs font-bold text-white">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm font-medium text-foreground">{item}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </div>
     </div>
+    <ServicePromiseBar>
+      With Sandi&apos;s, you don&apos;t have to worry about the process. We make
+      your passport application simple, fast, and stress-free.
+    </ServicePromiseBar>
   </div>
 );
 
@@ -1496,7 +1396,7 @@ const TravelInsuranceDetails = () => (
     <div className={servicePopupBackdropClass} />
     <PopupContactActions />
 
-    <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+    <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-card">
           <ShieldCheck size={18} />
@@ -1567,7 +1467,7 @@ const TravelInsuranceDetails = () => (
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
               Enquire for Insurance
@@ -1585,7 +1485,7 @@ const TravelInsuranceDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-emerald-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -1640,7 +1540,7 @@ const TravelInsuranceDetails = () => (
                   key={item}
                   className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
                 >
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-sky-600 text-xs font-bold text-white">
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-emerald-600 text-xs font-bold text-white">
                     {index + 1}
                   </span>
                   <p className="text-sm font-medium text-foreground">{item}</p>
@@ -1648,27 +1548,14 @@ const TravelInsuranceDetails = () => (
               ))}
             </div>
           </div>
-
-          <div className="mt-4 rounded-[8px] bg-accent p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                <BadgeCheck size={19} />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  Our Promise
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  With Sandi&apos;s, you travel with confidence, knowing you are
-                  protected against the unexpected. Choose the coverage that
-                  fits your plan and budget, and let us take care of the rest.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
+    <ServicePromiseBar>
+      With Sandi&apos;s, you travel with confidence, knowing you are protected
+      against the unexpected. Choose the coverage that fits your plan and
+      budget, and let us take care of the rest.
+    </ServicePromiseBar>
   </div>
 );
 
@@ -1677,7 +1564,7 @@ const HotelBookingDetails = () => (
     <div className={servicePopupBackdropClass} />
     <PopupContactActions />
 
-    <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+    <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-amber-200 bg-amber-50 px-4 py-2 text-sm font-semibold text-amber-700 shadow-card">
           <Hotel size={18} />
@@ -1741,7 +1628,7 @@ const HotelBookingDetails = () => (
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
               Enquire for Hotel Booking
@@ -1759,7 +1646,7 @@ const HotelBookingDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-amber-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -1819,25 +1706,6 @@ const HotelBookingDetails = () => (
               ))}
             </div>
           </div>
-
-          <div className="mt-4 rounded-[8px] bg-accent p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                <BadgeCheck size={19} />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  Our Promise
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Share your preference, budget, and destination. We&apos;ll
-                  find the perfect stay tailored for you so you book comfort,
-                  convenience, and peace of mind.
-                </p>
-              </div>
-            </div>
-          </div>
-
           <div className="mt-4 rounded-[8px] border border-border bg-white p-4 shadow-card">
             <p className="text-xs font-semibold uppercase text-muted-foreground">
               Coverage Snapshot
@@ -1868,6 +1736,11 @@ const HotelBookingDetails = () => (
         </div>
       </div>
     </div>
+    <ServicePromiseBar>
+      Share your preference, budget, and destination. We&apos;ll find the
+      perfect stay tailored for you so you book comfort, convenience, and peace
+      of mind.
+    </ServicePromiseBar>
   </div>
 );
 
@@ -1876,7 +1749,7 @@ const RentCarBusDetails = () => (
     <div className={servicePopupBackdropClass} />
     <PopupContactActions />
 
-    <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+    <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700 shadow-card">
           <Car size={18} />
@@ -1924,7 +1797,7 @@ const RentCarBusDetails = () => (
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
               Enquire for Car / Bus
@@ -1942,7 +1815,7 @@ const RentCarBusDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-sky-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -2031,26 +1904,13 @@ const RentCarBusDetails = () => (
               ))}
             </div>
           </div>
-
-          <div className="mt-4 rounded-[8px] bg-accent p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                <BadgeCheck size={19} />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  Our Promise
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Every journey with Sandi&apos;s is safe, comfortable, and
-                  memorable. Travel with trust.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
+    <ServicePromiseBar>
+      Every journey with Sandi&apos;s is safe, comfortable, and memorable.
+      Travel with trust.
+    </ServicePromiseBar>
   </div>
 );
 
@@ -2059,7 +1919,7 @@ const MemoriesTourDetails = () => (
     <div className={servicePopupBackdropClass} />
     <PopupContactActions />
 
-    <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+    <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground shadow-card">
           <Globe size={18} className="text-primary" />
@@ -2122,7 +1982,7 @@ const MemoriesTourDetails = () => (
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
               Enquire for Tour Packages
@@ -2140,7 +2000,7 @@ const MemoriesTourDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-primary/20 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -2197,26 +2057,14 @@ const MemoriesTourDetails = () => (
             </div>
           </div>
 
-          <div className="mt-4 rounded-[8px] bg-accent p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                <BadgeCheck size={19} />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  Our Promise
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  We don&apos;t just plan trips. We create experiences,
-                  emotions, and lifelong memories. With Sandi&apos;s, you
-                  don&apos;t just travel, you experience the world.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
+    <ServicePromiseBar>
+      We don&apos;t just plan trips. We create experiences, emotions, and
+      lifelong memories. With Sandi&apos;s, you don&apos;t just travel, you
+      experience the world.
+    </ServicePromiseBar>
   </div>
 );
 
@@ -2225,7 +2073,7 @@ const AirTicketingDetails = () => (
     <div className={servicePopupBackdropClass} />
     <PopupContactActions />
 
-    <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+    <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700 shadow-card">
           <Plane size={18} />
@@ -2290,7 +2138,7 @@ const AirTicketingDetails = () => (
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
               Enquire for Air Ticketing
@@ -2308,7 +2156,7 @@ const AirTicketingDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-sky-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -2360,7 +2208,7 @@ const AirTicketingDetails = () => (
                   key={item}
                   className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
                 >
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-sky-600 text-xs font-bold text-white">
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
                     {index + 1}
                   </span>
                   <p className="text-sm font-medium text-foreground">{item}</p>
@@ -2387,27 +2235,14 @@ const AirTicketingDetails = () => (
               ))}
             </div>
           </div>
-
-          <div className="mt-4 rounded-[8px] bg-accent p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                <BadgeCheck size={19} />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  Our Promise
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  We go beyond ticket booking to deliver smart travel
-                  solutions. Share your travel pattern, and we&apos;ll create a
-                  plan built for savings, comfort, and convenience.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
+    <ServicePromiseBar>
+      We go beyond ticket booking to deliver smart travel solutions. Share your
+      travel pattern, and we&apos;ll create a plan built for savings, comfort,
+      and convenience.
+    </ServicePromiseBar>
   </div>
 );
 
@@ -2416,7 +2251,7 @@ const AirportTransferDetails = () => (
     <div className={servicePopupBackdropClass} />
     <PopupContactActions />
 
-    <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+    <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-cyan-200 bg-cyan-50 px-4 py-2 text-sm font-semibold text-cyan-700 shadow-card">
           <Car size={18} />
@@ -2461,7 +2296,7 @@ const AirportTransferDetails = () => (
           </div>
         </div>
 
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
               Enquire for Airport Transfer
@@ -2479,7 +2314,7 @@ const AirportTransferDetails = () => (
         </div>
       </div>
 
-      <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+      <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
         <div className="w-full max-w-2xl rounded-[8px] border border-cyan-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -2546,27 +2381,13 @@ const AirportTransferDetails = () => (
               ))}
             </div>
           </div>
-
-          <div className="mt-4 rounded-[8px] bg-accent p-4">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                <BadgeCheck size={19} />
-              </div>
-              <div>
-                <h4 className="text-sm font-semibold text-foreground">
-                  Our Promise
-                </h4>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  The moment you choose Sandi&apos;s, you travel in safe and
-                  trusted hands. We don&apos;t just provide transfer services;
-                  we deliver peace of mind.
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
+    <ServicePromiseBar>
+      The moment you choose Sandi&apos;s, you travel in safe and trusted hands.
+      We don&apos;t just provide transfer services; we deliver peace of mind.
+    </ServicePromiseBar>
   </div>
 );
 
@@ -2733,11 +2554,11 @@ const Services = () => {
 
   return (
     <div className="pt-16">
-      <section className="py-20 px-4">
+      <section className="px-4 py-14 sm:py-20">
         <div className="container mx-auto">
           <div className="hidden">
             <div className={servicePopupBackdropClass} />
-            <div className="grid gap-0 lg:grid-cols-[0.94fr_1.06fr]">
+            <div className={servicePopupGridClass}>
               <div className="p-6 sm:p-8 lg:p-10">
                 <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground shadow-card">
                   <Train size={18} className="text-primary" />
@@ -2807,7 +2628,7 @@ const Services = () => {
                   })}
                 </div>
 
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <div className="hidden">
                   <Link to="/contact">
                     <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
                       Enquire for Rail Booking
@@ -2825,7 +2646,7 @@ const Services = () => {
                 </div>
               </div>
 
-              <div className="relative flex min-h-[500px] items-center justify-center p-6 sm:p-8 lg:p-10">
+              <div className="relative flex min-h-[400px] sm:min-h-[500px] items-center justify-center p-6 sm:p-8 lg:p-10">
                 <div className="absolute -left-4 top-10 hidden h-24 w-24 border-l border-t border-primary/20 lg:block" />
                 <div className="absolute -right-4 bottom-10 hidden h-24 w-24 border-b border-r border-sky-300 lg:block" />
 
@@ -2945,18 +2766,6 @@ const Services = () => {
                             </div>
                           </div>
                         </div>
-
-                        <div className="rounded-[8px] bg-accent p-3 text-foreground">
-                          <div className="flex items-center gap-3">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                              <BadgeCheck size={19} />
-                            </div>
-                            <p className="text-sm font-semibold">
-                              Because at Sandi&apos;s, it&apos;s always about
-                              how you want to travel.
-                            </p>
-                          </div>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -2988,6 +2797,10 @@ const Services = () => {
                 </div>
               ))}
             </div>
+            <ServicePromiseBar>
+              Because at Sandi&apos;s, it&apos;s always about how you want to
+              travel.
+            </ServicePromiseBar>
           </div>
 
           <Dialog
@@ -3007,7 +2820,7 @@ const Services = () => {
             <div className={servicePopupBackdropClass} />
             <PopupContactActions />
 
-            <div className="grid gap-0 lg:grid-cols-[1.02fr_0.98fr]">
+            <div className={servicePopupGridClass}>
               <div className="p-6 sm:p-8 lg:p-10">
                 <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-card">
                   <DollarSign size={18} />
@@ -3077,7 +2890,7 @@ const Services = () => {
                   })}
                 </div>
 
-                <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <div className="hidden">
                   <Link to="/contact">
                     <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
                       Enquire for Forex
@@ -3095,7 +2908,7 @@ const Services = () => {
                 </div>
               </div>
 
-              <div className="relative flex min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
+              <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
                 <div className="w-full max-w-2xl rounded-[8px] border border-emerald-200 bg-white/95 p-4 shadow-elevated md:p-5">
                   <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
@@ -3112,133 +2925,69 @@ const Services = () => {
                     </div>
                   </div>
 
-                  <div className="mt-5 grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-                    <div className="overflow-hidden rounded-[8px] border border-border bg-white shadow-card">
-                      <div className="bg-gradient-to-r from-emerald-600 via-primary to-sky-500 px-4 py-4 text-white">
-                        <div className="flex items-center justify-between gap-3">
-                          <div>
-                            <p className="text-xs font-semibold uppercase">
-                              Travel Money
-                            </p>
-                            <p className="mt-2 text-2xl font-bold">
-                              Forex Desk
-                            </p>
-                          </div>
-                          <Globe size={32} />
-                        </div>
-                      </div>
+                  <div className="mt-5 rounded-[8px] border border-border bg-white p-4 shadow-card">
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">
+                      Forex Support Includes
+                    </p>
+                    <div className="mt-4 grid gap-3">
+                      {forexSolutions.map((item, index) => {
+                        const Icon = item.icon;
 
-                      <div className="p-4">
-                        <div className="grid grid-cols-2 gap-3">
-                          {["USD", "EUR", "GBP", "AED"].map((code) => (
-                            <div
-                              key={code}
-                              className="rounded-[8px] border border-border bg-secondary/70 p-3"
-                            >
-                              <div className="flex items-center justify-between gap-2">
-                                <span className="font-bold text-foreground">
-                                  {code}
-                                </span>
-                                <TrendingUp
-                                  size={16}
-                                  className="text-emerald-600"
-                                />
+                        return (
+                          <div
+                            key={item.title}
+                            className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
+                          >
+                            <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-emerald-600 text-xs font-bold text-white">
+                              {index + 1}
+                            </span>
+                            <div className="flex items-start gap-2">
+                              <Icon
+                                size={17}
+                                className="mt-0.5 text-emerald-700"
+                              />
+                              <div>
+                                <p className="text-sm font-semibold text-foreground">
+                                  {item.title}
+                                </p>
+                                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                                  {item.description}
+                                </p>
                               </div>
-                              <p className="mt-2 text-xs text-muted-foreground">
-                                Daily monitored
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="mt-4 rounded-[8px] bg-emerald-50 p-3">
-                          <div className="flex items-start gap-3">
-                            <HandCoins
-                              size={20}
-                              className="mt-0.5 text-emerald-700"
-                            />
-                            <p className="text-sm font-semibold text-emerald-900">
-                              Competitive and transparent exchange support
-                              under one trusted roof.
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="rail-ticket-sheen overflow-hidden rounded-[8px] border border-border bg-white shadow-card">
-                        <div className="p-4">
-                          <div className="flex items-center justify-between gap-4">
-                            <div>
-                              <p className="text-xs font-semibold uppercase text-muted-foreground">
-                                Secure International Spending
-                              </p>
-                              <h4 className="mt-2 text-xl font-bold text-foreground">
-                                Travel Card Support
-                              </h4>
-                            </div>
-                            <div className="flex h-14 w-14 items-center justify-center rounded-[8px] bg-sky-100 text-sky-700">
-                              <WalletCards size={28} />
                             </div>
                           </div>
-
-                          <div className="mt-5 grid grid-cols-3 gap-2">
-                            <span className="h-2 rounded-full bg-emerald-500" />
-                            <span className="h-2 rounded-full bg-primary" />
-                            <span className="h-2 rounded-full bg-sky-500" />
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="rounded-[8px] border border-border bg-secondary/70 p-4">
-                        <p className="text-xs font-semibold uppercase text-muted-foreground">
-                          Smooth Forex Flow
-                        </p>
-                        <div className="mt-4 space-y-3">
-                          {forexSteps.map((item, index) => (
-                            <div
-                              key={item}
-                              className="flex items-center gap-3 rounded-[8px] bg-white p-3 shadow-card"
-                            >
-                              <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-emerald-600 text-xs font-bold text-white">
-                                {index + 1}
-                              </span>
-                              <p className="text-sm font-medium text-foreground">
-                                {item}
-                              </p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
+                        );
+                      })}
                     </div>
                   </div>
 
-                  <div className="mt-4 rounded-[8px] bg-accent p-4">
-                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                      <div className="flex items-start gap-3">
-                        <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                          <Sparkles size={19} />
-                        </div>
-                        <div>
-                          <h4 className="text-sm font-semibold text-foreground">
-                            Smart Exchange. Smooth Travel.
-                          </h4>
-                          <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                            Travel abroad with confidence, convenience, and
-                            complete peace of mind.
+                  <div className="mt-4 rounded-[8px] border border-border bg-secondary/70 p-4">
+                    <p className="text-xs font-semibold uppercase text-muted-foreground">
+                      Smooth Forex Flow
+                    </p>
+                    <div className="mt-4 space-y-3">
+                      {forexSteps.map((item, index) => (
+                        <div
+                          key={item}
+                          className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
+                        >
+                          <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-emerald-600 text-xs font-bold text-white">
+                            {index + 1}
+                          </span>
+                          <p className="text-sm font-medium text-foreground">
+                            {item}
                           </p>
                         </div>
-                      </div>
-                      <BadgeCheck
-                        size={24}
-                        className="hidden text-primary sm:block"
-                      />
+                      ))}
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+            <ServicePromiseBar icon={Sparkles} title="Smart Exchange. Smooth Travel.">
+              Travel abroad with confidence, convenience, and complete peace of
+              mind.
+            </ServicePromiseBar>
               </div>
             </DialogContent>
           </Dialog>
@@ -3414,25 +3163,6 @@ const Services = () => {
                           : showInsuranceDetails
                             ? "Comprehensive travel insurance plans for individuals, families, students, groups, and corporate travelers needing dependable protection worldwide."
                             : "Secure currency exchange, travel cards, and traveller's cheques with transparent rates and reliable assistance for travelers.";
-              const cardTag = showMemoriesDetails
-                ? "Signature Tours"
-                : showAirportDetails
-                  ? "Transfers"
-                  : showAirDetails
-                    ? "Flights"
-                    : showRailwayDetails
-                      ? "Rail Desk"
-                      : showVisaDetails
-                        ? "Documentation"
-                        : showPassportDetails
-                          ? "Identity"
-                          : showInsuranceDetails
-                            ? "Protection"
-                            : showHotelDetails
-                              ? "Stays"
-                              : showRentalDetails
-                                ? "Mobility"
-                                : "Travel";
               const cardTheme =
                 serviceCardThemes[cardIndex % serviceCardThemes.length];
               const WatermarkIcon = showMemoriesDetails
@@ -3458,7 +3188,7 @@ const Services = () => {
               return (
                 <div
                   key={service.id}
-                  className={`group relative isolate h-full min-h-[385px] overflow-hidden rounded-[24px] border bg-white/95 p-5 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated sm:p-6 ${cardTheme.border}`}
+                  className={`group relative isolate h-full overflow-hidden rounded-[24px] border bg-white/95 px-5 pb-4 pt-5 shadow-card transition-all duration-300 hover:-translate-y-1.5 hover:shadow-elevated sm:min-h-[300px] sm:px-6 sm:pb-4 sm:pt-6 ${cardTheme.border}`}
                 >
                   <div className={`pointer-events-none absolute inset-x-0 top-0 h-1 ${cardTheme.bar}`} />
                   <div className={`pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full blur-2xl ${cardTheme.glow}`} />
@@ -3469,21 +3199,18 @@ const Services = () => {
                   </div>
 
                   <div className="relative flex h-full flex-col">
-                    <div className="flex items-start justify-between gap-4">
+                    <div className="flex items-center gap-4">
                       <div className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-card ${cardTheme.iconWrap}`}>
                         <Icon size={28} className={cardTheme.icon} />
                       </div>
-                      <span className={`rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.12em] ${cardTheme.tag}`}>
-                        {cardTag}
-                      </span>
+                      <h3 className="text-left text-xl font-bold leading-tight text-foreground sm:text-2xl">
+                        {cardTitle}
+                      </h3>
                     </div>
-                    <h3 className="mt-5 min-h-[62px] text-center text-2xl font-bold leading-tight text-foreground sm:min-h-[68px]">
-                      {cardTitle}
-                    </h3>
-                    <p className="mt-2.5 h-[112px] overflow-hidden text-justify text-base leading-7 text-muted-foreground">
+                    <p className="mt-3 text-justify text-sm leading-6 text-muted-foreground sm:h-[88px] sm:overflow-hidden sm:text-base sm:leading-7">
                       {cardDescription}
                     </p>
-                    <div className="mt-auto flex justify-center border-t border-border/70 pt-4">
+                    <div className="mt-3 flex justify-center border-t border-border/70 pt-3">
                       <Button
                         size="sm"
                         className={`rounded-full px-5 font-semibold ${cardTheme.button}`}
@@ -3552,6 +3279,7 @@ const Services = () => {
 };
 
 export default Services;
+
 
 
 

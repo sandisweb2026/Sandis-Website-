@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Phone, Instagram, Facebook, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import sandisLogo from "@/assets/sandis logo.png";
+import sandisLogo from "@/assets/sandis logo .png";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -16,22 +16,19 @@ const navLinks = [
 const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 glass shadow-card">
       <div className="container mx-auto flex items-center justify-between h-16 px-4">
-        <Link to="/" className="flex flex-col items-center">
+        <Link to="/" className="flex items-center">
           <img
             src={sandisLogo}
             alt="Sandis Tours logo"
-            className="h-10 w-auto"
+            className={isHomePage ? "h-12 w-auto" : "h-12 w-auto sm:h-14 md:h-16"}
             loading="eager"
             decoding="async"
           />
-          <p className="brand-marathi-tagline mt-0.5 text-center text-[0.62rem] font-extrabold sm:text-[0.68rem]">
-            <span className="text-black">सुखद</span>{" "}
-            <span className="text-primary">क्षणाचे सोबती</span>
-          </p>
         </Link>
 
         {/* Desktop Nav */}

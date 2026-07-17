@@ -1,82 +1,51 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
-  ChevronLeft,
-  ChevronRight,
   Bus,
   CheckCircle,
   Clock,
   Heart,
   IndianRupee,
+  Mail,
   MapPin,
   ShieldCheck,
   Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { fallbackTourImages } from "@/lib/fallback-content";
 import {
-  createEmptyTourExtras,
-  extractTourExtras,
-} from "@/lib/content-types";
-import { fallbackTourImages, fallbackTours } from "@/lib/fallback-content";
-import {
-  fetchTourById,
-  getTourImage,
-  type TourRecord,
+  fetchHolidayPackageBySlug,
+  type HolidayPackageRecord,
 } from "@/lib/travel-cms";
 import { getWhatsAppUrl, WHATSAPP_PREFILLED_MESSAGE } from "@/lib/whatsapp";
 
 const defaultImage = fallbackTourImages["Goa Beach Paradise"];
-const getCategoryLabel = (category: TourRecord["category"]) => {
-  if (category === "maharashtra") return "Maharashtra";
-  if (category === "international") return "International";
-  return "India";
-};
+
+const getHeroImage = (holidayPackage: HolidayPackageRecord) =>
+  holidayPackage.hero_image_url ||
+  holidayPackage.banner_image_url ||
+  fallbackTourImages[holidayPackage.title] ||
+  defaultImage;
 
 const TourDetail = () => {
-  const { id } = useParams();
-  const [tour, setTour] = useState<TourRecord | null>(null);
+  const { id: packageSlug } = useParams();
+  const [holidayPackage, setHolidayPackage] =
+    useState<HolidayPackageRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [heroIndex, setHeroIndex] = useState(0);
-  const [enquiryChoice, setEnquiryChoice] = useState<"whatsapp" | "email" | null>(
-    null,
-  );
+  const [enquiryChoice, setEnquiryChoice] = useState<
+    "whatsapp" | "email" | null
+  >(null);
 
   useEffect(() => {
-    if (!id) return;
+    if (!packageSlug) return;
 
     setLoading(true);
-    fetchTourById(id)
-      .then((data) => {
-        setTour(data ?? fallbackTours.find((item) => item.id === id) ?? null);
-      })
-      .catch(() => {
-        setTour(fallbackTours.find((item) => item.id === id) ?? null);
-      })
+    fetchHolidayPackageBySlug(packageSlug)
+      .then(setHolidayPackage)
+      .catch(() => setHolidayPackage(null))
       .finally(() => setLoading(false));
-  }, [id]);
-
-  const extras = tour ? extractTourExtras(tour.itinerary ?? null) : createEmptyTourExtras();
-  const heroImage = tour
-    ? getTourImage(tour, fallbackTourImages, defaultImage)
-    : defaultImage;
-  const heroImages =
-    extras.heroGallery.length > 0 ? extras.heroGallery : [heroImage];
-  const isShirdi = tour?.name.toLowerCase().includes("shirdi") ?? false;
-
-  useEffect(() => {
-    setHeroIndex(0);
-  }, [id]);
-
-  useEffect(() => {
-    if (heroImages.length <= 1) return;
-
-    const timer = window.setInterval(() => {
-      setHeroIndex((current) => (current + 1) % heroImages.length);
-    }, 4000);
-
-    return () => window.clearInterval(timer);
-  }, [heroImages]);
+  }, [packageSlug]);
 
   if (loading) {
     return (
@@ -86,172 +55,145 @@ const TourDetail = () => {
     );
   }
 
-  if (!tour) {
+  if (!holidayPackage) {
     return (
       <div className="pt-32 text-center min-h-screen">
-        <h1 className="text-2xl font-bold">Tour not found</h1>
+        <h1 className="text-2xl font-bold">Holiday package not found</h1>
         <Link to="/holidays">
-          <Button className="mt-4">Back to Tours</Button>
+          <Button className="mt-4">Back to Holidays</Button>
         </Link>
       </div>
     );
   }
 
-  const { itinerary, highlights, exclusions, terms, gallery } = extras;
+  const isShirdi = holidayPackage.title.toLowerCase().includes("shirdi");
+  const durationLabel =
+    holidayPackage.duration || holidayPackage.trip_type || "On Request";
+  const priceLabel = holidayPackage.price_label || "On Request";
+  const aboutText =
+    holidayPackage.about_tour ||
+    holidayPackage.short_description ||
+    "Contact Sandi's Tours for complete package details.";
+  const galleryImages = (holidayPackage.gallery_images ?? []).filter(
+    (image) => image.is_active !== false,
+  );
+  const whatsappMessage =
+    holidayPackage.whatsapp_enquiry_message ||
+    `${WHATSAPP_PREFILLED_MESSAGE}\n\nHoliday Enquiry: ${holidayPackage.title}`;
+  const emailSubject =
+    holidayPackage.email_enquiry_subject ||
+    `Holiday enquiry: ${holidayPackage.title}`;
+  const emailMessage =
+    holidayPackage.email_enquiry_message ||
+    `Hello, I want to enquire about ${holidayPackage.title}.`;
+  const heroImage = getHeroImage(holidayPackage);
+  const featureCards = [
+    {
+      title: holidayPackage.good_for_title,
+      description: holidayPackage.good_for_description,
+      icon: Users,
+    },
+    {
+      title: holidayPackage.vehicles_title,
+      description: holidayPackage.vehicles_description,
+      icon: Bus,
+    },
+    {
+      title: holidayPackage.attraction_title,
+      description: holidayPackage.attraction_description,
+      icon: Heart,
+    },
+    {
+      title: holidayPackage.comfort_title,
+      description: holidayPackage.comfort_description,
+      icon: ShieldCheck,
+    },
+  ].filter((item) => item.title || item.description);
 
   return (
     <div className="pt-16">
       <div
-        className={`relative w-full ${
-          isShirdi ? "aspect-[16/9]" : "h-[50vh] min-h-[350px]"
-        } bg-foreground/5`}
+        className="relative w-full overflow-hidden bg-foreground/5 h-[52vh] min-h-[340px] sm:h-[60vh] lg:h-[calc(100vh-4rem)]"
       >
-        {heroImages.map((src, index) => (
-          <img
-            key={`${src}-${index}`}
-            src={src}
-            alt={tour.name}
-            className={`absolute inset-0 w-full h-full ${
-              isShirdi ? "object-cover object-center" : "object-cover"
-            } transition-opacity duration-700 ${
-              index === heroIndex ? "opacity-100" : "opacity-0"
-            }`}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 to-transparent" />
-        {heroImages.length > 1 && (
-          <>
-            <button
-              type="button"
-              onClick={() =>
-                setHeroIndex(
-                  (current) => (current - 1 + heroImages.length) % heroImages.length,
-                )
-              }
-              className="absolute left-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/35 p-2 text-white transition hover:bg-black/55"
-              aria-label="Previous hero image"
-            >
-              <ChevronLeft size={20} />
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                setHeroIndex((current) => (current + 1) % heroImages.length)
-              }
-              className="absolute right-4 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/35 p-2 text-white transition hover:bg-black/55"
-              aria-label="Next hero image"
-            >
-              <ChevronRight size={20} />
-            </button>
-          </>
-        )}
-        <div className="absolute bottom-0 left-0 right-0 p-6">
+        <img
+          src={heroImage}
+          alt={holidayPackage.title}
+          className="absolute inset-0 h-full w-full object-cover object-center"
+          loading="eager"
+          decoding="async"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/40 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:p-8">
           <div className="container mx-auto">
             <span className="text-xs bg-primary text-primary-foreground px-3 py-1 rounded-full font-medium">
-              {getCategoryLabel(tour.category)}
+              {holidayPackage.category?.name || "Holiday"}
             </span>
-            <h1 className="text-3xl md:text-4xl font-bold text-background mt-3">
-              {tour.name}
+            <h1 className="mt-3 text-2xl font-bold text-background sm:text-3xl md:text-4xl lg:text-5xl">
+              {holidayPackage.title}
             </h1>
-            <div className="flex items-center gap-6 mt-2 text-background/80">
+            <div className="mt-2 flex flex-wrap items-center gap-4 text-background/80 sm:gap-6">
               <span className="flex items-center gap-1">
-                <Clock size={16} /> {tour.duration}
+                <Clock size={16} /> {durationLabel}
               </span>
               <span className="flex items-center gap-0.5 text-primary font-bold text-xl">
-                <IndianRupee size={18} /> {tour.price}
+                <IndianRupee size={18} /> {priceLabel}
               </span>
+              {holidayPackage.location && (
+                <span className="flex items-center gap-1">
+                  <MapPin size={16} /> {holidayPackage.location}
+                </span>
+              )}
             </div>
           </div>
         </div>
-        {heroImages.length > 1 && (
-          <div className="absolute bottom-24 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-            {heroImages.map((image, index) => (
-              <button
-                key={`${image}-${index}`}
-                type="button"
-                onClick={() => setHeroIndex(index)}
-                className={`h-2.5 rounded-full transition-all ${
-                  index === heroIndex ? "w-8 bg-white" : "w-2.5 bg-white/55"
-                }`}
-                aria-label={`Show hero image ${index + 1}`}
-              />
-            ))}
-          </div>
-        )}
       </div>
 
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-start xl:grid-cols-[minmax(0,1fr)_420px]">
+          <div className="min-w-0 lg:pr-2 xl:pr-4">
             <h2 className="text-2xl font-bold text-foreground">About Tour</h2>
             <p className="text-muted-foreground mt-3 leading-relaxed">
-              {tour.description}
+              {aboutText}
             </p>
 
-            {isShirdi && (
+            {featureCards.length > 0 && (
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-card rounded-2xl p-4 shadow-card flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
-                    <Users size={26} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      Good For
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Families & devotees
-                    </p>
-                  </div>
-                </div>
-                <div className="bg-card rounded-2xl p-4 shadow-card flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
-                    <Bus size={26} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      Vehicles
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      4 to 49 seats
-                    </p>
-                  </div>
-                </div>
-                <div className="bg-card rounded-2xl p-4 shadow-card flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
-                    <Heart size={26} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      Darshan
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Sai Baba & Samadhi
-                    </p>
-                  </div>
-                </div>
-                <div className="bg-card rounded-2xl p-4 shadow-card flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
-                    <ShieldCheck size={26} className="text-primary" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">
-                      Safe Trip
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      Round-trip comfort
-                    </p>
-                  </div>
-                </div>
+                {featureCards.map((item) => {
+                  const FeatureIcon = item.icon;
+
+                  return (
+                    <div
+                      key={`${item.title}-${item.description}`}
+                      className="bg-card rounded-2xl p-4 shadow-card flex items-center gap-4"
+                    >
+                      <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
+                        <FeatureIcon size={26} className="text-primary" />
+                      </div>
+                      <div>
+                        {item.title && (
+                          <p className="text-sm font-semibold text-foreground">
+                            {item.title}
+                          </p>
+                        )}
+                        {item.description && (
+                          <p className="text-xs text-muted-foreground">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
 
-            {itinerary.length > 0 && (
+            {(holidayPackage.itinerary ?? []).length > 0 && (
               <>
                 <h3 className="text-xl font-bold mt-8 text-foreground">
                   Itinerary
                 </h3>
                 <div className="mt-4 space-y-4">
-                  {itinerary.map((item, index) => (
+                  {(holidayPackage.itinerary ?? []).map((item, index) => (
                     <div key={`${item.day}-${index}`} className="flex gap-4">
                       <div className="flex flex-col items-center">
                         <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold shrink-0">
@@ -263,9 +205,11 @@ const TourDetail = () => {
                         <h4 className="font-semibold text-foreground">
                           {item.title}
                         </h4>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {item.description}
-                        </p>
+                        {item.description && (
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {item.description}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -273,13 +217,13 @@ const TourDetail = () => {
               </>
             )}
 
-            {highlights.length > 0 && (
+            {(holidayPackage.highlights ?? []).length > 0 && (
               <>
                 <h3 className="text-xl font-bold mt-8 text-foreground">
                   Highlights
                 </h3>
                 <ul className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-muted-foreground">
-                  {highlights.map((item) => (
+                  {(holidayPackage.highlights ?? []).map((item) => (
                     <li key={item} className="flex items-start gap-2">
                       <CheckCircle
                         size={16}
@@ -292,13 +236,13 @@ const TourDetail = () => {
               </>
             )}
 
-            {tour.inclusions && tour.inclusions.length > 0 && (
+            {(holidayPackage.included_items ?? []).length > 0 && (
               <>
                 <h3 className="text-xl font-bold mt-8 text-foreground">
                   What's Included
                 </h3>
-                <div className="grid grid-cols-2 gap-3 mt-4">
-                  {tour.inclusions.map((item) => (
+                <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  {(holidayPackage.included_items ?? []).map((item) => (
                     <div
                       key={item}
                       className="flex items-center gap-2 text-sm text-muted-foreground"
@@ -311,13 +255,13 @@ const TourDetail = () => {
               </>
             )}
 
-            {exclusions.length > 0 && (
+            {(holidayPackage.excluded_items ?? []).length > 0 && (
               <>
                 <h3 className="text-xl font-bold mt-8 text-foreground">
                   What's Excluded
                 </h3>
                 <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                  {exclusions.map((item) => (
+                  {(holidayPackage.excluded_items ?? []).map((item) => (
                     <li key={item} className="flex items-start gap-2">
                       <CheckCircle
                         size={16}
@@ -330,13 +274,13 @@ const TourDetail = () => {
               </>
             )}
 
-            {terms.length > 0 && (
+            {(holidayPackage.terms ?? []).length > 0 && (
               <>
                 <h3 className="text-xl font-bold mt-8 text-foreground">
                   Terms & Conditions
                 </h3>
                 <ul className="mt-4 space-y-2 text-sm text-muted-foreground">
-                  {terms.map((item) => (
+                  {(holidayPackage.terms ?? []).map((item) => (
                     <li key={item} className="flex items-start gap-2">
                       <CheckCircle
                         size={16}
@@ -349,22 +293,22 @@ const TourDetail = () => {
               </>
             )}
 
-            {gallery.length > 0 && (
+            {galleryImages.length > 0 && (
               <>
                 <h3 className="text-xl font-bold mt-8 text-foreground">
                   Gallery
                 </h3>
                 <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {gallery.map((src, index) => (
+                  {galleryImages.map((image, index) => (
                     <div
-                      key={`${src}-${index}`}
+                      key={`${image.image_url}-${index}`}
                       className={`${
                         isShirdi ? "aspect-[16/9]" : "aspect-[4/3]"
                       } overflow-hidden rounded-xl bg-muted`}
                     >
                       <img
-                        src={src}
-                        alt={`${tour.name} gallery`}
+                        src={image.image_url}
+                        alt={image.alt_text || image.title || holidayPackage.title}
                         className={`w-full h-full ${
                           isShirdi ? "object-contain" : "object-cover"
                         }`}
@@ -375,22 +319,19 @@ const TourDetail = () => {
                 </div>
               </>
             )}
-
           </div>
 
-          <div>
-            <div className="bg-card rounded-2xl shadow-card p-6 sticky top-24">
+          <div className="sticky top-20 self-start h-fit sm:top-24 lg:top-28">
+            <div className="rounded-2xl bg-card p-5 shadow-card sm:p-6">
               <h3 className="text-center text-2xl font-bold text-primary">
                 Enquire Now
               </h3>
               <p className="text-sm text-muted-foreground mt-2 text-center">
-                Get quick assistance for this holiday package. Choose one enquiry
-                option below.
+                Get quick assistance for this holiday package. Choose one
+                enquiry option below.
               </p>
               <a
-                href={getWhatsAppUrl(
-                  `${WHATSAPP_PREFILLED_MESSAGE}\n\nTour Enquiry: ${tour.name}`,
-                )}
+                href={getWhatsAppUrl(whatsappMessage)}
                 target="_blank"
                 rel="noreferrer"
                 onClick={(event) => {
@@ -401,7 +342,9 @@ const TourDetail = () => {
                   setEnquiryChoice("whatsapp");
                 }}
                 aria-disabled={enquiryChoice === "email"}
-                className={enquiryChoice === "email" ? "pointer-events-none opacity-50" : ""}
+                className={
+                  enquiryChoice === "email" ? "pointer-events-none opacity-50" : ""
+                }
               >
                 <Button className="w-full mt-6" size="lg">
                   <MapPin size={16} className="mr-2" /> WhatsApp Enquiry
@@ -409,8 +352,8 @@ const TourDetail = () => {
               </a>
               <a
                 href={`mailto:info@sandistours.com?subject=${encodeURIComponent(
-                  `Tour enquiry: ${tour.name}`,
-                )}`}
+                  emailSubject,
+                )}&body=${encodeURIComponent(emailMessage)}`}
                 onClick={(event) => {
                   if (enquiryChoice === "whatsapp") {
                     event.preventDefault();
@@ -419,10 +362,14 @@ const TourDetail = () => {
                   setEnquiryChoice("email");
                 }}
                 aria-disabled={enquiryChoice === "whatsapp"}
-                className={enquiryChoice === "whatsapp" ? "pointer-events-none opacity-50" : ""}
+                className={
+                  enquiryChoice === "whatsapp"
+                    ? "pointer-events-none opacity-50"
+                    : ""
+                }
               >
                 <Button variant="outline" className="w-full mt-3" size="lg">
-                  Email Enquiry
+                  <Mail size={16} className="mr-2" /> Email Enquiry
                 </Button>
               </a>
             </div>

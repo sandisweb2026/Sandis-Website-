@@ -3,8 +3,7 @@ import dotenv from "dotenv";
 dotenv.config({ quiet: true });
 
 export const config = {
-  apiPort: Number(process.env.API_PORT ?? 4000),
-  jwtSecret: process.env.JWT_SECRET ?? "sandis-change-this-secret",
+  apiPort: Number(process.env.PORT ?? process.env.API_PORT ?? 4000),
   db: {
     host: process.env.DB_HOST ?? "127.0.0.1",
     port: Number(process.env.DB_PORT ?? 3306),

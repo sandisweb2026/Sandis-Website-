@@ -67,6 +67,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const signOut = async () => {
+    try {
+      await apiRequest<void>("/admin/logout", {
+        method: "POST",
+        auth: true,
+      });
+    } catch {
+      // Ignore logout API failures and clear local session anyway.
+    }
     clearAdminToken();
     setUser(null);
   };

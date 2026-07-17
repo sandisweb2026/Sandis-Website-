@@ -1,12 +1,17 @@
-# Sandis MySQL Backend Setup
+# Sandis Tours CMS Setup
 
-This project now uses a Node/Express API with MySQL instead of Supabase.
+This project now includes a full Admin CMS for:
 
-## 1. Configure environment
+- page banners
+- holiday categories
+- holiday packages + package detail sections
+- gallery images
+- settings
+- enquiries and services
 
-Create a `.env` file in the project root using `.env.example` as the template.
+## 1. Environment Variables
 
-Recommended starting values:
+Create `.env` from `.env.example`:
 
 ```env
 DB_HOST=127.0.0.1
@@ -15,101 +20,94 @@ DB_USER=root
 DB_PASSWORD=
 DB_NAME=sandis
 API_PORT=4000
-JWT_SECRET=change-this-to-a-long-random-secret
+ADMIN_SESSION_HOURS=168
 VITE_API_URL=http://localhost:4000/api
 ```
 
-Update `DB_USER` and `DB_PASSWORD` to match your local MySQL account.
+For Vercel, set the same env vars in Project Settings -> Environment Variables.
 
-## 2. Create tables in the `sandis` database
+## 2. Database Setup
 
-Run the SQL from [server/mysql/schema.sql](/d:/webakoof/sandis%20tours%20website/sandis-tour-website/server/mysql/schema.sql) in your MySQL client or MySQL Workbench while connected to the `sandis` database.
+For Hostinger phpMyAdmin, import these files in this order:
 
-It creates:
+1. `sandis.sql`
+2. `hostinger-default-data.sql`
+
+The first file creates all tables and the second file ensures default holiday
+categories and the admin login exist.
+
+Run schema initialization:
+
+```bash
+npm run db:init
+```
+
+This creates all required tables, including:
 
 - `admins`
-- `tours`
-- `services`
-- `media_uploads`
-- `enquiries`
+- `banners`
+- `holiday_categories`
+- `holiday_packages`
+- `package_itinerary`
+- `package_highlights`
+- `package_included_items`
+- `package_excluded_items`
+- `package_terms`
+- `package_gallery_images`
+- `gallery_images`
+- `settings`
+- `admin_sessions`
+- plus existing `services`, `enquiries`, `media_uploads`, and legacy `tours` tables
 
-## 3. Create the single admin login
+Default holiday categories are auto-seeded:
 
-After the schema exists and `.env` is filled in, run:
+- Group Tour
+- Maharashtra
+- India
+- International Trip
+
+## 3. Admin Login Setup
+
+Create or reset admin user:
 
 ```bash
 npm run admin:create -- admin@example.com yourpassword "Sandis Admin"
 ```
 
-You can run the same command again later with the same email to reset the admin password.
+Then login at:
 
-## 4. Start the app
+- `http://localhost:8082/admin/login`
 
-Start the API:
+## 4. Image Upload Storage
 
-```bash
-npm run dev:server
-```
+Admin image uploads (banners, package images, gallery) are stored in MySQL `media_uploads` and served through:
 
-Start the frontend:
+- `/api/uploads/:id`
 
-```bash
-npm run dev
-```
+This works locally and with your Hostinger MySQL setup (no Cloudinary required).
 
-Or start both together:
+## 5. Run Project
 
 ```bash
+npm install
 npm run dev:full
 ```
 
-Frontend:
+URLs:
 
-- `http://localhost:8080`
+- Frontend: `http://localhost:8082`
+- API: `http://localhost:4000`
+- Health: `http://localhost:4000/api/health`
 
-API health check:
+## 6. Admin Pages
 
-- `http://localhost:4000/api/health`
+After login, use:
 
-## Vercel deployment note
-
-The Vercel frontend and API can only connect to a MySQL database that is reachable from the public internet.
-
-Your local MySQL server on your own computer will work for local development, but it will not work from `vercel.app`.
-
-For online admin login and online API access, set the Vercel project environment variables to a hosted MySQL database:
-
-- `DB_HOST`
-- `DB_PORT`
-- `DB_USER`
-- `DB_PASSWORD`
-- `DB_NAME`
-- `JWT_SECRET`
-
-If you leave Vercel pointing at a local-only MySQL server, the deployed site can build, but admin login and API requests will fail online.
-
-## API overview
-
-Public routes:
-
-- `GET /api/tours`
-- `GET /api/tours/:id`
-- `GET /api/services`
-- `POST /api/enquiries`
-
-Admin routes:
-
-- `POST /api/admin/login`
-- `GET /api/admin/me`
-- `GET /api/admin/dashboard`
-- `POST /api/admin/uploads/tour-image`
-- `GET /api/uploads/:id`
-- `GET /api/admin/enquiries`
-- `PATCH /api/admin/enquiries/:id/status`
-- `DELETE /api/admin/enquiries/:id`
-- `POST /api/admin/tours`
-- `PUT /api/admin/tours/:id`
-- `DELETE /api/admin/tours/:id`
-- `POST /api/admin/services`
-- `PUT /api/admin/services/:id`
-- `DELETE /api/admin/services/:id`
+- `/admin` dashboard
+- `/admin/banners`
+- `/admin/categories`
+- `/admin/packages`
+- `/admin/gallery`
+- `/admin/settings`
+- `/admin/enquiries`
+- `/admin/services`

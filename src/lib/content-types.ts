@@ -95,6 +95,7 @@ export type EnquiryPayload = {
   message?: string | null;
   travel_date?: string | null;
   status?: EnquiryStatus;
+  submission_key?: string;
 };
 
 export type AdminUser = {
@@ -224,3 +225,171 @@ export const buildTourExtras = (extras: TourExtras): Json => ({
   gallery: normalizeStringList(extras.gallery),
   faqs: normalizeFaqs(extras.faqs),
 });
+
+export type BannerPageKey =
+  | "home"
+  | "holidays"
+  | "holiday-detail"
+  | "about"
+  | "contact"
+  | "gallery";
+
+export type BannerRecord = {
+  id: string;
+  page_key: BannerPageKey;
+  title: string | null;
+  subtitle: string | null;
+  image_url: string;
+  mobile_image_url: string | null;
+  cta_label: string | null;
+  cta_link: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type BannerPayload = {
+  page_key: BannerPageKey;
+  title?: string | null;
+  subtitle?: string | null;
+  image_url: string;
+  mobile_image_url?: string | null;
+  cta_label?: string | null;
+  cta_link?: string | null;
+  display_order?: number;
+  is_active?: boolean;
+};
+
+export type HolidayCategoryRecord = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type HolidayCategoryPayload = {
+  name: string;
+  slug?: string;
+  description?: string | null;
+  display_order?: number;
+  is_active?: boolean;
+};
+
+export type HolidayPackageCategory = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+};
+
+export type HolidayPackageItineraryItem = {
+  day: string;
+  title: string;
+  description: string | null;
+  display_order?: number;
+};
+
+export type HolidayPackageGalleryItem = {
+  id?: string;
+  image_url: string;
+  title: string | null;
+  alt_text: string | null;
+  display_order?: number;
+  is_active?: boolean;
+};
+
+export type HolidayPackageRecord = {
+  id: string;
+  title: string;
+  slug: string;
+  location: string | null;
+  banner_image_url: string | null;
+  hero_image_url?: string | null;
+  short_description: string | null;
+  duration: string | null;
+  trip_type: string | null;
+  price_label: string | null;
+  about_tour: string | null;
+  good_for_title: string | null;
+  good_for_description: string | null;
+  vehicles_title: string | null;
+  vehicles_description: string | null;
+  attraction_title: string | null;
+  attraction_description: string | null;
+  comfort_title: string | null;
+  comfort_description: string | null;
+  whatsapp_enquiry_message: string | null;
+  email_enquiry_subject: string | null;
+  email_enquiry_message: string | null;
+  seo_title: string | null;
+  seo_description: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+  category: HolidayPackageCategory;
+  itinerary?: HolidayPackageItineraryItem[];
+  highlights?: string[];
+  included_items?: string[];
+  excluded_items?: string[];
+  terms?: string[];
+  gallery_images?: HolidayPackageGalleryItem[];
+};
+
+export type HolidayPackagePayload = {
+  title: string;
+  slug?: string;
+  category_id: string;
+  location?: string | null;
+  banner_image_url?: string | null;
+  short_description?: string | null;
+  duration?: string | null;
+  trip_type?: string | null;
+  price_label?: string | null;
+  about_tour?: string | null;
+  good_for_title?: string | null;
+  good_for_description?: string | null;
+  vehicles_title?: string | null;
+  vehicles_description?: string | null;
+  attraction_title?: string | null;
+  attraction_description?: string | null;
+  comfort_title?: string | null;
+  comfort_description?: string | null;
+  whatsapp_enquiry_message?: string | null;
+  email_enquiry_subject?: string | null;
+  email_enquiry_message?: string | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  is_active?: boolean;
+  itinerary?: HolidayPackageItineraryItem[];
+  highlights?: string[];
+  included_items?: string[];
+  excluded_items?: string[];
+  terms?: string[];
+  gallery_images?: HolidayPackageGalleryItem[];
+};
+
+export type GalleryImageRecord = {
+  id: string;
+  image_url: string;
+  title: string | null;
+  category: string | null;
+  alt_text: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type GalleryImagePayload = {
+  image_url: string;
+  title?: string | null;
+  category?: string | null;
+  alt_text?: string | null;
+  display_order?: number;
+  is_active?: boolean;
+};

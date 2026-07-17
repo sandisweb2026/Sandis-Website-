@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { Phone, Mail, MapPin, Instagram, Facebook } from "lucide-react";
-import sandisLogo from "@/assets/sandis logo.png";
+import { Mail, MapPin, Instagram, Facebook, MessageCircle } from "lucide-react";
+import sandisLogo from "@/assets/sandis logo .png";
+import { WHATSAPP_CHAT_URL } from "@/lib/whatsapp";
 
 const quickLinks = [
   { label: "Home", path: "/" },
@@ -16,18 +17,14 @@ const Footer = () => (
     <div className="container mx-auto px-4 py-12">
       <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
         <div>
-          <div className="mb-4 flex flex-col items-center">
+          <div className="mb-4 inline-flex items-center rounded-xl bg-white px-3 py-2 shadow-sm">
             <img
               src={sandisLogo}
               alt="Sandis Tours logo"
-              className="h-10 w-auto"
+              className="h-14 w-auto"
               loading="lazy"
               decoding="async"
             />
-            <p className="brand-marathi-tagline mt-1 text-center text-xs font-extrabold">
-              <span className="text-black">सुखद</span>{" "}
-              <span className="text-primary">क्षणाचे सोबती</span>
-            </p>
           </div>
           <p className="text-sm leading-relaxed opacity-70">
             Creating unforgettable journeys since 1995. Your trusted travel
@@ -67,20 +64,24 @@ const Footer = () => (
           <h4 className="mb-4 font-semibold">Contact Info</h4>
           <div className="flex flex-col gap-3 text-sm opacity-70">
             <a
-              href="tel:+919876543210"
-              className="flex items-center gap-2 hover:opacity-100"
+              href={WHATSAPP_CHAT_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-start gap-2 hover:opacity-100"
             >
-              <Phone size={14} /> +91 98765 43210
+              <MessageCircle size={14} className="mt-0.5 shrink-0" /> 9890711155
+              | 9960000450
             </a>
             <a
-              href="mailto:info@sandistours.com"
-              className="flex items-center gap-2 hover:opacity-100"
+              href="mailto:sandis@sandis.com"
+              className="flex items-start gap-2 hover:opacity-100"
             >
-              <Mail size={14} /> info@sandistours.com
+              <Mail size={14} className="mt-0.5 shrink-0" /> sandis@sandis.com
             </a>
             <span className="flex items-start gap-2">
-              <MapPin size={14} className="mt-0.5 shrink-0" /> 123 Travel
-              Street, Mumbai, Maharashtra 400001
+              <MapPin size={14} className="mt-0.5 shrink-0" /> 5 Amit Complex,
+              474 Sadashiv Peth, Tilak Road, Pune - 30. Other Office:
+              Dahanukar Colony, Kothrud
             </span>
             <div className="flex gap-3 pt-2">
               <a
