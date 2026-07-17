@@ -2,7 +2,10 @@ import bcrypt from "bcryptjs";
 import cors from "cors";
 import express from "express";
 import multer from "multer";
+import fs from "node:fs";
+import path from "node:path";
 import { randomUUID } from "node:crypto";
+import { fileURLToPath } from "node:url";
 
 import { getCmsDashboardStats, registerCmsRoutes } from "./cms.js";
 import {
@@ -13,6 +16,10 @@ import {
 import { query } from "./db.js";
 
 const app = express();
+const currentDir = path.dirname(fileURLToPath(import.meta.url));
+const distDir = path.resolve(currentDir, "../dist");
+const distIndexPath = path.join(distDir, "index.html");
+const hasBuiltFrontend = fs.existsSync(distIndexPath);
 
 app.use(
   cors({
@@ -111,7 +118,7 @@ const validateServicePayload = (payload) => {
 const validEnquiryStatuses = new Set(["new", "contacted", "closed"]);
 const ENQUIRY_SUBMISSION_KEY = "d0800d02-8089-408a-8028-d05c953746a6";
 
-app.get("/", (_req, res) => {
+const sendApiLanding = (_req, res) => {
   res.type("html").send(`
     <!doctype html>
     <html lang="en">
@@ -180,7 +187,11 @@ app.get("/", (_req, res) => {
       </body>
     </html>
   `);
-});
+};
+
+if (!hasBuiltFrontend) {
+  app.get("/", sendApiLanding);
+}
 
 app.get("/api/health", async (_req, res, next) => {
   try {
@@ -600,6 +611,13 @@ app.delete(
     }
   },
 );
+
+if (hasBuiltFrontend) {
+  app.use(express.static(distDir));
+  app.get(/^\/(?!api(?:\/|$)).*/, (_req, res) => {
+    res.sendFile(distIndexPath);
+  });
+}
 
 app.use((error, _req, res, _next) => {
   if (error instanceof multer.MulterError && error.code === "LIMIT_FILE_SIZE") {
