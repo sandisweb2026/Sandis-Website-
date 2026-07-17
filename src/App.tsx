@@ -104,6 +104,7 @@ const AppLayout = () => {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/home" element={<Navigate to="/" replace />} />
+          <Route path="/coming-soon" element={<Navigate to="/" replace />} />
           <Route path="/services" element={<Services />} />
           <Route path="/holidays" element={<Tours />} />
           <Route path="/holidays/:id" element={<TourDetail />} />
