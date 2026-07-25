@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Pencil, Plus, Trash2, Upload } from "lucide-react";
+import {
+  ArrowLeft,
+  Pencil,
+  Plus,
+  Trash2,
+  TriangleAlert,
+  Upload,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -158,6 +165,47 @@ const createPackageForm = (packageItem: HolidayPackageRecord): PackageFormState 
   seo_description: packageItem.seo_description ?? "",
   is_active: packageItem.is_active ?? true,
 });
+
+const getMissingPackageSections = (packageItem: PackageFormState) => {
+  const missingSections: string[] = [];
+
+  if (
+    !packageItem.about_tour.trim() &&
+    !packageItem.short_description.trim()
+  ) {
+    missingSections.push("About Tour");
+  }
+
+  if (
+    !packageItem.itinerary.some(
+      (item) => item.title.trim() || item.description?.trim(),
+    )
+  ) {
+    missingSections.push("Itinerary");
+  }
+
+  if (splitLines(packageItem.highlightsText).length === 0) {
+    missingSections.push("Highlights");
+  }
+
+  if (splitLines(packageItem.includedText).length === 0) {
+    missingSections.push("What's Included");
+  }
+
+  if (splitLines(packageItem.excludedText).length === 0) {
+    missingSections.push("What's Excluded");
+  }
+
+  if (splitLines(packageItem.termsText).length === 0) {
+    missingSections.push("Terms & Conditions");
+  }
+
+  if (splitLines(packageItem.galleryText).length === 0) {
+    missingSections.push("Gallery");
+  }
+
+  return missingSections;
+};
 
 const AdminPackages = () => {
   const [packages, setPackages] = useState<HolidayPackageRecord[]>([]);
@@ -409,6 +457,10 @@ const AdminPackages = () => {
     });
   };
 
+  const missingDetailSections = editing
+    ? getMissingPackageSections(editing)
+    : [];
+
   if (editing) {
     return (
       <div className="pt-20 pb-12 px-4">
@@ -423,6 +475,29 @@ const AdminPackages = () => {
             {editing.id ? "Edit Holiday Package" : "Add Holiday Package"}
           </h1>
           <div className="bg-card rounded-2xl shadow-card p-6 flex flex-col gap-4">
+            {missingDetailSections.length > 0 && (
+              <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+                <div className="flex items-start gap-3">
+                  <TriangleAlert
+                    size={18}
+                    className="mt-0.5 shrink-0 text-amber-700"
+                  />
+                  <div>
+                    <p className="font-semibold">
+                      This package is missing saved detail sections.
+                    </p>
+                    <p className="mt-1 text-amber-900/90">
+                      The admin form and frontend detail page will look empty
+                      for any sections that have not been saved yet.
+                    </p>
+                    <p className="mt-2 text-amber-900/90">
+                      Missing: {missingDetailSections.join(", ")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <FieldHeading text="Package Title *" />

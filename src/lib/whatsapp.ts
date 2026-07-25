@@ -1,4 +1,6 @@
-export const WHATSAPP_PHONE_NUMBER = "919890711155";
+import { CONTACT_PHONE_NUMBER } from "@/lib/contact";
+
+export const WHATSAPP_PHONE_NUMBER = `91${CONTACT_PHONE_NUMBER}`;
 export const WHATSAPP_CHAT_URL = `https://wa.me/${WHATSAPP_PHONE_NUMBER}`;
 
 export const WHATSAPP_PREFILLED_MESSAGE = `🌍✈️ Welcome To Sandi's International Tours & Travels

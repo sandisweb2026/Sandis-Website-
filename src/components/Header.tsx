@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { Phone, Instagram, Facebook, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import sandisLogo from "@/assets/sandis logo .png";
+import { CONTACT_PHONE_TEL } from "@/lib/contact";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -56,7 +57,7 @@ const Header = () => {
           <a href="https://facebook.com" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
             <Facebook size={18} />
           </a>
-          <a href="tel:+919876543210">
+          <a href={CONTACT_PHONE_TEL}>
             <Button size="sm" className="gap-1.5">
               <Phone size={14} /> Call Now
             </Button>
@@ -94,7 +95,7 @@ const Header = () => {
               <a href="https://facebook.com" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary">
                 <Facebook size={18} />
               </a>
-              <a href="tel:+919876543210" className="ml-auto">
+              <a href={CONTACT_PHONE_TEL} className="ml-auto">
                 <Button size="sm" className="gap-1.5">
                   <Phone size={14} /> Call Now
                 </Button>

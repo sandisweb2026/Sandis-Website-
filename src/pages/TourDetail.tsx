@@ -5,6 +5,7 @@ import {
   CheckCircle,
   Clock,
   Heart,
+  Info,
   IndianRupee,
   Mail,
   MapPin,
@@ -14,6 +15,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { fallbackTourImages } from "@/lib/fallback-content";
+import { getContactMailtoUrl } from "@/lib/contact";
 import {
   fetchHolidayPackageBySlug,
   type HolidayPackageRecord,
@@ -27,6 +29,49 @@ const getHeroImage = (holidayPackage: HolidayPackageRecord) =>
   holidayPackage.banner_image_url ||
   fallbackTourImages[holidayPackage.title] ||
   defaultImage;
+
+const getMissingPackageSections = (holidayPackage: HolidayPackageRecord) => {
+  const missingSections: string[] = [];
+
+  if (
+    !holidayPackage.about_tour?.trim() &&
+    !holidayPackage.short_description?.trim()
+  ) {
+    missingSections.push("About Tour");
+  }
+
+  if (
+    !(holidayPackage.itinerary ?? []).some(
+      (item) => item.title?.trim() || item.description?.trim(),
+    )
+  ) {
+    missingSections.push("Itinerary");
+  }
+
+  if (!(holidayPackage.highlights ?? []).some((item) => item?.trim())) {
+    missingSections.push("Highlights");
+  }
+
+  if (!(holidayPackage.included_items ?? []).some((item) => item?.trim())) {
+    missingSections.push("What's Included");
+  }
+
+  if (!(holidayPackage.excluded_items ?? []).some((item) => item?.trim())) {
+    missingSections.push("What's Excluded");
+  }
+
+  if (!(holidayPackage.terms ?? []).some((item) => item?.trim())) {
+    missingSections.push("Terms & Conditions");
+  }
+
+  if (
+    !(holidayPackage.gallery_images ?? []).some((item) => item?.image_url?.trim())
+  ) {
+    missingSections.push("Gallery");
+  }
+
+  return missingSections;
+};
 
 const TourDetail = () => {
   const { id: packageSlug } = useParams();
@@ -109,6 +154,7 @@ const TourDetail = () => {
       icon: ShieldCheck,
     },
   ].filter((item) => item.title || item.description);
+  const missingDetailSections = getMissingPackageSections(holidayPackage);
 
   return (
     <div className="pt-16">
@@ -155,6 +201,27 @@ const TourDetail = () => {
             <p className="text-muted-foreground mt-3 leading-relaxed">
               {aboutText}
             </p>
+
+            {missingDetailSections.length > 0 && (
+              <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50/90 p-4 sm:p-5">
+                <div className="flex items-start gap-3">
+                  <Info size={18} className="mt-0.5 shrink-0 text-amber-700" />
+                  <div>
+                    <h3 className="text-base font-semibold text-amber-950">
+                      Full online package details are still being updated
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-amber-900">
+                      Some sections for this holiday are not available online
+                      yet: {missingDetailSections.join(", ")}.
+                    </p>
+                    <p className="mt-2 text-sm leading-relaxed text-amber-900">
+                      Use the enquiry options to get the complete itinerary and
+                      package inclusions from Sandi&apos;s Tours.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {featureCards.length > 0 && (
               <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -351,9 +418,7 @@ const TourDetail = () => {
                 </Button>
               </a>
               <a
-                href={`mailto:info@sandistours.com?subject=${encodeURIComponent(
-                  emailSubject,
-                )}&body=${encodeURIComponent(emailMessage)}`}
+                href={getContactMailtoUrl(emailSubject, emailMessage)}
                 onClick={(event) => {
                   if (enquiryChoice === "whatsapp") {
                     event.preventDefault();

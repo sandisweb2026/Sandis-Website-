@@ -1,8 +1,9 @@
 import { Phone } from "lucide-react";
+import { CONTACT_PHONE_TEL } from "@/lib/contact";
 
 const CallButton = () => (
   <a
-    href="tel:+919876543210"
+    href={CONTACT_PHONE_TEL}
     className="fixed bottom-4 left-4 z-50 rounded-full bg-[linear-gradient(180deg,#e56d74_0%,#cc4f58_100%)] p-3 text-white shadow-[0_18px_44px_rgba(0,0,0,0.22),0_0_0_10px_rgba(229,109,116,0.18),0_0_34px_rgba(229,109,116,0.35)] ring-4 ring-[hsla(352,70%,60%,0.22)] transition-transform hover:scale-110 animate-float-pop sm:bottom-6 sm:left-6 sm:p-4"
     aria-label="Call Sandis Tours"
   >

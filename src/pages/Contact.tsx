@@ -1,4 +1,10 @@
 import { Globe, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import {
+  CONTACT_EMAIL_DISPLAY,
+  CONTACT_EMAIL_MAILTO,
+  CONTACT_PHONE_DISPLAY,
+  CONTACT_PHONE_TEL,
+} from "@/lib/contact";
 import { WHATSAPP_CHAT_URL } from "@/lib/whatsapp";
 
 const Contact = () => {
@@ -29,7 +35,7 @@ const Contact = () => {
               </p>
               <div className="relative mt-8 flex flex-col gap-4">
                 <a
-                  href="tel:+912024431155"
+                  href={CONTACT_PHONE_TEL}
                   className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
@@ -38,7 +44,7 @@ const Contact = () => {
                   <div>
                     <h4 className="font-semibold text-foreground">Call</h4>
                     <div className="mt-1 text-sm text-muted-foreground transition-colors group-hover:text-primary">
-                      <span>+91 20 2443 1155</span>
+                      <span>{CONTACT_PHONE_DISPLAY}</span>
                     </div>
                   </div>
                 </a>
@@ -56,12 +62,12 @@ const Contact = () => {
                       Mobile & WhatsApp
                     </h4>
                     <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                      9890711155 | 9960000450
+                      {CONTACT_PHONE_DISPLAY}
                     </p>
                   </div>
                 </a>
                 <a
-                  href="mailto:sandis@sandis.com"
+                  href={CONTACT_EMAIL_MAILTO}
                   className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
@@ -70,7 +76,7 @@ const Contact = () => {
                   <div>
                     <h4 className="font-semibold text-foreground">Email</h4>
                     <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                      sandis@sandis.com | sandistravels@gmail.com
+                      {CONTACT_EMAIL_DISPLAY}
                     </p>
                   </div>
                 </a>

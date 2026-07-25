@@ -30,6 +30,7 @@ import {
   type HolidayCategoryRecord,
   type HolidayPackageRecord,
 } from "@/lib/travel-cms";
+import { getContactMailtoUrl } from "@/lib/contact";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const defaultPackageImage = fallbackTourImages["Goa Beach Paradise"];
@@ -137,7 +138,7 @@ const PopupContactActions = () => (
           WhatsApp Us
         </a>
         <a
-          href="mailto:info@sandistours.com?subject=Holiday%20Enquiry"
+          href={getContactMailtoUrl("Holiday Enquiry")}
           className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
         >
           <Mail size={15} />
