@@ -50,6 +50,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { fallbackServices } from "@/lib/fallback-content";
+import { getContactMailtoUrl } from "@/lib/contact";
 import { fetchServices, type ServiceRecord } from "@/lib/travel-cms";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -795,7 +796,7 @@ const PopupContactActions = () => (
         WhatsApp Us
       </a>
       <a
-        href="mailto:info@sandistours.com?subject=Service%20Enquiry"
+        href={getContactMailtoUrl("Service Enquiry")}
         className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
       >
         <Mail size={15} />

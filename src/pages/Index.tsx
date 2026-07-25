@@ -19,6 +19,7 @@ import tourDubai from "@/assets/tour-dubai.jpg";
 import tourBali from "@/assets/tour-bali.jpg";
 import tourThailand from "@/assets/tour-thailand.jpg";
 import { createEnquiry, fetchBanners, type BannerRecord } from "@/lib/travel-cms";
+import { CONTACT_PHONE_TEL } from "@/lib/contact";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const fallbackImages: Record<string, string> = {
@@ -400,7 +401,7 @@ const Index = () => {
                       <Facebook size={16} />
                     </a>
                     <a
-                      href="tel:+919876543210"
+                      href={CONTACT_PHONE_TEL}
                       className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
                       aria-label="Call Sandis Tours"
                     >
@@ -443,7 +444,7 @@ const Index = () => {
                     <Facebook size={18} />
                   </a>
                   <a
-                    href="tel:+919876543210"
+                    href={CONTACT_PHONE_TEL}
                     className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
                     aria-label="Call Sandis Tours"
                   >
