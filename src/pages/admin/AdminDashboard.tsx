@@ -1,16 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Database, LogOut } from "lucide-react";
+import { Database, LogOut, Save } from "lucide-react";
 import { toast } from "sonner";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/useAuth";
 import {
   fetchAdminBanners,
   fetchAdminGalleryImages,
   fetchAdminHolidayCategories,
   fetchAdminHolidayPackages,
+  fetchAdminSettings,
   fetchDashboardStats,
   fetchEnquiries,
+  upsertAdminSetting,
   type BannerRecord,
   type EnquiryRecord,
   type GalleryImageRecord,
@@ -40,6 +44,11 @@ type SectionConfig = {
   actionLabel?: string;
 };
 
+type HeroSettings = {
+  home_top_tagline: string;
+  home_airport_booking_label: string;
+};
+
 const blankStats: DashboardStats = {
   packages: 0,
   categories: 0,
@@ -52,6 +61,11 @@ const blankStats: DashboardStats = {
 };
 
 const ACTIVE_SECTION_STORAGE_KEY = "sandis_admin_active_section";
+
+const defaultHeroSettings: HeroSettings = {
+  home_top_tagline: "30+ Years Of Travel Care",
+  home_airport_booking_label: "Mumbai Airport Booking",
+};
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -71,6 +85,9 @@ const AdminDashboard = () => {
   const [packages, setPackages] = useState<HolidayPackageRecord[]>([]);
   const [enquiries, setEnquiries] = useState<EnquiryRecord[]>([]);
   const [galleryImages, setGalleryImages] = useState<GalleryImageRecord[]>([]);
+  const [heroSettings, setHeroSettings] =
+    useState<HeroSettings>(defaultHeroSettings);
+  const [savingHeroSettings, setSavingHeroSettings] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -117,12 +134,14 @@ const AdminDashboard = () => {
           nextPackages,
           nextEnquiries,
           nextGallery,
+          nextSettings,
         ] = await Promise.all([
           fetchAdminHolidayCategories(),
           fetchAdminBanners(),
           fetchAdminHolidayPackages(),
           fetchEnquiries(),
           fetchAdminGalleryImages(),
+          fetchAdminSettings(),
         ]);
 
         if (!mounted) return;
@@ -131,6 +150,20 @@ const AdminDashboard = () => {
         setPackages(nextPackages);
         setEnquiries(nextEnquiries);
         setGalleryImages(nextGallery);
+        const settingsMap = nextSettings.reduce<Record<string, string>>(
+          (accumulator, setting) => {
+            accumulator[setting.setting_key] = setting.setting_value ?? "";
+            return accumulator;
+          },
+          {},
+        );
+        setHeroSettings({
+          home_top_tagline:
+            settingsMap.home_top_tagline || defaultHeroSettings.home_top_tagline,
+          home_airport_booking_label:
+            settingsMap.home_airport_booking_label ||
+            defaultHeroSettings.home_airport_booking_label,
+        });
       } catch (error) {
         if (!mounted) return;
         const message =
@@ -301,6 +334,30 @@ const AdminDashboard = () => {
     navigate(activeSection.route);
   };
 
+  const saveHeroSettings = async () => {
+    setSavingHeroSettings(true);
+    try {
+      await Promise.all([
+        upsertAdminSetting(
+          "home_top_tagline",
+          heroSettings.home_top_tagline.trim() || defaultHeroSettings.home_top_tagline,
+        ),
+        upsertAdminSetting(
+          "home_airport_booking_label",
+          heroSettings.home_airport_booking_label.trim() ||
+            defaultHeroSettings.home_airport_booking_label,
+        ),
+      ]);
+      toast.success("Hero text updated.");
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unable to save hero text.";
+      toast.error(message);
+    } finally {
+      setSavingHeroSettings(false);
+    }
+  };
+
   const renderPreviewRows = () => {
     if (loadingPreview) {
       return (
@@ -326,19 +383,76 @@ const AdminDashboard = () => {
 
     if (activeSection.id === "hero") {
       const rows = banners;
-      if (rows.length === 0) return <p className="text-sm text-muted-foreground">No banners yet.</p>;
-      return rows.map((item) => (
-        <div
-          key={item.id}
-          className="rounded-xl border border-border bg-background/70 px-4 py-3 text-sm"
-        >
-          <span className="font-medium text-foreground">{item.page_key}</span>
-          <span className="ml-2 text-muted-foreground">
-            {item.title || "Untitled"} | Order {item.display_order} |{" "}
-            {item.is_active ? "Active" : "Inactive"}
-          </span>
+      return (
+        <div className="space-y-4">
+          <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 sm:p-5">
+            <div className="flex flex-col gap-1">
+              <h3 className="text-base font-semibold text-foreground">
+                Homepage Hero Text
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Change the top tagline and airport booking button shown on the homepage.
+              </p>
+            </div>
+
+            <div className="mt-4 grid gap-4 md:grid-cols-2">
+              <label className="space-y-2 text-sm font-medium text-foreground">
+                30+ Years tagline
+                <Input
+                  value={heroSettings.home_top_tagline}
+                  onChange={(event) =>
+                    setHeroSettings((current) => ({
+                      ...current,
+                      home_top_tagline: event.target.value,
+                    }))
+                  }
+                  placeholder="30+ Years Of Travel Care"
+                />
+              </label>
+              <label className="space-y-2 text-sm font-medium text-foreground">
+                Airport booking button
+                <Input
+                  value={heroSettings.home_airport_booking_label}
+                  onChange={(event) =>
+                    setHeroSettings((current) => ({
+                      ...current,
+                      home_airport_booking_label: event.target.value,
+                    }))
+                  }
+                  placeholder="Mumbai Airport Booking"
+                />
+              </label>
+            </div>
+
+            <Button
+              type="button"
+              onClick={saveHeroSettings}
+              disabled={savingHeroSettings}
+              className="mt-4 gap-2"
+            >
+              <Save className="h-4 w-4" />
+              {savingHeroSettings ? "Saving..." : "Save Hero Text"}
+            </Button>
+          </div>
+
+          {rows.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No banners yet.</p>
+          ) : (
+            rows.map((item) => (
+              <div
+                key={item.id}
+                className="rounded-xl border border-border bg-background/70 px-4 py-3 text-sm"
+              >
+                <span className="font-medium text-foreground">{item.page_key}</span>
+                <span className="ml-2 text-muted-foreground">
+                  {item.title || "Untitled"} | Order {item.display_order} |{" "}
+                  {item.is_active ? "Active" : "Inactive"}
+                </span>
+              </div>
+            ))
+          )}
         </div>
-      ));
+      );
     }
 
     if (activeSection.id === "packages") {
