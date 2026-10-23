@@ -17,6 +17,8 @@ import {
   type BannerRecord,
   type GalleryImageRecord,
 } from "@/lib/travel-cms";
+import Seo from "@/components/Seo";
+import { SITE_ORIGIN, createBreadcrumbSchema } from "@/lib/seo";
 
 type GalleryItem = {
   title: string;
@@ -95,7 +97,32 @@ const Gallery = () => {
         );
 
   return (
-    <div className="pt-16">
+    <>
+      <Seo
+        title="Travel Gallery | Sandis Tours"
+        description="Browse travel moments, destinations and experiences curated by Sandis Tours."
+        path="/gallery"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "CollectionPage",
+              "@id": `${SITE_ORIGIN}/gallery#page`,
+              name: "Travel Gallery | Sandis Tours",
+              url: `${SITE_ORIGIN}/gallery`,
+              mainEntity: {
+                "@type": "ImageGallery",
+                image: items.slice(0, 100).map((item) => item.image),
+              },
+            },
+            createBreadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Gallery", path: "/gallery" },
+            ]),
+          ],
+        }}
+      />
+      <div className="pt-16">
       {heroBanner ? (
         <section className="relative overflow-hidden px-4 py-20 text-white sm:py-28">
           <img
@@ -182,7 +209,8 @@ const Gallery = () => {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -52,7 +52,12 @@ import {
 import { fallbackServices } from "@/lib/fallback-content";
 import { getContactMailtoUrl } from "@/lib/contact";
 import { fetchServices, type ServiceRecord } from "@/lib/travel-cms";
-import { getWhatsAppUrl } from "@/lib/whatsapp";
+import Seo from "@/components/Seo";
+import { SITE_ORIGIN, createBreadcrumbSchema } from "@/lib/seo";
+import {
+  AIRPORT_BOOKING_WHATSAPP_MESSAGE,
+  getWhatsAppUrl,
+} from "@/lib/whatsapp";
 
 const iconMap: Record<string, React.ElementType> = {
   Plane,
@@ -435,18 +440,22 @@ const hotelStayOptions = [
 const hotelComfortPoints = [
   {
     title: "Safety & Security",
+    description: "Stay with complete confidence",
     icon: ShieldCheck,
   },
   {
     title: "Cleanliness & Hygiene",
+    description: "Fresh spaces, hygienic standards",
     icon: BadgeCheck,
   },
   {
     title: "Comfort & Convenience",
+    description: "Easy stays, thoughtful amenities",
     icon: Hotel,
   },
   {
     title: "Quality Food & Service",
+    description: "Delicious meals, prompt service",
     icon: Sparkles,
   },
 ];
@@ -605,18 +614,22 @@ const airDomesticHighlights = [
 const airInternationalPlanning = [
   {
     title: "Best Flight Options",
+    description: "Routes matched to needs",
     icon: PlaneTakeoff,
   },
   {
     title: "Smart Route Combinations",
+    description: "Efficient connections, smoother journeys",
     icon: Route,
   },
   {
     title: "Competitive Fares",
+    description: "Competitive value for travel",
     icon: HandCoins,
   },
   {
     title: "Latest Offers & Discounts",
+    description: "Save more on bookings",
     icon: BadgeCheck,
   },
 ];
@@ -645,12 +658,12 @@ const airportTransferZones = [
   {
     label: "Navi Mumbai Airport (NMIA)",
     icon: PlaneTakeoff,
-    accent: "bg-emerald-100 text-emerald-700",
+    accent: "bg-sky-100 text-sky-700",
   },
   {
     label: "Pune Airport",
     icon: MapPinned,
-    accent: "bg-amber-100 text-primary",
+    accent: "bg-sky-100 text-sky-700",
   },
 ];
 
@@ -798,7 +811,7 @@ const popupContactConfigs = {
   ),
   airport: createPopupContactConfig(
     "Airport Transfers",
-    "Hello Sandis, I need airport pickup or drop support. Please share the available transfer options.",
+    AIRPORT_BOOKING_WHATSAPP_MESSAGE,
     "Hello, I want to enquire about airport pickup and drop support. Please share the available transfer options and next steps.",
   ),
   forex: createPopupContactConfig(
@@ -930,88 +943,36 @@ const RailwayReservationDetails = () => (
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground shadow-card">
-          <Train size={18} className="text-primary" />
+          <Train size={18} className="text-indigo-600" />
           Railway Reservation
         </div>
 
         <h2 className={servicePopupHeadingClass}>
-          Rail bookings made effortless before your journey begins
+          Railway Reservation
         </h2>
 
-        <p className="mt-5 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
-          Indian Railways connects the nation every day. Sandi&apos;s simplifies
-          that vast network into a guided booking experience with authorized
-          support, clear options, and ticket delivery exactly how you need it.
+        <p className="mt-5 max-w-2xl text-justify text-base leading-7 text-muted-foreground">
+          The Indian Railways is the lifeline of the nation, connecting cities
+          and towns across thousands of kilometers, length and breadth, every
+          day. With continuous improvements and facilities like <strong>E-Ticketing</strong>,
+          rail travel has become more convenient and accessible than ever.
+        </p>
+        <p className="mt-4 max-w-2xl text-justify text-base leading-7 text-muted-foreground">
+          At <strong>Sandi&apos;s International Tours &amp; Travels</strong>, we
+          make your railway booking <strong>simple, fast, and hassle-free</strong>.
         </p>
 
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
-          {railwayHighlights.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <div
-                key={item.label}
-                className="rounded-[8px] border border-border bg-white/90 p-4 shadow-card"
-              >
-                <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-primary text-primary-foreground">
-                  <Icon size={20} />
-                </div>
-                <p className="mt-3 text-xs text-muted-foreground">
-                  {item.label}
-                </p>
-                <h3 className="mt-1 text-sm font-semibold text-foreground">
-                  {item.value}
-                </h3>
-              </div>
-            );
-          })}
+        <div className="mt-8">
+          <h3 className="text-xl font-semibold text-foreground">
+            Authorized Booking Partner
+          </h3>
+          <p className="mt-3 max-w-2xl text-justify text-base leading-7 text-muted-foreground">
+            Sandi&apos;s is an <strong>Authorized Rail Traveller Service Agent</strong>,
+            approved by Western Railway, Government of India. We provide
+            reliable railway ticket reservation services at <strong>minimal charges</strong>.
+          </p>
         </div>
 
-        <div className="mt-8 grid gap-3 sm:grid-cols-2">
-          {railwayServices.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <div
-                key={item.title}
-                className="rounded-[8px] border border-border bg-white p-3 shadow-card"
-              >
-                <div className="flex items-start gap-3">
-                  <div
-                    className={`flex h-9 w-9 flex-none items-center justify-center rounded-[8px] ${item.accent}`}
-                  >
-                    <Icon size={18} />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-semibold text-foreground">
-                      {item.title}
-                    </h3>
-                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        <div className="hidden">
-          <Link to="/contact">
-            <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
-              Enquire for Rail Booking
-              <ArrowRight size={17} />
-            </Button>
-          </Link>
-          <Link to="/contact">
-            <Button
-              variant="outline"
-              className="w-full border-primary/20 bg-white text-primary hover:bg-accent sm:w-auto"
-            >
-              Plan My Journey
-            </Button>
-          </Link>
-        </div>
       </div>
 
       <div className="relative flex min-h-[400px] sm:min-h-[500px] items-start justify-center p-6 sm:p-8 lg:p-10">
@@ -1037,7 +998,7 @@ const RailwayReservationDetails = () => (
               Rail Support Includes
             </p>
             <div className="mt-4 grid gap-3">
-              {railwayServices.map((item, index) => {
+              {railwayServices.map((item) => {
                 const Icon = item.icon;
 
                 return (
@@ -1045,11 +1006,8 @@ const RailwayReservationDetails = () => (
                     key={item.title}
                     className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                   >
-                    <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
-                      {index + 1}
-                    </span>
                     <div className="flex items-start gap-2">
-                      <Icon size={17} className="mt-0.5 text-primary" />
+                      <Icon size={17} className="mt-0.5 text-indigo-600" />
                       <div>
                         <p className="text-sm font-semibold text-foreground">
                           {item.title}
@@ -1075,7 +1033,7 @@ const RailwayReservationDetails = () => (
                   key={item.step}
                   className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
                 >
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-indigo-600 text-xs font-bold text-white">
                     {index + 1}
                   </span>
                   <div>
@@ -1094,7 +1052,9 @@ const RailwayReservationDetails = () => (
       </div>
     </div>
     <ServicePromiseBar>
-      Because at Sandi&apos;s, it&apos;s always about how you want to travel.
+      We don&apos;t just plan trips. We create experiences, emotions, and
+      lifelong memories. With Sandi&apos;s, you don&apos;t just travel, you
+      experience the world.
     </ServicePromiseBar>
   </div>
 );
@@ -1112,19 +1072,38 @@ const VisaAssistanceDetails = () => (
         </div>
 
         <h2 className={servicePopupHeadingClass}>
-          Visa requirements vary by country. We make the process simple.
+          Visa requirements vary from one country to another—and that&apos;s
+          where our expertise makes all the difference.
         </h2>
 
-        <p className="mt-5 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
-          Whether you are traveling for education, tourism, or business,
-          Sandi&apos;s International Tours & Travels offers reliable and
-          hassle-free visa assistance, backed by extensive experience with
-          consulates in Mumbai and New Delhi.
+        <p className="hidden mt-5 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+          Whether you are traveling for:
         </p>
 
-        <div className="mt-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Travel Purpose
+        <ul className="hidden mt-2 space-y-2 text-base leading-7 text-muted-foreground">
+          <li className="flex items-start gap-2">
+            <span className="text-sky-700">✓</span>
+            Education
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-sky-700">✓</span>
+            Tourism
+          </li>
+          <li className="flex items-start gap-2">
+            <span className="text-sky-700">✓</span>
+            Business
+          </li>
+        </ul>
+
+        <p className="mt-5 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+          <strong>Sandi&apos;s International Tours &amp; Travels</strong> offers
+          reliable and hassle-free visa assistance, backed by extensive
+          experience in dealing with consulates in Mumbai and New Delhi.
+        </p>
+
+        <div className="mt-7">
+          <p className="text-base font-medium text-muted-foreground">
+            Whether you are traveling for:
           </p>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             {visaTravelPurposes.map((item) => {
@@ -1133,50 +1112,16 @@ const VisaAssistanceDetails = () => (
               return (
                 <div
                   key={item.label}
-                  className="rounded-[8px] border border-border bg-white p-3 shadow-card"
+                  className="flex items-center gap-3 rounded-[12px] border border-sky-100 bg-white px-4 py-3 shadow-card"
                 >
                   <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-[8px] ${item.accent}`}
+                    className={`flex h-9 w-9 flex-none items-center justify-center rounded-full ${item.accent}`}
                   >
-                    <Icon size={20} />
+                    <Icon size={18} />
                   </div>
-                  <p className="mt-3 text-sm font-semibold text-foreground">
+                  <span className="text-sm font-semibold text-foreground">
                     {item.label}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="mt-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Our Services Include
-          </p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {visaServiceSupport.map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={item.title}
-                  className="rounded-[8px] border border-border bg-white p-4 shadow-card"
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`flex h-10 w-10 flex-none items-center justify-center rounded-[8px] ${item.accent}`}
-                    >
-                      <Icon size={19} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-foreground">
-                        {item.title}
-                      </h3>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
+                  </span>
                 </div>
               );
             })}
@@ -1223,7 +1168,7 @@ const VisaAssistanceDetails = () => (
               Visa Support Includes
             </p>
             <div className="mt-4 grid gap-3">
-              {visaServiceSupport.map((item, index) => {
+              {visaServiceSupport.map((item) => {
                 const Icon = item.icon;
 
                 return (
@@ -1231,9 +1176,6 @@ const VisaAssistanceDetails = () => (
                     key={item.title}
                     className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                   >
-                    <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
-                      {index + 1}
-                    </span>
                     <div className="flex items-start gap-2">
                       <Icon size={17} className="mt-0.5 text-sky-700" />
                       <div>
@@ -1261,7 +1203,7 @@ const VisaAssistanceDetails = () => (
                   key={item}
                   className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
                 >
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-indigo-600 text-xs font-bold text-white">
                     {index + 1}
                   </span>
                   <p className="text-sm font-medium text-foreground">{item}</p>
@@ -1331,40 +1273,6 @@ const PassportAssistanceDetails = () => (
           </div>
         </div>
 
-        <div className="mt-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Our Services Include
-          </p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            {passportServiceSupport.map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={item.title}
-                  className="rounded-[8px] border border-border bg-white p-4 shadow-card"
-                >
-                  <div className="flex items-start gap-3">
-                    <div
-                      className={`flex h-10 w-10 flex-none items-center justify-center rounded-[8px] ${item.accent}`}
-                    >
-                      <Icon size={19} />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-semibold text-foreground">
-                        {item.title}
-                      </h3>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
         <div className="hidden">
           <Link to="/contact">
             <Button className="w-full gap-2 bg-primary text-primary-foreground hover:bg-primary/90 sm:w-auto">
@@ -1405,7 +1313,7 @@ const PassportAssistanceDetails = () => (
               Passport Support Includes
             </p>
             <div className="mt-4 grid gap-3">
-              {passportServiceSupport.map((item, index) => {
+              {passportServiceSupport.map((item) => {
                 const Icon = item.icon;
 
                 return (
@@ -1413,11 +1321,8 @@ const PassportAssistanceDetails = () => (
                     key={item.title}
                     className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                   >
-                    <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-indigo-600 text-xs font-bold text-white">
-                      {index + 1}
-                    </span>
                     <div className="flex items-start gap-2">
-                      <Icon size={17} className="mt-0.5 text-indigo-700" />
+                      <Icon size={17} className="mt-0.5 text-primary" />
                       <div>
                         <p className="text-sm font-semibold text-foreground">
                           {item.title}
@@ -1443,7 +1348,7 @@ const PassportAssistanceDetails = () => (
                   key={item}
                   className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
                 >
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-indigo-600 text-xs font-bold text-white">
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
                     {index + 1}
                   </span>
                   <p className="text-sm font-medium text-foreground">{item}</p>
@@ -1484,31 +1389,6 @@ const TravelInsuranceDetails = () => (
           your total travel cost, insurance gives meaningful protection and
           confidence.
         </p>
-
-        <div className="mt-8 grid gap-3 sm:grid-cols-3">
-          {insuranceCoreBenefits.map((item) => {
-            const Icon = item.icon;
-
-            return (
-              <div
-                key={item.label}
-                className="rounded-[8px] border border-border bg-white p-4 shadow-card"
-              >
-                <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-[8px] ${item.accent}`}
-                >
-                  <Icon size={20} />
-                </div>
-                <p className="mt-3 text-sm font-semibold text-foreground">
-                  {item.label}
-                </p>
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  {item.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
 
         <div className="mt-8">
           <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -1577,7 +1457,7 @@ const TravelInsuranceDetails = () => (
               Coverage Includes
             </p>
             <div className="mt-4 grid gap-3">
-              {insuranceCoverageItems.map((item, index) => {
+              {insuranceCoverageItems.map((item) => {
                 const Icon = item.icon;
 
                 return (
@@ -1585,11 +1465,8 @@ const TravelInsuranceDetails = () => (
                     key={item.title}
                     className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                   >
-                    <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-emerald-600 text-xs font-bold text-white">
-                      {index + 1}
-                    </span>
                     <div className="flex items-start gap-2">
-                      <Icon size={17} className="mt-0.5 text-emerald-700" />
+                      <Icon size={17} className="mt-0.5 text-sky-600" />
                       <p className="text-sm font-semibold text-foreground">
                         {item.title}
                       </p>
@@ -1610,7 +1487,7 @@ const TravelInsuranceDetails = () => (
                   key={item}
                   className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
                 >
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-emerald-600 text-xs font-bold text-white">
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-sky-600 text-xs font-bold text-white">
                     {index + 1}
                   </span>
                   <p className="text-sm font-medium text-foreground">{item}</p>
@@ -1652,51 +1529,18 @@ const HotelBookingDetails = () => (
           worldwide.
         </p>
 
-        <div className="mt-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Stay Options For Every Traveler
-          </p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            {hotelStayOptions.map((item) => {
-              const Icon = item.icon;
+        <p className="mt-6 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+          Our hotel booking network covers <strong>hotels, motels, and resorts
+          in India and worldwide</strong>, with options suited to every travel
+          plan and budget.
+        </p>
 
-              return (
-                <div
-                  key={item.label}
-                  className="rounded-[8px] border border-border bg-white p-4 shadow-card"
-                >
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-[8px] ${item.accent}`}
-                  >
-                    <Icon size={20} />
-                  </div>
-                  <p className="mt-3 text-sm font-semibold text-foreground">
-                    {item.label}
-                  </p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    {item.description}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="mt-8 rounded-[8px] border border-border bg-white p-4 shadow-card">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Heritage & Royal Stays
-          </p>
-          <div className="mt-3 flex items-start gap-3">
-            <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-amber-100 text-primary">
-              <Landmark size={20} />
-            </div>
-            <p className="text-sm leading-relaxed text-foreground">
-              For travelers who want the charm of royal India, we offer
-              exclusive heritage stay options in iconic destinations like
-              Udaipur and Delhi, where history meets luxury.
-            </p>
-          </div>
-        </div>
+        <p className="mt-4 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+          For travelers who appreciate history and luxury, we also arrange
+          <strong> exclusive heritage stays</strong> in destinations like
+          Udaipur and Delhi. Every recommendation is selected with comfort,
+          convenience, and peace of mind in mind.
+        </p>
 
         <div className="hidden">
           <Link to="/contact">
@@ -1737,21 +1581,26 @@ const HotelBookingDetails = () => (
             <p className="text-xs font-semibold uppercase text-muted-foreground">
               Comfort Checklist
             </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3">
               {hotelComfortPoints.map((item) => {
                 const Icon = item.icon;
 
                 return (
                   <div
                     key={item.title}
-                    className="flex items-center gap-3 rounded-[8px] bg-secondary/60 p-3"
+                    className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                   >
                     <div className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-amber-100 text-primary">
                       <Icon size={16} />
                     </div>
-                    <p className="text-sm font-semibold text-foreground">
-                      {item.title}
-                    </p>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        {item.title}
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
                 );
               })}
@@ -1774,33 +1623,6 @@ const HotelBookingDetails = () => (
                   <p className="text-sm font-medium text-foreground">{item}</p>
                 </div>
               ))}
-            </div>
-          </div>
-          <div className="mt-4 rounded-[8px] border border-border bg-white p-4 shadow-card">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">
-              Coverage Snapshot
-            </p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-3">
-              {hotelHighlights.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <div
-                    key={item.label}
-                    className="rounded-[8px] border border-border bg-secondary/50 p-3"
-                  >
-                    <div className="flex h-8 w-8 items-center justify-center rounded-[8px] bg-white text-primary shadow-card">
-                      <Icon size={16} />
-                    </div>
-                    <p className="mt-2 text-xs text-muted-foreground">
-                      {item.label}
-                    </p>
-                    <p className="mt-1 text-xs font-semibold text-foreground">
-                      {item.value}
-                    </p>
-                  </div>
-                );
-              })}
             </div>
           </div>
         </div>
@@ -1917,14 +1739,19 @@ const RentCarBusDetails = () => (
                 return (
                   <div
                     key={item.title}
-                    className="flex items-center gap-3 rounded-[8px] bg-secondary/60 p-3"
+                    className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                   >
                     <div className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-white text-primary shadow-card">
                       <Icon size={16} />
                     </div>
-                    <p className="text-sm font-semibold text-foreground">
-                      {item.title}
-                    </p>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        {item.title}
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
                 );
               })}
@@ -2007,50 +1834,22 @@ const MemoriesTourDetails = () => (
           experiences that stay with you long after the trip ends.
         </p>
 
-        <div className="mt-8 rounded-[8px] border border-border bg-white p-4 shadow-card">
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-amber-100 text-primary">
-              <Landmark size={20} />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-foreground">
-                Vande Bharat - Discover India
-              </h3>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                From Himalayas, rivers, oceans, deserts, and backwaters to
-                India&apos;s culture, traditions, and spirituality, every corner
-                inspires deeper exploration.
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {memoriesIndiaThemes.map((item) => (
-              <span
-                key={item}
-                className="rounded-full border border-border bg-secondary/70 px-3 py-1 text-xs font-semibold text-foreground"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
+        <p className="mt-6 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+          From the Himalayas, rivers, oceans, deserts, and backwaters to
+          India&apos;s culture, traditions, and spirituality, every corner
+          inspires deeper exploration. Our journeys include pilgrimages,
+          weekend getaways, adventure tours, heritage and monuments, wildlife
+          experiences, culinary journeys, honeymoons, luxury and royal
+          heritage tours, memory lane journeys, hiking and biking, and medical
+          tourism.
+        </p>
 
-        <div className="mt-8 rounded-[8px] border border-border bg-white p-4 shadow-card">
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-sky-100 text-sky-700">
-              <PlaneTakeoff size={20} />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-foreground">
-                World Voyage - Explore Beyond Boundaries
-              </h3>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                The world opens doors to growth and transformation. As Mark
-                Twain reminds us, real regret comes from journeys we never took.
-              </p>
-            </div>
-          </div>
-        </div>
+        <p className="mt-4 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+          The world also opens doors to growth and transformation. We create
+          meaningful international experiences that stay with you long after
+          the journey ends, because real regret comes from journeys we never
+          take.
+        </p>
 
         <div className="hidden">
           <Link to="/contact">
@@ -2145,67 +1944,48 @@ const AirTicketingDetails = () => (
 
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
-        <div className="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-semibold text-sky-700 shadow-card">
+        <div className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-semibold text-emerald-700 shadow-card">
           <Plane size={18} />
           Air Ticketing Services
         </div>
 
         <h2 className={servicePopupHeadingClass}>
-          Travel better with smart air ticketing support
+          Air Ticketing Services
         </h2>
 
         <p className="mt-5 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
-          With new airlines and routes added regularly, choosing the right
-          flight can be overwhelming. Sandi&apos;s simplifies booking with
-          practical options that match your budget, timing, and comfort.
+          With new airlines and routes being introduced regularly, travelers
+          today have more choices than before. But with so many options,
+          finding the right flight that matches your <strong>budget, timing,
+          and comfort</strong> can be challenging.
+        </p>
+
+        <p className="mt-4 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+          At <strong>Sandi&apos;s International Tours &amp; Travels</strong>, we
+          make it simple and hassle-free. We work closely with all major
+          <strong> domestic airlines in India</strong>, giving you access to
+          both <strong>budget-friendly and premium travel options</strong>.
+          Whether you want the lowest fare or the most comfortable journey,
+          our team helps you make the right choice—quickly and confidently.
+        </p>
+
+        <p className="mt-4 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+          Our experts continuously monitor fares, offers, and route
+          combinations to ensure you always get the <strong>best value for your
+          money</strong>.
         </p>
 
         <div className="mt-8">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            Domestic Air Ticketing
+          <h3 className="text-xl font-semibold text-foreground">
+            International Air Ticketing
+          </h3>
+          <p className="mt-3 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+            For today&apos;s global traveler, planning international journeys
+            requires experience, expertise, and the right connections—that&apos;s
+            exactly what we offer. With strong tie-ups with leading
+            <strong> international airlines</strong>, we provide seamless
+            booking solutions tailored to your needs.
           </p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-3">
-            {airDomesticHighlights.map((item) => {
-              const Icon = item.icon;
-
-              return (
-                <div
-                  key={item.label}
-                  className="rounded-[8px] border border-border bg-white p-4 shadow-card"
-                >
-                  <div
-                    className={`flex h-10 w-10 items-center justify-center rounded-[8px] ${item.accent}`}
-                  >
-                    <Icon size={20} />
-                  </div>
-                  <p className="mt-3 text-sm font-semibold text-foreground">
-                    {item.label}
-                  </p>
-                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                    {item.description}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="mt-8 rounded-[8px] border border-border bg-white p-4 shadow-card">
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-emerald-100 text-emerald-700">
-              <Globe size={20} />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-foreground">
-                International Air Ticketing
-              </h3>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                With strong tie-ups across leading international airlines, we
-                design seamless bookings with the right routes, fares, and
-                current offers for global travel.
-              </p>
-            </div>
-          </div>
         </div>
 
         <div className="hidden">
@@ -2228,10 +2008,10 @@ const AirTicketingDetails = () => (
 
       <div className="relative flex min-h-[420px] sm:min-h-[520px] items-center justify-center p-6 sm:p-8 lg:p-10">
 
-        <div className="w-full max-w-2xl rounded-[8px] border border-sky-200 bg-white/95 p-4 shadow-elevated md:p-5">
+        <div className="w-full max-w-2xl rounded-[8px] border border-emerald-200 bg-white/95 p-4 shadow-elevated md:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
             <div>
-              <p className="text-xs font-semibold uppercase text-sky-700">
+              <p className="text-xs font-semibold uppercase text-emerald-700">
                 Ticketing Command Desk
               </p>
               <h3 className="mt-1 text-2xl font-bold text-foreground">
@@ -2247,43 +2027,29 @@ const AirTicketingDetails = () => (
             <p className="text-xs font-semibold uppercase text-muted-foreground">
               International Planning Includes
             </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3">
               {airInternationalPlanning.map((item) => {
                 const Icon = item.icon;
 
                 return (
                   <div
                     key={item.title}
-                    className="flex items-center gap-3 rounded-[8px] bg-secondary/60 p-3"
+                    className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                   >
-                    <div className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-white text-primary shadow-card">
+                    <div className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-emerald-50 text-emerald-600 shadow-card">
                       <Icon size={16} />
                     </div>
-                    <p className="text-sm font-semibold text-foreground">
-                      {item.title}
-                    </p>
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">
+                        {item.title}
+                      </p>
+                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                        {item.description}
+                      </p>
+                    </div>
                   </div>
                 );
               })}
-            </div>
-          </div>
-
-          <div className="mt-4 rounded-[8px] border border-border bg-secondary/70 p-4">
-            <p className="text-xs font-semibold uppercase text-muted-foreground">
-              Why Choose Sandi&apos;s
-            </p>
-            <div className="mt-4 space-y-3">
-              {airTicketingBenefits.map((item, index) => (
-                <div
-                  key={item}
-                  className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
-                >
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
-                    {index + 1}
-                  </span>
-                  <p className="text-sm font-medium text-foreground">{item}</p>
-                </div>
-              ))}
             </div>
           </div>
 
@@ -2297,7 +2063,7 @@ const AirTicketingDetails = () => (
                   key={item}
                   className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
                 >
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-primary text-xs font-bold text-primary-foreground">
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-emerald-600 text-xs font-bold text-white">
                     {index + 1}
                   </span>
                   <p className="text-sm font-medium text-foreground">{item}</p>
@@ -2415,7 +2181,7 @@ const AirportTransferDetails = () => (
                     className="rounded-[8px] bg-secondary/60 p-3"
                   >
                     <div className="flex items-start gap-3">
-                      <div className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-white text-primary shadow-card">
+                      <div className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-white text-sky-600 shadow-card">
                         <Icon size={16} />
                       </div>
                       <div>
@@ -2443,7 +2209,7 @@ const AirportTransferDetails = () => (
                   key={item}
                   className="flex items-start gap-3 rounded-[8px] bg-white p-3 shadow-card"
                 >
-                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-cyan-600 text-xs font-bold text-white">
+                  <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-sky-600 text-xs font-bold text-white">
                     {index + 1}
                   </span>
                   <p className="text-sm font-medium text-foreground">{item}</p>
@@ -2624,6 +2390,27 @@ const Services = () => {
 
   return (
     <div className="pt-16">
+      <Seo
+        title="Travel Services | Sandis Tours"
+        description="Book flights, hotels, airport transfers, railway tickets, visa assistance, passport support, travel insurance, foreign exchange and more with Sandis Tours."
+        path="/services"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "CollectionPage",
+              "@id": `${SITE_ORIGIN}/services#page`,
+              name: "Travel Services | Sandis Tours",
+              url: `${SITE_ORIGIN}/services`,
+              description: "Complete travel booking and support services from Sandis Tours.",
+            },
+            createBreadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Services", path: "/services" },
+            ]),
+          ],
+        }}
+      />
       <section className="px-4 py-14 sm:py-20">
         <div className="container mx-auto">
           <div className="hidden">
@@ -2897,67 +2684,43 @@ const Services = () => {
                   Foreign Exchange Services
                 </div>
 
-                <h2 className={servicePopupHeadingClass}>
+                <h2
+                  className={`${servicePopupHeadingClass} w-full max-w-[36rem] break-words`}
+                >
                   Smart exchange, smooth travel, complete peace of mind
                 </h2>
 
-                <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground">
-                  If you are traveling abroad for business or leisure,
-                  Sandi&apos;s International Tours & Travels helps make currency
-                  exchange smooth, secure, and hassle-free with the right value
-                  at the right time.
+                <p className="mt-5 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+                  If you&apos;re traveling abroad for business or leisure, <strong>Sandi&apos;s
+                  International Tours &amp; Travels</strong> ensures a <strong>smooth, secure,
+                  and hassle-free currency exchange experience</strong>.
                 </p>
 
-                <div className="mt-8 grid gap-4 sm:grid-cols-3">
-                  {forexBenefits.map((item) => {
-                    const Icon = item.icon;
+                <p className="mt-4 max-w-2xl text-justify text-base leading-8 text-muted-foreground">
+                  We understand how important it is to get the right value—at the right time.
+                </p>
 
-                    return (
-                      <div
-                        key={item.label}
-                        className="rounded-[8px] border border-border bg-white p-4 shadow-card"
-                      >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-[8px] bg-emerald-600 text-white">
-                          <Icon size={20} />
-                        </div>
-                        <p className="mt-3 text-xs text-muted-foreground">
-                          {item.label}
-                        </p>
-                        <h3 className="mt-1 text-sm font-semibold text-foreground">
-                          {item.value}
-                        </h3>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                <div className="mt-8 grid gap-3">
-                  {forexSolutions.map((item) => {
-                    const Icon = item.icon;
-
-                    return (
-                      <div
-                        key={item.title}
-                        className="rounded-[8px] border border-border bg-white p-4 shadow-card"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div
-                            className={`flex h-10 w-10 flex-none items-center justify-center rounded-[8px] ${item.accent}`}
-                          >
-                            <Icon size={19} />
-                          </div>
-                          <div>
-                            <h3 className="text-sm font-semibold text-foreground">
-                              {item.title}
-                            </h3>
-                            <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                              {item.description}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                <div className="mt-8">
+                  <h3 className="text-xl font-semibold text-foreground">
+                    Why Choose Sandi&apos;s For Forex?
+                  </h3>
+                  <p className="mt-3 text-base leading-8 text-muted-foreground">
+                    At Sandi&apos;s, we:
+                  </p>
+                  <ul className="mt-2 space-y-2 text-base leading-7 text-muted-foreground">
+                    <li className="flex items-start gap-2">
+                      <span className="text-emerald-700">✓</span>
+                      Monitor daily currency fluctuations
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-emerald-700">✓</span>
+                      Offer competitive and transparent exchange rates
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <span className="text-emerald-700">✓</span>
+                      Ensure quick, safe, and reliable transactions
+                    </li>
+                  </ul>
                 </div>
 
                 <div className="hidden">
@@ -3000,7 +2763,7 @@ const Services = () => {
                       Forex Support Includes
                     </p>
                     <div className="mt-4 grid gap-3">
-                      {forexSolutions.map((item, index) => {
+                      {forexSolutions.map((item) => {
                         const Icon = item.icon;
 
                         return (
@@ -3008,13 +2771,10 @@ const Services = () => {
                             key={item.title}
                             className="flex items-start gap-3 rounded-[8px] bg-secondary/60 p-3"
                           >
-                            <span className="flex h-8 w-8 flex-none items-center justify-center rounded-[8px] bg-emerald-600 text-xs font-bold text-white">
-                              {index + 1}
-                            </span>
                             <div className="flex items-start gap-2">
                               <Icon
-                                size={17}
-                                className="mt-0.5 text-emerald-700"
+                                size={20}
+                                className="mt-0.5 flex-none text-emerald-700"
                               />
                               <div>
                                 <p className="text-sm font-semibold text-foreground">

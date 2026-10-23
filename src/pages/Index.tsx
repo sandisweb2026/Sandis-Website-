@@ -29,7 +29,12 @@ import {
   CONTACT_INSTAGRAM_URL,
   CONTACT_PHONE_TEL,
 } from "@/lib/contact";
-import { getWhatsAppUrl } from "@/lib/whatsapp";
+import {
+  AIRPORT_BOOKING_WHATSAPP_MESSAGE,
+  getWhatsAppUrl,
+} from "@/lib/whatsapp";
+import Seo from "@/components/Seo";
+import { SITE_ORIGIN } from "@/lib/seo";
 
 const fallbackImages: Record<string, string> = {
   "Goa Beach Paradise": tourGoa,
@@ -399,6 +404,31 @@ const Index = () => {
 
   return (
     <div>
+      <Seo
+        title="Sandis Tours - 30+ Years of Trusted Travel Experience"
+        description="Sandis Tours offers domestic and international tour packages, flight booking, hotel booking, visa services and complete travel support from Pune."
+        path="/"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "WebSite",
+              "@id": `${SITE_ORIGIN}/#website`,
+              name: "Sandis Tours",
+              url: `${SITE_ORIGIN}/`,
+              inLanguage: "en-IN",
+            },
+            {
+              "@type": "WebPage",
+              "@id": `${SITE_ORIGIN}/#webpage`,
+              name: "Sandis Tours - 30+ Years of Trusted Travel Experience",
+              url: `${SITE_ORIGIN}/`,
+              isPartOf: { "@id": `${SITE_ORIGIN}/#website` },
+              about: { "@id": `${SITE_ORIGIN}/#organization` },
+            },
+          ],
+        }}
+      />
       {/* Hero Carousel */}
       <section className="relative h-[68vh] min-h-[420px] overflow-hidden sm:h-[75vh] sm:min-h-[460px] lg:h-[88vh] lg:min-h-[640px]">
         <div className="absolute inset-x-0 top-0 z-20">
@@ -448,7 +478,7 @@ const Index = () => {
                     {homeTagline}
                   </p>
                   <a
-                    href={getWhatsAppUrl()}
+                    href={getWhatsAppUrl(AIRPORT_BOOKING_WHATSAPP_MESSAGE)}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-orange-400 to-amber-400 px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_10px_26px_hsla(27,91%,48%,0.35)] transition-all hover:scale-[1.01] hover:shadow-[0_16px_32px_hsla(27,91%,48%,0.5)] md:w-auto md:px-5"
@@ -571,7 +601,7 @@ const Index = () => {
 
             return (
             <Link
-              to={`/services?popup=${popup}`}
+              to={popup === "memories" ? "/holidays" : `/services?popup=${popup}`}
               key={label}
               onPointerDown={() => setActiveService(label)}
               onPointerUp={() => setActiveService(null)}

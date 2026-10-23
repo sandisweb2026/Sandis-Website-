@@ -11,10 +11,51 @@ import {
   CONTACT_SECONDARY_ADDRESS_DISPLAY,
 } from "@/lib/contact";
 import { WHATSAPP_CHAT_URL } from "@/lib/whatsapp";
+import Seo from "@/components/Seo";
+import { SITE_ORIGIN, createBreadcrumbSchema } from "@/lib/seo";
 
 const Contact = () => {
   return (
-    <div className="pt-16">
+    <>
+      <Seo
+        title="Contact Sandis Tours | Pune Travel Agency"
+        description="Contact Sandis Tours in Pune for holiday packages, flight and hotel bookings, airport transfers, visa assistance and travel enquiries."
+        path="/contact"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "ContactPage",
+              "@id": `${SITE_ORIGIN}/contact#page`,
+              name: "Contact Sandis Tours",
+              url: `${SITE_ORIGIN}/contact`,
+              about: { "@id": `${SITE_ORIGIN}/#organization` },
+            },
+            {
+              "@type": "LocalBusiness",
+              "@id": `${SITE_ORIGIN}/#organization`,
+              name: "Sandi's International Tours & Travels",
+              url: `${SITE_ORIGIN}/`,
+              telephone: "+919890711155",
+              email: "sandis@sandis.com",
+              image: `${SITE_ORIGIN}/sandis-logo.png`,
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "5 Amit Complex, 474 Sadashiv Peth, Tilak Road",
+                addressLocality: "Pune",
+                addressRegion: "Maharashtra",
+                postalCode: "411030",
+                addressCountry: "IN",
+              },
+            },
+            createBreadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Contact", path: "/contact" },
+            ]),
+          ],
+        }}
+      />
+      <div className="pt-16">
       <section className="px-4 py-14 sm:py-20">
         <div className="container mx-auto">
           <div className="mx-auto mb-10 max-w-3xl text-center">
@@ -149,7 +190,8 @@ const Contact = () => {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 };
 

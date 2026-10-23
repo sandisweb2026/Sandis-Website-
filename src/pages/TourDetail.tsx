@@ -21,6 +21,8 @@ import {
   type HolidayPackageRecord,
 } from "@/lib/travel-cms";
 import { getWhatsAppUrl, WHATSAPP_PREFILLED_MESSAGE } from "@/lib/whatsapp";
+import Seo from "@/components/Seo";
+import { SITE_ORIGIN, createBreadcrumbSchema } from "@/lib/seo";
 
 const defaultImage = fallbackTourImages["Goa Beach Paradise"];
 
@@ -94,20 +96,33 @@ const TourDetail = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center pt-16">
-        Loading...
-      </div>
+      <>
+        <Seo
+          title="Holiday Package | Sandis Tours"
+          description="Explore holiday packages and customized travel options from Sandis Tours."
+          path={`/holidays/${packageSlug || ""}`}
+        />
+        <div className="min-h-screen flex items-center justify-center pt-16">Loading...</div>
+      </>
     );
   }
 
   if (!holidayPackage) {
     return (
-      <div className="pt-32 text-center min-h-screen">
-        <h1 className="text-2xl font-bold">Holiday package not found</h1>
-        <Link to="/holidays">
-          <Button className="mt-4">Back to Holidays</Button>
-        </Link>
-      </div>
+      <>
+        <Seo
+          title="Holiday package not found | Sandis Tours"
+          description="The requested holiday package could not be found."
+          path={`/holidays/${packageSlug || ""}`}
+          noindex
+        />
+        <div className="pt-32 text-center min-h-screen">
+          <h1 className="text-2xl font-bold">Holiday package not found</h1>
+          <Link to="/holidays">
+            <Button className="mt-4">Back to Holidays</Button>
+          </Link>
+        </div>
+      </>
     );
   }
 
@@ -157,7 +172,48 @@ const TourDetail = () => {
   const missingDetailSections = getMissingPackageSections(holidayPackage);
 
   return (
-    <div className="pt-16">
+    <>
+      <Seo
+        title={`${holidayPackage.seo_title?.trim() || holidayPackage.title} | Sandis Tours`}
+        description={
+          holidayPackage.seo_description?.trim() ||
+          holidayPackage.short_description?.trim() ||
+          holidayPackage.about_tour?.trim() ||
+          `Explore the ${holidayPackage.title} holiday package with Sandis Tours.`
+        }
+        path={`/holidays/${holidayPackage.slug || packageSlug || ""}`}
+        image={getHeroImage(holidayPackage)}
+        type="article"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "TouristTrip",
+              "@id": `${SITE_ORIGIN}/holidays/${holidayPackage.slug || packageSlug}#trip`,
+              name: holidayPackage.title,
+              url: `${SITE_ORIGIN}/holidays/${holidayPackage.slug || packageSlug}`,
+              description:
+                holidayPackage.seo_description?.trim() ||
+                holidayPackage.short_description?.trim() ||
+                holidayPackage.about_tour?.trim() ||
+                `Explore the ${holidayPackage.title} holiday package with Sandis Tours.`,
+              image: getHeroImage(holidayPackage),
+              ...(holidayPackage.location
+                ? { touristDestination: { "@type": "Place", name: holidayPackage.location } }
+                : {}),
+            },
+            createBreadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Holidays", path: "/holidays" },
+              {
+                name: holidayPackage.title,
+                path: `/holidays/${holidayPackage.slug || packageSlug || ""}`,
+              },
+            ]),
+          ],
+        }}
+      />
+      <div className="pt-16">
       <div
         className="relative w-full overflow-hidden bg-foreground/5 h-[52vh] min-h-[340px] sm:h-[60vh] lg:h-[calc(100vh-4rem)]"
       >
@@ -441,7 +497,8 @@ const TourDetail = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

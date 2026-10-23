@@ -31,6 +31,8 @@ import {
 } from "@/lib/travel-cms";
 import { getContactMailtoUrl } from "@/lib/contact";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
+import Seo from "@/components/Seo";
+import { SITE_ORIGIN, createBreadcrumbSchema } from "@/lib/seo";
 
 const defaultPackageImage = fallbackTourImages["Goa Beach Paradise"];
 const allCategoriesFilter = {
@@ -330,6 +332,39 @@ const Tours = () => {
 
   return (
     <div className="pt-16">
+      <Seo
+        title="Holiday Packages | Sandis Tours"
+        description="Explore domestic and international holiday packages from Sandis Tours, with customized itineraries, comfortable stays and trusted travel support."
+        path="/holidays"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "CollectionPage",
+              "@id": `${SITE_ORIGIN}/holidays#page`,
+              name: "Holiday Packages | Sandis Tours",
+              url: `${SITE_ORIGIN}/holidays`,
+              description: "Domestic and international holiday packages from Sandis Tours.",
+              mainEntity: {
+                "@type": "ItemList",
+                itemListElement: packages.slice(0, 100).map((packageItem, index) => ({
+                  "@type": "ListItem",
+                  position: index + 1,
+                  name: packageItem.title,
+                  url: `${SITE_ORIGIN}/holidays/${packageItem.slug}`,
+                  ...(packageItem.banner_image_url || packageItem.hero_image_url
+                    ? { image: packageItem.banner_image_url || packageItem.hero_image_url }
+                    : {}),
+                })),
+              },
+            },
+            createBreadcrumbSchema([
+              { name: "Home", path: "/" },
+              { name: "Holidays", path: "/holidays" },
+            ]),
+          ],
+        }}
+      />
       <Dialog open={showMemoriesIntro} onOpenChange={setShowMemoriesIntro}>
         <DialogContent
           className="max-h-[92vh] max-w-[1180px] overflow-y-auto border-0 bg-transparent p-0 shadow-none sm:rounded-[8px] [&>button]:hidden"

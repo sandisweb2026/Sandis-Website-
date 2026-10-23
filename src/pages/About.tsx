@@ -2,6 +2,8 @@ import { Award, Clock3, MapPin, Sparkles, Compass, Globe2, ShieldCheck, Users } 
 import aboutImage from "@/assets/hero-beach.jpg";
 import mountainImage from "@/assets/tour-manali.jpg";
 import whySandisImage from "@/assets/why sandis.png";
+import Seo from "@/components/Seo";
+import { SITE_ORIGIN, createBreadcrumbSchema } from "@/lib/seo";
 
 const stats = [
   { value: "30+", label: "Years Experience", position: "lg:pt-14" },
@@ -91,7 +93,29 @@ const sandisMobileRoute = [
 ] as const;
 
 const About = () => (
-  <div className="pt-16">
+  <>
+    <Seo
+      title="About Sandis Tours | Trusted Travel Company Since 1995"
+      description="Learn about Sandis Tours, a Pune-based travel company with 30+ years of experience in holidays, bookings, airport transfers and complete travel support."
+      path="/about"
+      structuredData={{
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "AboutPage",
+            "@id": `${SITE_ORIGIN}/about#page`,
+            name: "About Sandis Tours",
+            url: `${SITE_ORIGIN}/about`,
+            about: { "@id": `${SITE_ORIGIN}/#organization` },
+          },
+          createBreadcrumbSchema([
+            { name: "Home", path: "/" },
+            { name: "About", path: "/about" },
+          ]),
+        ],
+      }}
+    />
+    <div className="pt-16">
     {/* Story */}
     <section className="overflow-hidden px-4 py-6 sm:py-8 lg:min-h-[calc(100vh-4rem)] lg:py-5">
       <div className="container mx-auto">
@@ -419,7 +443,8 @@ const About = () => (
       </div>
     </section>
 
-  </div>
+    </div>
+  </>
 );
 
 export default About;

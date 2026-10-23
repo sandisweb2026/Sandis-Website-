@@ -26,6 +26,7 @@ import AdminPackages from "./pages/admin/AdminPackages";
 import AdminGallery from "./pages/admin/AdminGallery";
 import AdminSettings from "./pages/admin/AdminSettings";
 import NotFound from "./pages/NotFound";
+import Seo from "@/components/Seo";
 
 const queryClient = new QueryClient();
 const ADMIN_ENTRY_PATH = "/sandis_tours_26";
@@ -71,6 +72,8 @@ const AppLayout = () => {
   const isFirstLocationRender = useRef(true);
   const isHomePage = location.pathname === "/" || location.pathname === "/home";
   const pagePath = `${location.pathname}${location.search}`;
+  const isAdminRoute =
+    location.pathname.startsWith("/admin") || location.pathname === ADMIN_ENTRY_PATH;
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "auto" });
@@ -99,6 +102,14 @@ const AppLayout = () => {
 
   return (
     <>
+      {isAdminRoute && (
+        <Seo
+          title="Sandis Tours Admin"
+          description="Private Sandis Tours administration area."
+          path={location.pathname}
+          noindex
+        />
+      )}
       {!isHomePage && <Header />}
       <main className="min-h-screen site-page-background">
         <Routes>

@@ -3,6 +3,9 @@ import { CONTACT_PHONE_NUMBER } from "@/lib/contact";
 export const WHATSAPP_PHONE_NUMBER = `91${CONTACT_PHONE_NUMBER}`;
 export const WHATSAPP_CHAT_URL = `https://wa.me/${WHATSAPP_PHONE_NUMBER}`;
 
+export const AIRPORT_BOOKING_WHATSAPP_MESSAGE =
+  "Hello Sandis, I need airport pickup or drop support. Please share the available transfer options.";
+
 export const WHATSAPP_PREFILLED_MESSAGE = `*Welcome To Sandi's International Tours & Travels*
 Your Trusted Travel Partner With 30+ Years Of Experience In Creating Unforgettable Journeys!
 
