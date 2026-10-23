@@ -3,7 +3,11 @@ import { Link, useLocation } from "react-router-dom";
 import { Phone, Instagram, Facebook, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import sandisLogo from "@/assets/sandis logo .png";
-import { CONTACT_PHONE_TEL } from "@/lib/contact";
+import {
+  CONTACT_FACEBOOK_URL,
+  CONTACT_INSTAGRAM_URL,
+  CONTACT_PHONE_TEL,
+} from "@/lib/contact";
 
 const navLinks = [
   { label: "Home", path: "/" },
@@ -51,10 +55,10 @@ const Header = () => {
 
         {/* Social & Phone */}
         <div className="hidden md:flex items-center gap-3">
-          <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+          <a href={CONTACT_INSTAGRAM_URL} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
             <Instagram size={18} />
           </a>
-          <a href="https://facebook.com" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
+          <a href={CONTACT_FACEBOOK_URL} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary transition-colors">
             <Facebook size={18} />
           </a>
           <a href={CONTACT_PHONE_TEL}>
@@ -89,10 +93,10 @@ const Header = () => {
               </Link>
             ))}
             <div className="flex items-center gap-3 pt-2 border-t border-border">
-              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary">
+              <a href={CONTACT_INSTAGRAM_URL} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary">
                 <Instagram size={18} />
               </a>
-              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary">
+              <a href={CONTACT_FACEBOOK_URL} target="_blank" rel="noreferrer" className="text-muted-foreground hover:text-primary">
                 <Facebook size={18} />
               </a>
               <a href={CONTACT_PHONE_TEL} className="ml-auto">

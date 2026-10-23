@@ -18,8 +18,17 @@ import tourKerala from "@/assets/tour-kerala.jpg";
 import tourDubai from "@/assets/tour-dubai.jpg";
 import tourBali from "@/assets/tour-bali.jpg";
 import tourThailand from "@/assets/tour-thailand.jpg";
-import { createEnquiry, fetchBanners, type BannerRecord } from "@/lib/travel-cms";
-import { CONTACT_PHONE_TEL } from "@/lib/contact";
+import {
+  createEnquiry,
+  fetchBanners,
+  fetchPublicSettings,
+  type BannerRecord,
+} from "@/lib/travel-cms";
+import {
+  CONTACT_FACEBOOK_URL,
+  CONTACT_INSTAGRAM_URL,
+  CONTACT_PHONE_TEL,
+} from "@/lib/contact";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const fallbackImages: Record<string, string> = {
@@ -147,8 +156,14 @@ const submitPopupEnquiry = async (payload: PopupEnquiryPayload) => {
 };
 
 const EnquiryPopup = () => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const timerId = window.setTimeout(() => setOpen(true), 7000);
+
+    return () => window.clearTimeout(timerId);
+  }, []);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -288,6 +303,10 @@ const EnquiryPopup = () => {
 
 const Index = () => {
   const [heroSlides, setHeroSlides] = useState<HomeSlide[]>(fallbackSlides);
+  const [homeTagline, setHomeTagline] = useState("30+ Years Of Travel Care");
+  const [airportBookingLabel, setAirportBookingLabel] = useState(
+    "Mumbai Airport Booking",
+  );
   const [current, setCurrent] = useState(0);
   const [activeService, setActiveService] = useState<string | null>(null);
   const [visibleStats, setVisibleStats] = useState(() =>
@@ -309,6 +328,21 @@ const Index = () => {
         }
       })
       .catch(() => setHeroSlides(fallbackSlides));
+  }, []);
+
+  useEffect(() => {
+    fetchPublicSettings()
+      .then((settings) => {
+        if (settings.home_top_tagline?.trim()) {
+          setHomeTagline(settings.home_top_tagline.trim());
+        }
+        if (settings.home_airport_booking_label?.trim()) {
+          setAirportBookingLabel(settings.home_airport_booking_label.trim());
+        }
+      })
+      .catch(() => {
+        // Keep the built-in copy when the public settings endpoint is unavailable.
+      });
   }, []);
 
   useEffect(() => {
@@ -383,7 +417,7 @@ const Index = () => {
                   </Link>
                   <div className="flex items-center gap-2 md:hidden">
                     <a
-                      href="https://instagram.com"
+                      href={CONTACT_INSTAGRAM_URL}
                       target="_blank"
                       rel="noreferrer"
                       className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-pink-300 hover:text-pink-600"
@@ -392,7 +426,7 @@ const Index = () => {
                       <Instagram size={16} />
                     </a>
                     <a
-                      href="https://facebook.com"
+                      href={CONTACT_FACEBOOK_URL}
                       target="_blank"
                       rel="noreferrer"
                       className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-600"
@@ -411,22 +445,22 @@ const Index = () => {
                 </div>
                 <div className="flex w-full flex-col items-center gap-2 md:w-auto">
                   <p className="text-center text-sm font-black italic tracking-[0.12em] text-transparent bg-gradient-to-r from-primary via-orange-500 to-amber-500 bg-clip-text drop-shadow-[0_2px_7px_rgba(240,126,20,0.34)] sm:text-base">
-                    30+ Years Of Travel Care
+                    {homeTagline}
                   </p>
                   <a
                     href={getWhatsAppUrl()}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-primary via-orange-400 to-amber-400 px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_10px_26px_hsla(27,91%,48%,0.35)] transition-all hover:scale-[1.01] hover:shadow-[0_16px_32px_hsla(27,91%,48%,0.5)] md:w-auto md:px-5"
-                    aria-label="Mumbai Airport booking on WhatsApp"
+                    aria-label={`${airportBookingLabel} on WhatsApp`}
                   >
                     <Plane size={16} />
-                    <span>Mumbai Airport Booking</span>
+                    <span>{airportBookingLabel}</span>
                   </a>
                 </div>
                 <div className="hidden items-center gap-2 md:flex lg:gap-3">
                   <a
-                    href="https://instagram.com"
+                    href={CONTACT_INSTAGRAM_URL}
                     target="_blank"
                     rel="noreferrer"
                     className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-pink-300 hover:text-pink-600"
@@ -435,7 +469,7 @@ const Index = () => {
                     <Instagram size={18} />
                   </a>
                   <a
-                    href="https://facebook.com"
+                    href={CONTACT_FACEBOOK_URL}
                     target="_blank"
                     rel="noreferrer"
                     className="flex h-10 w-10 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 shadow-sm transition-all hover:-translate-y-0.5 hover:border-blue-300 hover:text-blue-600"
@@ -565,19 +599,21 @@ const Index = () => {
       </section>
 
       {/* Tour Stats */}
-      <section ref={statsSectionRef} className="mt-10 px-4">
+      <section ref={statsSectionRef} className="mt-10 px-4 pb-6 sm:pb-8">
         <div className="container mx-auto">
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {tourStats.map(({ value, suffix, label, decimals }, index) => (
               <div
                 key={label}
-                className="rounded-3xl bg-[linear-gradient(135deg,hsl(27_91%_48%),hsl(35_95%_55%))] p-6 text-center text-white shadow-[0_16px_34px_rgba(236,117,0,0.24)]"
+                className="flex min-h-[112px] flex-col items-center justify-center rounded-3xl px-6 py-4 text-center text-white shadow-[0_16px_34px_rgba(236,117,0,0.24)] bg-[linear-gradient(135deg,hsl(27_91%_48%),hsl(35_95%_55%))]"
               >
                 <div className="text-3xl font-extrabold tracking-tight">
                   {decimals ? visibleStats[index].toFixed(decimals) : visibleStats[index]}
                   {suffix}
                 </div>
-                <p className="mt-1 text-sm font-medium uppercase tracking-[0.14em] text-white/78">{label}</p>
+                <p className="mt-1.5 max-w-[12rem] text-center text-sm font-medium uppercase tracking-[0.14em] text-white/78">
+                  {label}
+                </p>
               </div>
             ))}
           </div>

@@ -1,9 +1,14 @@
-import { Globe, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { ArrowUpRight, LocateFixed, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import {
+  CONTACT_ADDRESS_DISPLAY,
   CONTACT_EMAIL_DISPLAY,
   CONTACT_EMAIL_MAILTO,
+  CONTACT_MAP_BUSINESS_NAME,
+  CONTACT_MAP_EMBED_URL,
+  CONTACT_MAPS_URL,
   CONTACT_PHONE_DISPLAY,
   CONTACT_PHONE_TEL,
+  CONTACT_SECONDARY_ADDRESS_DISPLAY,
 } from "@/lib/contact";
 import { WHATSAPP_CHAT_URL } from "@/lib/whatsapp";
 
@@ -81,42 +86,59 @@ const Contact = () => {
                   </div>
                 </a>
                 <a
-                  href="https://www.sandis.com"
+                  href={CONTACT_MAPS_URL}
                   target="_blank"
                   rel="noreferrer"
                   className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]"
                 >
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
-                    <Globe size={20} />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-foreground">Website</h4>
-                    <p className="text-sm text-muted-foreground group-hover:text-primary transition-colors">
-                      www.sandis.com
-                    </p>
-                  </div>
-                </a>
-                <div className="group flex items-start gap-4 rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm transition-all hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_16px_34px_rgba(236,117,0,0.14)]">
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-white">
                     <MapPin size={20} />
                   </div>
                   <div>
                     <h4 className="font-semibold text-foreground">Address</h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      5 Amit Complex, 474 Sadashiv Peth, Tilak Road, Pune - 30.
+                    <p className="text-sm leading-relaxed text-muted-foreground transition-colors group-hover:text-primary">
+                      {CONTACT_ADDRESS_DISPLAY}
                       <br />
-                      Other Office: Dahanukar Colony, Kothrud
+                      {CONTACT_SECONDARY_ADDRESS_DISPLAY}
                     </p>
+                    <span className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary">
+                      Open in Google Maps
+                      <ArrowUpRight size={14} />
+                    </span>
                   </div>
-                </div>
+                </a>
               </div>
             </div>
 
             <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-[linear-gradient(135deg,hsl(27_96%_53%),hsl(35_98%_56%))] p-2 shadow-[0_24px_60px_rgba(236,117,0,0.18)]">
               <div className="pointer-events-none absolute -right-12 -top-12 z-10 h-36 w-36 rounded-full bg-white/30 blur-3xl" />
               <div className="relative h-full min-h-[420px] overflow-hidden rounded-xl bg-white">
+                <div className="pointer-events-none absolute left-4 top-4 z-10 max-w-[300px] rounded-2xl border border-primary/15 bg-white/95 p-4 shadow-[0_16px_40px_rgba(15,23,42,0.16)] backdrop-blur-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                      <LocateFixed size={18} />
+                    </div>
+                    <div>
+                      <h3 className="mt-1 text-base font-bold text-foreground">
+                        {CONTACT_MAP_BUSINESS_NAME}
+                      </h3>
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                        {CONTACT_ADDRESS_DISPLAY}
+                      </p>
+                      <a
+                        href={CONTACT_MAPS_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="pointer-events-auto mt-3 inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                      >
+                        Open in Google Maps
+                        <ArrowUpRight size={13} />
+                      </a>
+                    </div>
+                  </div>
+                </div>
                 <iframe
-                  src="https://www.google.com/maps?q=5%20Amit%20Complex%2C%20474%20Sadashiv%20Peth%2C%20Tilak%20Road%2C%20Pune&output=embed"
+                  src={CONTACT_MAP_EMBED_URL}
                   className="w-full h-full border-0"
                   allowFullScreen
                   loading="lazy"

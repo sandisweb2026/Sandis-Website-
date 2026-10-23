@@ -774,7 +774,76 @@ const isAirTicketingService = (service: ServiceRecord) => {
   );
 };
 
-const PopupContactActions = () => (
+type PopupContactConfig = {
+  emailBody: string;
+  emailSubject: string;
+  whatsappMessage: string;
+};
+
+const createPopupContactConfig = (
+  serviceName: string,
+  whatsappMessage: string,
+  emailBody: string,
+): PopupContactConfig => ({
+  emailBody,
+  emailSubject: `${serviceName} enquiry`,
+  whatsappMessage,
+});
+
+const popupContactConfigs = {
+  air: createPopupContactConfig(
+    "Air Ticketing Services",
+    "Hello Sandis, I need help with flight booking. Please share the best options for my travel plan.",
+    "Hello, I want to enquire about flight booking support. Please share the best options and next steps for my travel plan.",
+  ),
+  airport: createPopupContactConfig(
+    "Airport Transfers",
+    "Hello Sandis, I need airport pickup or drop support. Please share the available transfer options.",
+    "Hello, I want to enquire about airport pickup and drop support. Please share the available transfer options and next steps.",
+  ),
+  forex: createPopupContactConfig(
+    "Foreign Exchange Services",
+    "Hello Sandis, I need forex support for my trip. Please share the currency exchange options.",
+    "Hello, I want to enquire about foreign exchange support for my trip. Please share the available currency options and next steps.",
+  ),
+  hotel: createPopupContactConfig(
+    "Hotel Booking",
+    "Hello Sandis, I need hotel booking help for my trip. Please share suitable stay options.",
+    "Hello, I want to enquire about hotel booking support for my trip. Please share suitable stay options and next steps.",
+  ),
+  insurance: createPopupContactConfig(
+    "Travel Insurance",
+    "Hello Sandis, I need travel insurance for my trip. Please share the available plan options.",
+    "Hello, I want to enquire about travel insurance for my trip. Please share the available plan options and next steps.",
+  ),
+  memories: createPopupContactConfig(
+    "Customized Holidays",
+    "Hello Sandis, I want a customized holiday package. Please share travel options for my plan.",
+    "Hello, I want to enquire about customized holiday packages. Please share suitable travel options and the next steps.",
+  ),
+  passport: createPopupContactConfig(
+    "Passport Assistance",
+    "Hello Sandis, I need passport assistance. Please guide me with the process and required support.",
+    "Hello, I want to enquire about passport assistance. Please guide me with the process, documents, and next steps.",
+  ),
+  railway: createPopupContactConfig(
+    "Railway Reservation",
+    "Hello Sandis, I need help with railway reservation. Please share booking support and the next steps.",
+    "Hello, I want to enquire about railway reservation support. Please share the booking process and next steps.",
+  ),
+  rental: createPopupContactConfig(
+    "Rent A Car / Bus",
+    "Hello Sandis, I need a car or bus rental. Please share the available vehicle options and fare details.",
+    "Hello, I want to enquire about car or bus rental support. Please share the available vehicle options, fare details, and next steps.",
+  ),
+  visa: createPopupContactConfig(
+    "Visa Assistance",
+    "Hello Sandis, I need visa assistance for my travel plan. Please guide me with the required process.",
+    "Hello, I want to enquire about visa assistance for my travel plan. Please guide me with the required process and next steps.",
+  ),
+} as const;
+
+const PopupContactActions = ({ config }: { config: PopupContactConfig }) => (
   <div
     className="sticky top-0 z-40 w-full border-b border-border/60 bg-white/95 px-6 py-4 shadow-[0_10px_30px_rgba(15,23,42,0.08)] backdrop-blur-md sm:px-8 lg:px-10"
   >
@@ -787,7 +856,7 @@ const PopupContactActions = () => (
         Enquire Now
       </Link>
       <a
-        href={getWhatsAppUrl()}
+        href={getWhatsAppUrl(config.whatsappMessage)}
         target="_blank"
         rel="noreferrer"
         className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3.5 py-2 text-sm font-semibold text-green-700 transition-colors hover:bg-green-100"
@@ -796,7 +865,7 @@ const PopupContactActions = () => (
         WhatsApp Us
       </a>
       <a
-        href={getContactMailtoUrl("Service Enquiry")}
+        href={getContactMailtoUrl(config.emailSubject, config.emailBody)}
         className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
       >
         <Mail size={15} />
@@ -857,7 +926,7 @@ const ServicePromiseBar = ({
 const RailwayReservationDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
-    <PopupContactActions />
+    <PopupContactActions config={popupContactConfigs.railway} />
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/15 bg-accent px-4 py-2 text-sm font-semibold text-accent-foreground shadow-card">
@@ -1033,7 +1102,7 @@ const RailwayReservationDetails = () => (
 const VisaAssistanceDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
-    <PopupContactActions />
+    <PopupContactActions config={popupContactConfigs.visa} />
 
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1216,7 +1285,7 @@ const VisaAssistanceDetails = () => (
 const PassportAssistanceDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
-    <PopupContactActions />
+    <PopupContactActions config={popupContactConfigs.passport} />
 
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1395,7 +1464,7 @@ const PassportAssistanceDetails = () => (
 const TravelInsuranceDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
-    <PopupContactActions />
+    <PopupContactActions config={popupContactConfigs.insurance} />
 
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1563,7 +1632,7 @@ const TravelInsuranceDetails = () => (
 const HotelBookingDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
-    <PopupContactActions />
+    <PopupContactActions config={popupContactConfigs.hotel} />
 
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1748,7 +1817,7 @@ const HotelBookingDetails = () => (
 const RentCarBusDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
-    <PopupContactActions />
+    <PopupContactActions config={popupContactConfigs.rental} />
 
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
@@ -1918,7 +1987,7 @@ const RentCarBusDetails = () => (
 const MemoriesTourDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
-    <PopupContactActions />
+    <PopupContactActions config={popupContactConfigs.memories} />
 
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
@@ -2072,7 +2141,7 @@ const MemoriesTourDetails = () => (
 const AirTicketingDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
-    <PopupContactActions />
+    <PopupContactActions config={popupContactConfigs.air} />
 
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
@@ -2250,7 +2319,7 @@ const AirTicketingDetails = () => (
 const AirportTransferDetails = () => (
   <div className={servicePopupShellClass}>
     <div className={servicePopupBackdropClass} />
-    <PopupContactActions />
+    <PopupContactActions config={popupContactConfigs.airport} />
 
     <div className={servicePopupGridClass}>
       <div className="p-6 sm:p-8 lg:p-10">
@@ -2819,7 +2888,7 @@ const Services = () => {
               </DialogDescription>
               <div className={servicePopupShellClass}>
             <div className={servicePopupBackdropClass} />
-            <PopupContactActions />
+            <PopupContactActions config={popupContactConfigs.forex} />
 
             <div className={servicePopupGridClass}>
               <div className="p-6 sm:p-8 lg:p-10">

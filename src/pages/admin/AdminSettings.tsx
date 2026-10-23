@@ -18,6 +18,8 @@ const defaultSettings: Array<{ key: string; label: string; multiline?: boolean }
     { key: "instagram_url", label: "Instagram URL" },
     { key: "facebook_url", label: "Facebook URL" },
     { key: "default_whatsapp_message", label: "Default WhatsApp Message", multiline: true },
+    { key: "home_top_tagline", label: "Homepage Top Tagline" },
+    { key: "home_airport_booking_label", label: "Homepage Airport Booking Button" },
   ];
 
 const AdminSettings = () => {

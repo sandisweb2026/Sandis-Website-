@@ -436,6 +436,14 @@ const AdminDashboard = () => {
               <LogOut className="h-4 w-4" />
               Logout
             </button>
+
+            <button
+              type="button"
+              onClick={() => navigate("/admin/settings")}
+              className="inline-flex items-center rounded-full border border-primary/35 bg-primary/10 px-5 py-2 text-sm font-medium text-primary transition hover:bg-primary/20"
+            >
+              Site Settings
+            </button>
           </div>
 
           <div className="mt-8 flex flex-wrap gap-3">

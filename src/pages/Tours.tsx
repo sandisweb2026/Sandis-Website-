@@ -10,7 +10,6 @@ import {
   MessageCircle,
   PlaneTakeoff,
   Sparkles,
-  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -78,20 +77,6 @@ const getCategoryFilters = (
     : [allCategoriesFilter, ...fallbackCategoryFilters];
 };
 
-const memoriesIndiaThemes = [
-  "Pilgrimages",
-  "Weekend Getaways",
-  "Adventure Tours",
-  "Heritage & Monuments",
-  "Wildlife Experiences",
-  "Culinary Journeys",
-  "Honeymoons & Romantic Escapes",
-  "Luxury & Royal Heritage Tours",
-  "Memory Lane Journeys",
-  "Hiking and Biking",
-  "Medical Tourism",
-];
-
 const memoriesExpertise = [
   "Family Vacations",
   "Honeymoon & Romantic Tours",
@@ -109,6 +94,16 @@ const memoriesJourneyFlow = [
   "Get a personalized journey instead of a generic package",
   "Travel with comfort, safety, and thoughtful planning",
   "Return with stories, emotions, and lifelong memories",
+];
+
+const holidayPopupWhatsAppMessage =
+  "Hello Sandis, I want a customized holiday package. Please share suitable travel options for my plan.";
+const holidayPopupEmailSubject = "Holiday enquiry";
+const holidayPopupEmailBody =
+  "Hello, I want to enquire about holiday packages and customized travel options. Please share the next steps.";
+const holidayPopupNarrative = [
+  "From pilgrimages and family vacations to honeymoon escapes, senior-friendly tours, ladies special groups, heritage circuits, wellness trips, and adventure breaks, each holiday is shaped around the traveler instead of forcing everyone into one fixed package.",
+  "We focus on the pace, comfort, stays, local experiences, and practical support that make a journey feel personal from the first discussion to the final return home.",
 ];
 
 const holidayPopupShellClass =
@@ -129,7 +124,7 @@ const PopupContactActions = () => (
           Enquire Now
         </Link>
         <a
-          href={getWhatsAppUrl()}
+          href={getWhatsAppUrl(holidayPopupWhatsAppMessage)}
           target="_blank"
           rel="noreferrer"
           className="inline-flex items-center gap-1.5 rounded-full border border-green-200 bg-green-50 px-3.5 py-2 text-sm font-semibold text-green-700 transition-colors hover:bg-green-100"
@@ -138,7 +133,10 @@ const PopupContactActions = () => (
           WhatsApp Us
         </a>
         <a
-          href={getContactMailtoUrl("Holiday Enquiry")}
+          href={getContactMailtoUrl(
+            holidayPopupEmailSubject,
+            holidayPopupEmailBody,
+          )}
           className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
         >
           <Mail size={15} />
@@ -176,47 +174,25 @@ const MemoriesHolidayPopup = () => (
           experiences that stay with you long after the trip ends.
         </p>
 
-        <div className="mt-8 rounded-[8px] border border-border bg-white p-4 shadow-card">
+        <div className="mt-8 rounded-[8px] border border-border bg-white p-5 shadow-card">
           <div className="flex items-start gap-3">
             <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-amber-100 text-primary">
               <Landmark size={20} />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-foreground">
-                Vande Bharat - Discover India
+              <h3 className="text-base font-semibold text-foreground">
+                Journeys Designed Around Your Travel Style
               </h3>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                From Himalayas, rivers, oceans, deserts, and backwaters to
-                India&apos;s culture, traditions, and spirituality, every corner
-                inspires deeper exploration.
-              </p>
-            </div>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {memoriesIndiaThemes.map((item) => (
-              <span
-                key={item}
-                className="rounded-full border border-border bg-secondary/70 px-3 py-1 text-xs font-semibold text-foreground"
-              >
-                {item}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-8 rounded-[8px] border border-border bg-white p-4 shadow-card">
-          <div className="flex items-start gap-3">
-            <div className="flex h-10 w-10 flex-none items-center justify-center rounded-[8px] bg-sky-100 text-sky-700">
-              <PlaneTakeoff size={20} />
-            </div>
-            <div>
-              <h3 className="text-sm font-semibold text-foreground">
-                World Voyage - Explore Beyond Boundaries
-              </h3>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                The world opens doors to growth and transformation. As Mark
-                Twain reminds us, real regret comes from journeys we never took.
-              </p>
+              <div className="mt-3 space-y-4">
+                {holidayPopupNarrative.map((paragraph) => (
+                  <p
+                    key={paragraph}
+                    className="text-sm leading-7 text-muted-foreground"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
             </div>
           </div>
         </div>

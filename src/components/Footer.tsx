@@ -4,6 +4,8 @@ import sandisLogo from "@/assets/sandis logo .png";
 import {
   CONTACT_EMAIL_DISPLAY,
   CONTACT_EMAIL_MAILTO,
+  CONTACT_FACEBOOK_URL,
+  CONTACT_INSTAGRAM_URL,
   CONTACT_PHONE_DISPLAY,
 } from "@/lib/contact";
 import { WHATSAPP_CHAT_URL } from "@/lib/whatsapp";
@@ -89,7 +91,7 @@ const Footer = () => (
             </span>
             <div className="flex gap-3 pt-2">
               <a
-                href="https://instagram.com"
+                href={CONTACT_INSTAGRAM_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:opacity-100"
@@ -97,7 +99,7 @@ const Footer = () => (
                 <Instagram size={18} />
               </a>
               <a
-                href="https://facebook.com"
+                href={CONTACT_FACEBOOK_URL}
                 target="_blank"
                 rel="noreferrer"
                 className="hover:opacity-100"
@@ -110,7 +112,15 @@ const Footer = () => (
       </div>
 
       <div className="mt-8 border-t border-background/10 pt-6 text-center text-sm opacity-50">
-        Copyright {new Date().getFullYear()} Sandis Tours. All rights reserved.
+        Copyright {new Date().getFullYear()} Sandis Tours. All rights reserved. By{" "}
+        <a
+          href="https://webakoof.com"
+          target="_blank"
+          rel="noreferrer"
+          className="transition-opacity hover:opacity-100 hover:underline"
+        >
+          Webakoof
+        </a>
       </div>
     </div>
   </footer>

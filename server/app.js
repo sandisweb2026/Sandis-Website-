@@ -14,6 +14,7 @@ import {
   requireAdmin,
 } from "./auth.js";
 import { query } from "./db.js";
+import { syncEnquiryToGoogleSheet } from "./google-sheets.js";
 
 const app = express();
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
@@ -544,7 +545,9 @@ app.post("/api/enquiries", async (req, res, next) => {
     );
 
     const rows = await query(`${enquirySelect} WHERE id = :id LIMIT 1`, { id });
-    res.status(201).json({ enquiry: mapEnquiry(rows[0]) });
+    const enquiry = mapEnquiry(rows[0]);
+    await syncEnquiryToGoogleSheet(enquiry);
+    res.status(201).json({ enquiry });
   } catch (error) {
     next(error);
   }
@@ -585,7 +588,9 @@ app.patch(
       const rows = await query(`${enquirySelect} WHERE id = :id LIMIT 1`, {
         id: req.params.id,
       });
-      return res.json({ enquiry: mapEnquiry(rows[0]) });
+      const enquiry = mapEnquiry(rows[0]);
+      await syncEnquiryToGoogleSheet(enquiry);
+      return res.json({ enquiry });
     } catch (error) {
       next(error);
     }
@@ -605,6 +610,7 @@ app.delete(
         return res.status(404).json({ message: "Enquiry not found." });
       }
 
+      await syncEnquiryToGoogleSheet({ id: req.params.id }, "delete");
       return res.status(204).end();
     } catch (error) {
       next(error);

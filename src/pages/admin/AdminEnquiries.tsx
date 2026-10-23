@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Download } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,50 @@ const statusColors: Record<string, string> = {
   new: "bg-destructive/10 text-destructive",
   contacted: "bg-primary/10 text-primary",
   closed: "bg-muted text-muted-foreground",
+};
+
+const escapeCsvValue = (value: unknown) => {
+  const text = value == null ? "" : String(value);
+  return /[\",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+};
+
+const downloadEnquiriesCsv = (enquiries: EnquiryRecord[]) => {
+  const headers = [
+    "ID",
+    "Name",
+    "Email",
+    "Phone",
+    "Destination",
+    "Message",
+    "Travel Date",
+    "Status",
+    "Created At",
+  ];
+  const rows = enquiries.map((enquiry) => [
+    enquiry.id,
+    enquiry.name,
+    enquiry.email,
+    enquiry.phone,
+    enquiry.destination,
+    enquiry.message,
+    enquiry.travel_date,
+    enquiry.status,
+    enquiry.created_at,
+  ]);
+  const csv = [headers, ...rows]
+    .map((row) => row.map(escapeCsvValue).join(","))
+    .join("\r\n");
+  const blob = new Blob(["\uFEFF", csv], {
+    type: "text/csv;charset=utf-8;",
+  });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `sandis-enquiries-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
 };
 
 const AdminEnquiries = () => {
@@ -66,7 +110,7 @@ const AdminEnquiries = () => {
   return (
     <div className="pt-20 pb-12 px-4">
       <div className="container mx-auto max-w-4xl">
-        <div className="flex items-center gap-3 mb-6">
+        <div className="flex items-center gap-3 mb-6 flex-wrap">
           <Link
             to="/admin"
             className="text-muted-foreground hover:text-foreground"
@@ -77,6 +121,17 @@ const AdminEnquiries = () => {
           <span className="text-sm text-muted-foreground">
             ({enquiries.length} total)
           </span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="ml-auto"
+            onClick={() => downloadEnquiriesCsv(enquiries)}
+            disabled={enquiries.length === 0}
+          >
+            <Download size={16} className="mr-2" />
+            Download Excel Sheet
+          </Button>
         </div>
 
         <div className="space-y-3">
