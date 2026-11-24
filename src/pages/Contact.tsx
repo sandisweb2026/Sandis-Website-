@@ -1,3 +1,5 @@
+import { useSearchParams } from "react-router-dom";
+import EnquiryForm from "@/components/EnquiryForm";
 import { ArrowUpRight, LocateFixed, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import {
   CONTACT_ADDRESS_DISPLAY,
@@ -15,6 +17,9 @@ import Seo from "@/components/Seo";
 import { SITE_ORIGIN, createBreadcrumbSchema } from "@/lib/seo";
 
 const Contact = () => {
+  const [searchParams] = useSearchParams();
+  const subject = searchParams.get("subject") || undefined;
+  const initialMessage = searchParams.get("message") || undefined;
   return (
     <>
       <Seo
@@ -66,6 +71,11 @@ const Contact = () => {
               Call, mail, or visit us for travel planning, airport transfers,
               hotel bookings, tours, and complete travel support.
             </p>
+          </div>
+
+          <div className="mx-auto mb-8 max-w-6xl rounded-2xl border border-primary/15 bg-card p-5 shadow-card sm:p-8">
+            <h2 className="text-2xl font-bold text-foreground">Send an Enquiry</h2>
+            <EnquiryForm key={searchParams.toString()} subject={subject} initialMessage={initialMessage} />
           </div>
 
           <div className="mx-auto grid max-w-6xl grid-cols-1 gap-8 lg:grid-cols-[0.82fr_1.18fr]">

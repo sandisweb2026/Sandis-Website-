@@ -1,10 +1,7 @@
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { Shield, Award, HeadphonesIcon, Star, Plane, Hotel, FileCheck, BookOpen, Car, Bus, IndianRupee, Instagram, Facebook, Phone, MapPin, House, Info, Contact, X } from "lucide-react";
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import EnquiryForm from "@/components/EnquiryForm";
 import banner1 from "@/assets/banners/banner 1.jpeg";
 import banner2 from "@/assets/banners/banner 2.jpeg";
 import banner3 from "@/assets/banners/banner 3.jpeg";
@@ -19,7 +16,6 @@ import tourDubai from "@/assets/tour-dubai.jpg";
 import tourBali from "@/assets/tour-bali.jpg";
 import tourThailand from "@/assets/tour-thailand.jpg";
 import {
-  createEnquiry,
   fetchBanners,
   fetchPublicSettings,
   type BannerRecord,
@@ -108,108 +104,14 @@ const bannerNavItems = [
 
 const whiteSlidePanelClass = "mx-4 md:mx-auto max-w-5xl rounded-2xl bg-white shadow-card";
 
-const WEB3FORMS_ACCESS_KEY = "d0800d02-8089-408a-8028-d05c953746a6";
-const WEB3FORMS_ENDPOINT = "https://api.web3forms.com/submit";
-
-type PopupEnquiryPayload = {
-  name: string;
-  email: string;
-  phone: string;
-  destination: string | null;
-  message: string | null;
-  travel_date: string | null;
-};
-
-const appendIfPresent = (
-  formData: FormData,
-  key: string,
-  value: string | null | undefined,
-) => {
-  const trimmed = value?.trim();
-  if (trimmed) {
-    formData.append(key, trimmed);
-  }
-};
-
-const submitPopupEnquiry = async (payload: PopupEnquiryPayload) => {
-  const formData = new FormData();
-
-  formData.append("access_key", WEB3FORMS_ACCESS_KEY);
-  formData.append("subject", "New Sandis Tours enquiry");
-  formData.append("from_name", "Sandis Tours website");
-  formData.append("name", payload.name.trim());
-  appendIfPresent(formData, "email", payload.email);
-  appendIfPresent(formData, "replyto", payload.email);
-  formData.append("phone", payload.phone.trim());
-  appendIfPresent(formData, "destination", payload.destination);
-  appendIfPresent(formData, "message", payload.message);
-  appendIfPresent(formData, "travel_date", payload.travel_date);
-  formData.append("botcheck", "");
-
-  const response = await fetch(WEB3FORMS_ENDPOINT, {
-    method: "POST",
-    body: formData,
-  });
-
-  const data = await response
-    .json()
-    .catch(() => ({} as { success?: boolean; message?: string }));
-
-  if (!response.ok || data.success === false) {
-    throw new Error(data.message || "Unable to submit enquiry.");
-  }
-};
-
 const EnquiryPopup = () => {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const timerId = window.setTimeout(() => setOpen(true), 7000);
 
     return () => window.clearTimeout(timerId);
   }, []);
-
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const enquiryPayload: PopupEnquiryPayload = {
-      name: String(formData.get("name") ?? "").trim(),
-      email: String(formData.get("email") ?? "").trim(),
-      phone: String(formData.get("phone") ?? "").trim(),
-      destination: null,
-      message: String(formData.get("message") ?? "").trim() || null,
-      travel_date: null,
-    };
-    setLoading(true);
-
-    try {
-      const [internalResult, emailResult] = await Promise.allSettled([
-        createEnquiry(enquiryPayload),
-        submitPopupEnquiry(enquiryPayload),
-      ]);
-
-      if (emailResult.status === "rejected") {
-        throw emailResult.reason;
-      }
-
-      if (internalResult.status === "rejected") {
-        console.warn(
-          "Popup enquiry saved to Web3Forms but internal save failed:",
-          internalResult.reason,
-        );
-      }
-
-      toast.success("Thank you! We'll contact you soon.");
-      setOpen(false);
-      form.reset();
-    } catch {
-      toast.error("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   if (!open) return null;
 
@@ -259,47 +161,7 @@ const EnquiryPopup = () => {
           <p className="mt-2 text-base text-muted-foreground sm:text-lg">
             Fill the form below and we&apos;ll get back to you soon.
           </p>
-          <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3">
-            <Input
-              name="name"
-              placeholder="Full Name*"
-              required
-              className="h-12 rounded border-slate-300 bg-white text-base"
-            />
-            <Input
-              name="email"
-              placeholder="Email Address*"
-              type="email"
-              required
-              className="h-12 rounded border-slate-300 bg-white text-base"
-            />
-            <Input
-              name="phone"
-              placeholder="Phone Number*"
-              type="tel"
-              required
-              className="h-12 rounded border-slate-300 bg-white text-base"
-            />
-            <Textarea
-              name="message"
-              placeholder="Your message / requirements"
-              className="min-h-[130px] rounded border-slate-300 bg-white text-base"
-            />
-            <input
-              type="checkbox"
-              name="botcheck"
-              className="hidden"
-              tabIndex={-1}
-              aria-hidden="true"
-            />
-            <Button
-              type="submit"
-              className="mt-2 h-12 w-fit rounded bg-orange-500 px-8 text-base font-bold text-white hover:bg-orange-600"
-              disabled={loading}
-            >
-              {loading ? "Submitting..." : "Send Enquiry"}
-            </Button>
-          </form>
+          <EnquiryForm onSuccess={() => setOpen(false)} />
         </div>
       </div>
     </div>

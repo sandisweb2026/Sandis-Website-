@@ -27,19 +27,5 @@ export const CONTACT_MAP_EMBED_URL = `https://www.google.com/maps?q=${encodeURIC
   CONTACT_MAP_QUERY,
 )}&output=embed`;
 
-export const getContactMailtoUrl = (subject?: string, body?: string) => {
-  const params = new URLSearchParams();
-
-  if (subject?.trim()) {
-    params.set("subject", subject.trim());
-  }
-
-  if (body?.trim()) {
-    params.set("body", body.trim());
-  }
-
-  const query = params.toString();
-  return query
-    ? `${CONTACT_EMAIL_MAILTO}?${query}`
-    : CONTACT_EMAIL_MAILTO;
-};
+export const getEnquiryUrl = (subject: string, message: string) =>
+  `/contact?${new URLSearchParams({ subject, message })}`;

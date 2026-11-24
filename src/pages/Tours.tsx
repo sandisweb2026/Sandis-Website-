@@ -6,7 +6,6 @@ import {
   Globe2,
   IndianRupee,
   Landmark,
-  Mail,
   MessageCircle,
   PlaneTakeoff,
   Sparkles,
@@ -29,7 +28,7 @@ import {
   type HolidayCategoryRecord,
   type HolidayPackageRecord,
 } from "@/lib/travel-cms";
-import { getContactMailtoUrl } from "@/lib/contact";
+import { getEnquiryUrl } from "@/lib/contact";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
 import Seo from "@/components/Seo";
 import { SITE_ORIGIN, createBreadcrumbSchema } from "@/lib/seo";
@@ -120,7 +119,7 @@ const PopupContactActions = () => (
     <div className="relative flex w-full items-center justify-center">
       <div className="mx-auto flex w-full max-w-fit flex-wrap items-center justify-center gap-2 rounded-2xl border border-white/80 bg-white/95 p-2 shadow-[0_14px_34px_rgba(15,23,42,0.14)] ring-1 ring-primary/10 backdrop-blur-md">
         <Link
-          to="/contact"
+          to={getEnquiryUrl(holidayPopupEmailSubject, holidayPopupEmailBody)}
           className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
         >
           Enquire Now
@@ -133,16 +132,6 @@ const PopupContactActions = () => (
         >
           <MessageCircle size={15} />
           WhatsApp Us
-        </a>
-        <a
-          href={getContactMailtoUrl(
-            holidayPopupEmailSubject,
-            holidayPopupEmailBody,
-          )}
-          className="inline-flex items-center gap-1.5 rounded-full border border-sky-200 bg-sky-50 px-3.5 py-2 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-100"
-        >
-          <Mail size={15} />
-          Mail Us
         </a>
       </div>
       <DialogClose className="absolute right-0 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border-3 border-primary bg-white text-primary shadow-[0_10px_24px_rgba(236,117,0,0.22)] transition-all hover:bg-primary hover:text-white sm:h-11 sm:w-11">

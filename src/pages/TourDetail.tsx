@@ -15,12 +15,11 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { fallbackTourImages } from "@/lib/fallback-content";
-import { getContactMailtoUrl } from "@/lib/contact";
+import { getEnquiryUrl } from "@/lib/contact";
 import {
   fetchHolidayPackageBySlug,
   type HolidayPackageRecord,
 } from "@/lib/travel-cms";
-import { getWhatsAppUrl, WHATSAPP_PREFILLED_MESSAGE } from "@/lib/whatsapp";
 import Seo from "@/components/Seo";
 import { SITE_ORIGIN, createBreadcrumbSchema } from "@/lib/seo";
 
@@ -80,9 +79,6 @@ const TourDetail = () => {
   const [holidayPackage, setHolidayPackage] =
     useState<HolidayPackageRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  const [enquiryChoice, setEnquiryChoice] = useState<
-    "whatsapp" | "email" | null
-  >(null);
 
   useEffect(() => {
     if (!packageSlug) return;
@@ -137,9 +133,6 @@ const TourDetail = () => {
   const galleryImages = (holidayPackage.gallery_images ?? []).filter(
     (image) => image.is_active !== false,
   );
-  const whatsappMessage =
-    holidayPackage.whatsapp_enquiry_message ||
-    `${WHATSAPP_PREFILLED_MESSAGE}\n\nHoliday Enquiry: ${holidayPackage.title}`;
   const emailSubject =
     holidayPackage.email_enquiry_subject ||
     `Holiday enquiry: ${holidayPackage.title}`;
@@ -450,49 +443,13 @@ const TourDetail = () => {
                 Enquire Now
               </h3>
               <p className="text-sm text-muted-foreground mt-2 text-center">
-                Get quick assistance for this holiday package. Choose one
-                enquiry option below.
+                Send us your questions about this holiday package.
               </p>
-              <a
-                href={getWhatsAppUrl(whatsappMessage)}
-                target="_blank"
-                rel="noreferrer"
-                onClick={(event) => {
-                  if (enquiryChoice === "email") {
-                    event.preventDefault();
-                    return;
-                  }
-                  setEnquiryChoice("whatsapp");
-                }}
-                aria-disabled={enquiryChoice === "email"}
-                className={
-                  enquiryChoice === "email" ? "pointer-events-none opacity-50" : ""
-                }
-              >
-                <Button className="w-full mt-6" size="lg">
-                  <MapPin size={16} className="mr-2" /> WhatsApp Enquiry
-                </Button>
-              </a>
-              <a
-                href={getContactMailtoUrl(emailSubject, emailMessage)}
-                onClick={(event) => {
-                  if (enquiryChoice === "whatsapp") {
-                    event.preventDefault();
-                    return;
-                  }
-                  setEnquiryChoice("email");
-                }}
-                aria-disabled={enquiryChoice === "whatsapp"}
-                className={
-                  enquiryChoice === "whatsapp"
-                    ? "pointer-events-none opacity-50"
-                    : ""
-                }
-              >
-                <Button variant="outline" className="w-full mt-3" size="lg">
-                  <Mail size={16} className="mr-2" /> Email Enquiry
-                </Button>
-              </a>
+              <Button asChild className="mt-6 w-full" size="lg">
+                <Link to={getEnquiryUrl(emailSubject, emailMessage)}>
+                  <Mail size={16} className="mr-2" /> Send Enquiry
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
