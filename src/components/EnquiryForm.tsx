@@ -62,7 +62,18 @@ export default function EnquiryForm({
     <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3">
       <Input name="name" aria-label="Full name" placeholder="Full Name*" autoComplete="name" required className="h-12 rounded border-slate-300 bg-white text-base" />
       <Input name="email" aria-label="Email address" placeholder="Email Address*" type="email" autoComplete="email" required className="h-12 rounded border-slate-300 bg-white text-base" />
-      <Input name="phone" aria-label="Phone number" placeholder="Phone Number*" type="tel" autoComplete="tel" required className="h-12 rounded border-slate-300 bg-white text-base" />
+      <Input
+        name="phone"
+        aria-label="Phone number"
+        placeholder="10-digit Phone Number*"
+        type="tel"
+        inputMode="numeric"
+        autoComplete="tel-national"
+        pattern="[0-9]{10}"
+        title="Enter exactly 10 digits."
+        required
+        className="h-12 rounded border-slate-300 bg-white text-base"
+      />
       <Textarea name="message" aria-label="Your message" placeholder="Your message / requirements" defaultValue={initialMessage} className="min-h-[130px] rounded border-slate-300 bg-white text-base" />
       <input type="checkbox" name="botcheck" hidden />
       <Button
